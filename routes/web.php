@@ -1,9 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers;
+use App\Http\Middleware;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('test', 'test@index')->middleware(Test::class);
+Route::get('test', [Controllers\TestController::class, 'index'])->middleware(Middleware\Test::class);
+
+Route::prefix('admin')->group(function () {
+    Route::get('/', [Controllers\Admin\IndexController::class, 'index']);
+    Route::get('login', [Controllers\Admin\IndexController::class, 'login']);
+});

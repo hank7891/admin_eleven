@@ -8,7 +8,6 @@ class TestController extends Controller
 {
     public function index()
     {
-        echo 888;exit;
         return view('test');
     }
 }
