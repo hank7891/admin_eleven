@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Employee extends Model
 {
     use HasFactory;
+
+    /**
+     * 資料表名稱
+     * @var string
+     */
+    protected $table = 'employee';
 }
