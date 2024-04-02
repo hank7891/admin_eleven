@@ -9,11 +9,11 @@ class IndexController extends Controller
 {
     public function index()
     {
-        echo 'admin index';exit;
+        return view('admin/index');
     }
 
     public function login()
     {
-        echo 'admin login';exit;
+        return view('admin/login');
     }
 }
