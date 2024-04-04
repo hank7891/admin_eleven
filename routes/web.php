@@ -16,3 +16,7 @@ Route::prefix('admin')->group(function () {
     Route::post('login', [Controllers\Admin\IndexController::class, 'loginDo'])->middleware(Middleware\AdminNotLogin::class);
     Route::get('logout', [Controllers\Admin\IndexController::class, 'logout'])->middleware(Middleware\AdminIsLogin::class);
 });
+
+Route::prefix('share')->group(function () {
+    Route::get('getMessage/{type}', [Controllers\Share\MessageController::class, 'getMessage']);
+});

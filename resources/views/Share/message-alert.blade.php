@@ -70,7 +70,7 @@
     var getMessage = function () {
         $.ajax({
             type: "GET",
-            url: "/api/getMessage/<?= ADMIN_MESSAGE_SESSION ?>",
+            url: "/share/getMessage/<?= ADMIN_MESSAGE_SESSION ?>",
             data: {},
             success: function (data) {
                 if (data.status === 1) {
