@@ -35,19 +35,12 @@ class Message
     public static function setMessage($sessionKey, $type, $msg)
     {
         $messages = session($sessionKey);
+        $messages = (is_array($messages)) ? $messages : [];
 
-
-        if (is_array($messages)) {
-            $messages[] = [
-                'type'    => $type,
-                'message' => $msg,
-            ];
-        } else {
-            $messages[] = [
-                'type'    => $type,
-                'message' => $msg,
-            ];
-        }
+        $messages[] = [
+            'type'    => $type,
+            'message' => $msg,
+        ];
 
         session([$sessionKey => $messages]);
     }
