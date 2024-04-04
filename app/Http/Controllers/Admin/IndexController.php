@@ -14,6 +14,10 @@ class IndexController extends Controller
         return view('admin/index');
     }
 
+    /**
+     * 登入頁
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\View\View
+     */
     public function login()
     {
         return view('admin/login');
@@ -45,5 +49,15 @@ class IndexController extends Controller
             Message::setMessage(ADMIN_MESSAGE_SESSION, MESSAGE::DANGER, $e->getMessage());
             return redirect('admin/login');
         }
+    }
+
+    /**
+     * 登出
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function logout()
+    {
+        session()->forget(ADMIN_AUTH_SESSION);
+        return redirect('admin/login');
     }
 }
