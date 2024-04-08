@@ -18,7 +18,7 @@ class Auth
     {
         $employee = Employee::where('account', $account)
             ->where('password', $password)
-            ->get()
+            ->first()
             ->toArray();
 
         if (empty($employee)) {
