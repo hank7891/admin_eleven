@@ -15,6 +15,10 @@ Route::prefix('admin')->group(function () {
     Route::get('login', [Controllers\Admin\IndexController::class, 'login'])->middleware(Middleware\AdminNotLogin::class);
     Route::post('login', [Controllers\Admin\IndexController::class, 'loginDo'])->middleware(Middleware\AdminNotLogin::class);
     Route::get('logout', [Controllers\Admin\IndexController::class, 'logout'])->middleware(Middleware\AdminIsLogin::class);
+
+    Route::prefix('employee')->group(function () {
+        Route::get('edit', [Controllers\Admin\EmployeeController::class, 'edit'])->middleware(Middleware\AdminIsLogin::class);
+    });
 });
 
 Route::prefix('share')->group(function () {
