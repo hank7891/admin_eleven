@@ -2,6 +2,7 @@
     #alert-area {
         position: absolute;
         top: 5%;
+        left: 50%;
         z-index: 9999;
     }
 
