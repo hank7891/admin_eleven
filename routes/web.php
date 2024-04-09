@@ -18,6 +18,7 @@ Route::prefix('admin')->group(function () {
 
     Route::prefix('employee')->group(function () {
         Route::get('edit', [Controllers\Admin\EmployeeController::class, 'edit'])->middleware(Middleware\AdminIsLogin::class);
+        Route::post('edit', [Controllers\Admin\EmployeeController::class, 'editDo'])->middleware(Middleware\AdminIsLogin::class);
     });
 });
 

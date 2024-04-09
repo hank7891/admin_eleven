@@ -31,7 +31,9 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form>
+                            <form action={{asset('admin/employee/edit')}} method="post">
+                                @csrf
+                                <input type="hidden" id="{{ $data['id'] ?? 0 }}">
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label>帳號: {{ $data['account'] ?? '--' }}</label>
@@ -39,11 +41,20 @@
 
                                     <div class="form-group">
                                         <label for="exampleInputName">姓名</label>
-                                        <input type="text" class="form-control" id="exampleInputName" placeholder="Enter name">
+                                        <input type="text"
+                                               class="form-control"
+                                               id="exampleInputName"
+                                               name="name"
+                                               placeholder="Enter name"
+                                               value="{{ $data['name'] ?? '' }}">
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputPassword1">Password</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                                        <input type="password"
+                                               class="form-control"
+                                               id="exampleInputPassword1"
+                                               name="password"
+                                               placeholder="Password">
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
