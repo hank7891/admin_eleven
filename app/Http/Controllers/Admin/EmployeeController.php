@@ -9,7 +9,10 @@ class EmployeeController extends Controller
 {
     public function edit()
     {
-        echo 'Edit Employee Page';exit;
-        return view('admin/employee/edit');
+        $setData = [
+            'user' => session(ADMIN_AUTH_SESSION),
+        ];
+
+        return view('admin/employee/edit', $setData);
     }
 }
