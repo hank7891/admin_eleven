@@ -9,6 +9,8 @@ use App\Library\Admin\Employee;
 
 class EmployeeController extends Controller
 {
+    const POST_SESSION = 'employee_edit_post';
+
     /**
      * 編輯
      * @param Employee $employeeLib
@@ -18,10 +20,17 @@ class EmployeeController extends Controller
     public function edit(Employee $employeeLib)
     {
         try {
-            $user    = session(ADMIN_AUTH_SESSION);
+            $user = session(ADMIN_AUTH_SESSION);
+            $data = $employeeLib->fetchDataByID($user['id']);
+
+            if (session(self::POST_SESSION)) {
+                $data = session(self::POST_SESSION) + $data;
+                session()->forget(self::POST_SESSION);
+            }
+
             $setData = [
                 'user' => $user,
-                'data' => $employeeLib->fetchDataByID($user['id']),
+                'data' => $data,
             ];
 
             return view('admin/employee/edit', $setData);
@@ -41,14 +50,17 @@ class EmployeeController extends Controller
      */
     public function editDo(Request $request, Employee $employee)
     {
+        $post = $request->all();
+
         try {
 
-            Message::setMessage(ADMIN_MESSAGE_SESSION, MESSAGE::SUCCESS, '儲存成功');
+            Message::setMessage(ADMIN_MESSAGE_SESSION, MESSAGE::SUCCESS, '編輯成功！');
             return redirect('admin/employee/edit');
         } catch (\Exception $e) {
+            session([self::POST_SESSION => $post]);
 
             Message::setMessage(ADMIN_MESSAGE_SESSION, MESSAGE::DANGER, $e->getMessage());
-            return redirect('admin/');
+            return redirect('admin/employee/edit');
         }
     }
 }
