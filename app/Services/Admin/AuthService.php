@@ -17,13 +17,13 @@ class AuthService
     {
         $employee = Employee::where('account', $account)
             ->where('password', $password)
-            ->first()
-            ->toArray();
+            ->first();
 
         if (empty($employee)) {
             throw new \Exception('帳號或密碼輸入錯誤！ #001');
         }
 
+        $employee = $employee->toArray();
         unset($employee['password']);
         session([ADMIN_AUTH_SESSION => $employee]);
     }
