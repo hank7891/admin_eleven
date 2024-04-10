@@ -1,20 +1,19 @@
 <?php
 
-namespace App\Library\Admin;
+namespace App\Services\Admin;
 
 use App\Models\Employee;
 
-class Auth
+class AuthService
 {
     /**
-     * 依照帳號密碼資訊取得登入帳號
-     * @param $account
-     * @param $password
+     * 實作登入邏輯
+     * @param string $account
+     * @param string $password
      *
-     * @return mixed
      * @throws \Exception
      */
-    public function fetchDataByLogin($account, $password)
+    public function login(string $account, string $password): void
     {
         $employee = Employee::where('account', $account)
             ->where('password', $password)
@@ -26,6 +25,6 @@ class Auth
         }
 
         unset($employee['password']);
-        return $employee;
+        session([ADMIN_AUTH_SESSION => $employee]);
     }
 }

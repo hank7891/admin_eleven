@@ -4,14 +4,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Library\Admin\Auth;
+use App\Services\Admin\AuthService;
 use App\Library\Share\Message;
 
 class IndexController extends Controller
 {
+    # 建構元
+    public function __construct(protected AuthService $authService)
+    {
+
+    }
+
     public function index()
     {
-        return view('admin/index');
+        $setData = [
+            'user' => session(ADMIN_AUTH_SESSION),
+        ];
+
+        return view('admin/index', $setData);
     }
 
     /**
@@ -26,11 +36,10 @@ class IndexController extends Controller
     /**
      * 登入實作
      * @param Request $request
-     * @param Auth    $auth
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function loginDo(Request $request, Auth $auth)
+    public function loginDo(Request $request)
     {
         try {
             $account  = $request->account;
@@ -40,9 +49,7 @@ class IndexController extends Controller
                 throw new \Exception('請輸入帳號及密碼！ #002');
             }
 
-            $employee = $auth->fetchDataByLogin($account, $password);
-            session([ADMIN_AUTH_SESSION => $employee]);
-
+            $this->authService->login($account, $password);
             return redirect('admin/');
         } catch (\Exception $e) {
 
