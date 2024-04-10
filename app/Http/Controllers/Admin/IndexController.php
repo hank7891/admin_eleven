@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Admin\AuthService;
-use App\Library\Share\Message;
+use App\Services\Share\MessageService;
+
 
 class IndexController extends Controller
 {
@@ -20,7 +21,6 @@ class IndexController extends Controller
         $setData = [
             'user' => session(ADMIN_AUTH_SESSION),
         ];
-
         return view('admin/index', $setData);
     }
 
@@ -53,7 +53,7 @@ class IndexController extends Controller
             return redirect('admin/');
         } catch (\Exception $e) {
 
-            Message::setMessage(ADMIN_MESSAGE_SESSION, MESSAGE::DANGER, $e->getMessage());
+            MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
             return redirect('admin/login');
         }
     }

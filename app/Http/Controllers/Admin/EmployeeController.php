@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Library\Share\Message;
 use Illuminate\Http\Request;
 use App\Library\Admin\Employee;
+use App\Services\Share\MessageService;
 
 class EmployeeController extends Controller
 {
@@ -36,7 +36,7 @@ class EmployeeController extends Controller
             return view('admin/employee/edit', $setData);
         } catch (\Exception $e) {
 
-            Message::setMessage(ADMIN_MESSAGE_SESSION, MESSAGE::DANGER, $e->getMessage());
+            MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
             return redirect('admin/');
         }
     }
@@ -54,12 +54,12 @@ class EmployeeController extends Controller
 
         try {
 
-            Message::setMessage(ADMIN_MESSAGE_SESSION, MESSAGE::SUCCESS, '編輯成功！');
+            MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '編輯成功！');
             return redirect('admin/employee/edit');
         } catch (\Exception $e) {
             session([self::POST_SESSION => $post]);
 
-            Message::setMessage(ADMIN_MESSAGE_SESSION, MESSAGE::DANGER, $e->getMessage());
+            MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
             return redirect('admin/employee/edit');
         }
     }

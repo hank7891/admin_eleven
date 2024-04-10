@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Share;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Library\Share\Message;
+use App\Services\Share\MessageService;
 
 class MessageController extends Controller
 {
@@ -15,7 +15,7 @@ class MessageController extends Controller
     public function getMessage($type)
     {
         try {
-            $data = Message::getMessages($type);
+            $data = MessageService::getMessages($type);
             return response()->json(['status' => 0, 'data' => $data]);
 
         } catch (\Exception $e) {
