@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Services\Admin\AuthService;
 use App\Services\Share\MessageService;
 
-
 class IndexController extends Controller
 {
     # 建構元

@@ -2,10 +2,16 @@
 
 namespace App\Services\Admin;
 
-use App\Models\Employee;
+use App\Repositories\Admin\EmployeeRepository;
 
 class AuthService
 {
+    # 建構元
+    public function __construct(protected EmployeeRepository $employeeRepository)
+    {
+
+    }
+
     /**
      * 實作登入邏輯
      * @param string $account
@@ -15,16 +21,12 @@ class AuthService
      */
     public function login(string $account, string $password): void
     {
-        $employee = Employee::where('account', $account)
-            ->where('password', $password)
-            ->first();
+        $employee = $this->employeeRepository->fetchDataByAccount($account, $password);
 
         if (empty($employee)) {
             throw new \Exception('帳號或密碼輸入錯誤！ #001');
         }
 
-        $employee = $employee->toArray();
-        unset($employee['password']);
         session([ADMIN_AUTH_SESSION => $employee]);
     }
 
