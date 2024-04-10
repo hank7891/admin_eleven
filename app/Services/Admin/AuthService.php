@@ -27,4 +27,12 @@ class AuthService
         unset($employee['password']);
         session([ADMIN_AUTH_SESSION => $employee]);
     }
+
+    /**
+     * 實作登出邏輯
+     */
+    public function logout(): void
+    {
+        session()->forget(ADMIN_AUTH_SESSION);
+    }
 }

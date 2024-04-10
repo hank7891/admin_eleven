@@ -64,7 +64,7 @@ class IndexController extends Controller
      */
     public function logout()
     {
-        session()->forget(ADMIN_AUTH_SESSION);
+        $this->authService->logout();
         return redirect('admin/login');
     }
 }
