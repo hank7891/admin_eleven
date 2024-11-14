@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Library\Admin\Employee;
+use App\Services\Admin\EmployeeService;
 use App\Services\Share\MessageService;
 
 class EmployeeController extends Controller
@@ -13,15 +13,15 @@ class EmployeeController extends Controller
 
     /**
      * 編輯
-     * @param Employee $employeeLib
+     * @param EmployeeService $employeeService
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function edit(Employee $employeeLib)
+    public function edit(EmployeeService $employeeService)
     {
         try {
             $user = session(ADMIN_AUTH_SESSION);
-            $data = $employeeLib->fetchDataByID($user['id']);
+            $data = $employeeService->fetchDataByID($user['id']);
 
             if (session(self::POST_SESSION)) {
                 $data = session(self::POST_SESSION) + $data;
@@ -43,12 +43,12 @@ class EmployeeController extends Controller
 
     /**
      * 編輯實作
-     * @param Request  $request
-     * @param Employee $employee
+     * @param Request         $request
+     * @param EmployeeService $employeeService
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function editDo(Request $request, Employee $employee)
+    public function editDo(Request $request, EmployeeService $employeeService)
     {
         $post = $request->all();
 
