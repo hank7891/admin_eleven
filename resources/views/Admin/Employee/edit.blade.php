@@ -36,7 +36,7 @@
                                 <input type="hidden" id="{{ $data['id'] ?? 0 }}">
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label>帳號: {{ $data['account'] ?? '--' }}</label>
+                                        <label>帳號: {{$data['account'] ?? '--'}}</label>
                                     </div>
 
                                     <div class="form-group">
@@ -46,7 +46,7 @@
                                                id="exampleInputName"
                                                name="name"
                                                placeholder="Enter name"
-                                               value="{{ $data['name'] ?? '' }}">
+                                               value="{{$data['name'] ?? ''}}">
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputPassword1">Password</label>
