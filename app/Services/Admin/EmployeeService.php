@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use Carbon\Carbon;
 use App\Repositories\Admin\EmployeeRepository;
 
 class EmployeeService
@@ -18,7 +19,21 @@ class EmployeeService
      */
     public function fetchAllData(): array
     {
-        return $this->employeeRepository->fetchAllData();
+        $data = $this->employeeRepository->fetchAllData();
+
+        # 資料解析
+        foreach ($data as &$value) {
+            # 時間資料調整
+            $value['created_at'] = !empty(trim($value['created_at']))
+                ? Carbon::parse($value['created_at'])->format('Y-m-d')
+                : '';
+
+            $value['updated_at'] = !empty(trim($value['updated_at']))
+                ? Carbon::parse($value['updated_at'])->format('Y-m-d')
+                : '';
+        }
+
+        return $data;
     }
 
     /**

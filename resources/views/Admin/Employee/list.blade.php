@@ -52,7 +52,7 @@
                                             <tr>
                                                 <td>{{$user['id']}}</td>
                                                 <td>{{$user['name']}}</td>
-                                                <td>{{Carbon::parse($user['created_at'])->format('Y-m-d')}}</td>
+                                                <td>{{$user['created_at']}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
