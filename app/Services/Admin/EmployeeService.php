@@ -13,6 +13,15 @@ class EmployeeService
     }
 
     /**
+     * 取得所有會員資料
+     * @return array
+     */
+    public function fetchAllData(): array
+    {
+        return $this->employeeRepository->fetchAllData();
+    }
+
+    /**
      * 依照 ID 取得會員資料
      * @param int $id
      *

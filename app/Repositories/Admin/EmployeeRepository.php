@@ -13,6 +13,15 @@ class EmployeeRepository
     }
 
     /**
+     * 取得所有資料
+     * @return array
+     */
+    public function fetchAllData(): array
+    {
+        return $this->employee::all()->toArray();
+    }
+
+    /**
      * 依照 id 取得資料
      * @param int $id
      *

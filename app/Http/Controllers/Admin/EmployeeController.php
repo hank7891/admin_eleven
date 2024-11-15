@@ -12,6 +12,20 @@ class EmployeeController extends Controller
     const POST_SESSION = 'employee_edit_post';
 
     /**
+     * 列表頁面
+     * @param EmployeeService $employeeService
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
+     */
+    public function list(EmployeeService $employeeService)
+    {
+        $setData = [
+            'data' => $employeeService->fetchAllData()
+        ];
+        return view('admin/employee/list', $setData);
+    }
+
+    /**
      * 編輯
      * @param EmployeeService $employeeService
      *
