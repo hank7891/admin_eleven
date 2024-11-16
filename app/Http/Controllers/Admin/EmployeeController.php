@@ -11,31 +11,35 @@ class EmployeeController extends Controller
 {
     const POST_SESSION = 'employee_edit_post';
 
+    # 建構元
+    public function __construct(protected EmployeeService $service)
+    {
+        # code...
+    }
+
     /**
      * 列表頁面
-     * @param EmployeeService $employeeService
-     *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
-    public function list(EmployeeService $employeeService)
+    public function list()
     {
         $setData = [
-            'data' => $employeeService->fetchAllData()
+            'data' => $this->service->fetchAllData()
         ];
         return view('admin/employee/list', $setData);
     }
 
     /**
      * 編輯
-     * @param EmployeeService $employeeService
+     * @param int $id
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function edit(int $id, EmployeeService $employeeService)
+    public function edit(int $id)
     {
         try {
             $user = session(ADMIN_AUTH_SESSION);
-            $data = $employeeService->fetchDataByID($id);
+            $data = $this->service->fetchDataByID($id);
 
             if (session(self::POST_SESSION)) {
                 $data = session(self::POST_SESSION) + $data;
@@ -58,11 +62,10 @@ class EmployeeController extends Controller
     /**
      * 編輯實作
      * @param Request         $request
-     * @param EmployeeService $employeeService
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function editDo(Request $request, EmployeeService $employeeService)
+    public function editDo(Request $request)
     {
         $post = $request->all();
 
