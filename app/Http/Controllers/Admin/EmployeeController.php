@@ -31,11 +31,11 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function edit(EmployeeService $employeeService)
+    public function edit(int $id, EmployeeService $employeeService)
     {
         try {
             $user = session(ADMIN_AUTH_SESSION);
-            $data = $employeeService->fetchDataByID($user['id']);
+            $data = $employeeService->fetchDataByID($id);
 
             if (session(self::POST_SESSION)) {
                 $data = session(self::POST_SESSION) + $data;

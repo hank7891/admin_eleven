@@ -42,15 +42,21 @@
                                 <table id="example2" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
+                                        <th style="width: 10px;">#</th>
+                                        <th style="width: 50px;"></th>
                                         <th>ID</th>
                                         <th>NAME</th>
                                         <th>建立時間</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($data as $user)
+                                        @foreach($data as $key => $user)
                                             <tr>
-                                                <td>{{$user['id']}}</td>
+                                                <td>{{$key + 1}}</td>
+                                                <td>
+                                                    <a class="btn btn-primary" href={{asset('admin/employee/edit') . '/' . $user['id']}}>編輯</a>
+                                                </td>
+                                                <td >{{$user['id']}}</td>
                                                 <td>{{$user['name']}}</td>
                                                 <td>{{$user['created_at']}}</td>
                                             </tr>
@@ -58,6 +64,8 @@
                                     </tbody>
                                     <tfoot>
                                     <tr>
+                                        <th>#</th>
+                                        <th></th>
                                         <th>ID</th>
                                         <th>NAME</th>
                                         <th>建立時間</th>
