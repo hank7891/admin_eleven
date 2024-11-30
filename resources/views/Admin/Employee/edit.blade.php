@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">資料編輯</h1>
+                        <h1 class="m-0">{{(empty($data['id'])) ? '資料新增' : '資料編輯'}}</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -31,9 +31,9 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form action={{asset('admin/employee/edit')}} method="post">
+                            <form action={{asset('admin/employee/edit')}} method="POST">
                                 @csrf
-                                <input type="hidden" id="{{ $data['id'] ?? 0 }}">
+                                <input type="hidden" name="id" value={{ $data['id'] ?? 0 }}>
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label>帳號: {{$data['account'] ?? '--'}}</label>
