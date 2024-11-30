@@ -49,4 +49,15 @@ class EmployeeRepository
 
         return !empty($employee) ? $employee->toArray() : [];
     }
+
+    /**
+     * 新增資料
+     * @param array $data
+     *
+     * @return object
+     */
+    public function addData(array $data): object
+    {
+        return $this->employee::create($data);
+    }
 }

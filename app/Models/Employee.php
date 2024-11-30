@@ -21,4 +21,11 @@ class Employee extends Model
      * @var array
      */
     protected $hidden = ['password'];
+
+    /**
+     * 不允許批量賦值的欄位
+     *
+     * @var array
+     */
+    protected $guarded = [];
 }

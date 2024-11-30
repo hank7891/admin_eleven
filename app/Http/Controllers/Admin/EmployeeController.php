@@ -70,14 +70,21 @@ class EmployeeController extends Controller
         $post = $request->all();
 
         try {
+            $id = $post['id'];
+            if ($post['id'] == 0) {
+                # 新增
+                $id = $this->service->addData($post);
+            } else {
+                # TODO 編輯
+            }
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '編輯成功！');
-            return redirect('admin/employee/edit');
+            return redirect('admin/employee/edit/' . $id);
         } catch (\Exception $e) {
             session([self::POST_SESSION => $post]);
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
-            return redirect('admin/employee/edit');
+            return redirect('admin/employee/edit' . $id);
         }
     }
 }

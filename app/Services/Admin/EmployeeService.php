@@ -53,4 +53,27 @@ class EmployeeService
 
         return $data;
     }
+
+    /**
+     * 新增會員帳號
+     *
+     * @param array $data
+     *
+     * @return int
+     * @throws \Exception
+     */
+    public function addData(array $data): int
+    {
+        # TODO 資料驗證
+
+        # 資料新增
+        $user = $this->employeeRepository->addData($data);
+
+        # 回傳 id
+        if (empty($user->id)) {
+            throw new \Exception('新增會員資料失敗！ #001');
+        }
+
+        return $user->id;
+    }
 }

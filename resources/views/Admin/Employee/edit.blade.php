@@ -36,9 +36,18 @@
                                 <input type="hidden" name="id" value={{ $data['id'] ?? 0 }}>
                                 <div class="card-body">
                                     <div class="form-group">
-                                        <label>帳號: {{$data['account'] ?? '--'}}</label>
+                                        @if ($data['id'] ?? 0 > 0)
+                                            <label>帳號: {{$data['account'] ?? '--'}}</label>
+                                        @else
+                                            <label for="exampleInputAccount">帳號</label>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="exampleInputAccount"
+                                                   name="account"
+                                                   placeholder="Enter account"
+                                                   value="">
+                                        @endif
                                     </div>
-
                                     <div class="form-group">
                                         <label for="exampleInputName">姓名</label>
                                         <input type="text"
