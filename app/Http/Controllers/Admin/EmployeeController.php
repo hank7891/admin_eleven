@@ -39,7 +39,7 @@ class EmployeeController extends Controller
     {
         try {
             $user = session(ADMIN_AUTH_SESSION);
-            $data = $this->service->fetchDataByID($id);
+            $data = ($id > 0) ? $this->service->fetchDataByID($id) : [];
 
             if (session(self::POST_SESSION)) {
                 $data = session(self::POST_SESSION) + $data;
