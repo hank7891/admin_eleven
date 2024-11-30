@@ -39,6 +39,16 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
+                                <div class="mailbox-controls">
+                                    <!-- Check all button -->
+                                    <a class="btn btn-default btn-sm" href={{asset('admin/employee/edit') . '/0'}}>
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+
+                                    <button type="button" class="btn btn-default btn-sm">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
                                 <table id="example2" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
