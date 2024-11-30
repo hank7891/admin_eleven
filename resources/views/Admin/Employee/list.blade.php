@@ -43,7 +43,7 @@
                                     <thead>
                                     <tr>
                                         <th style="width: 10px;">#</th>
-                                        <th style="width: 50px;"></th>
+                                        <th style="width: 60px;"></th>
                                         <th>ID</th>
                                         <th>NAME</th>
                                         <th>建立時間</th>
