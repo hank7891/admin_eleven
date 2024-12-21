@@ -26,7 +26,7 @@ class EmployeeController extends Controller
         $setData = [
             'data' => $this->service->fetchAllData()
         ];
-        return view('admin/employee/list', $setData);
+        return view('admin-share/page/list', $setData);
     }
 
     /**
