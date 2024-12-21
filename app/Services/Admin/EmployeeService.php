@@ -76,4 +76,27 @@ class EmployeeService
 
         return $user->id;
     }
+
+    /**
+     * 修改資料
+     * @param int   $id
+     * @param array $data
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public function updateData(int $id, array $data): bool
+    {
+        # TODO 資料驗證
+
+        # 資料更新
+        $result = $this->employeeRepository->updateData($id, $data);
+
+        # 回傳結果
+        if (!$result) {
+            throw new \Exception('更新會員資料失敗！ #001');
+        }
+
+        return $id;
+    }
 }

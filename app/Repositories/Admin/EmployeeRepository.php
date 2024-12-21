@@ -60,4 +60,24 @@ class EmployeeRepository
     {
         return $this->employee::create($data);
     }
+
+    /**
+     * 修改資料
+     * @param int   $id
+     * @param array $data
+     *
+     * @return object
+     * @throws \Exception
+     */
+    public function updateData(int $id, array $data): object
+    {
+        $employee = $this->employee::find($id);
+
+        if (empty($employee)) {
+            throw new \Exception('修改資料取得錯誤！ #001');
+        }
+
+        $employee->update($data);
+        return $employee;
+    }
 }

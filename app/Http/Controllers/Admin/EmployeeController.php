@@ -75,7 +75,8 @@ class EmployeeController extends Controller
                 # 新增
                 $id = $this->service->addData($post);
             } else {
-                # TODO 編輯
+                # 編輯
+                $this->service->updateData($post['id'], $post);
             }
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '編輯成功！');
