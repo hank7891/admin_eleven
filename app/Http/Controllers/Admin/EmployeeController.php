@@ -85,7 +85,7 @@ class EmployeeController extends Controller
             session([self::POST_SESSION => $post]);
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
-            return redirect('admin/employee/edit' . $id);
+            return redirect('admin/employee/edit/' . $id);
         }
     }
 }
