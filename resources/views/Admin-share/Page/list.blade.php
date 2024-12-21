@@ -11,7 +11,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">會員管理</h1>
+                        <h1 class="m-0">{{$pageTitle}}</h1>
                     </div><!-- /.col -->
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -37,7 +37,7 @@
                             <div class="card-body">
                                 <div class="mailbox-controls">
                                     <!-- Check all button -->
-                                    <a class="btn btn-default btn-sm" href={{asset('admin/employee/edit') . '/0'}}>
+                                    <a class="btn btn-default btn-sm" href={{$editUrl . '0'}}>
                                         <i class="fas fa-plus"></i>
                                     </a>
 
@@ -50,9 +50,9 @@
                                     <tr>
                                         <th style="width: 10px;">#</th>
                                         <th style="width: 60px;"></th>
-                                        <th>ID</th>
-                                        <th>NAME</th>
-                                        <th>建立時間</th>
+                                        @foreach($fields as $filed_key => $field)
+                                            <th>{{$filed_key}}</th>
+                                        @endforeach
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -60,11 +60,11 @@
                                             <tr>
                                                 <td>{{$key + 1}}</td>
                                                 <td>
-                                                    <a class="btn btn-primary" href={{asset('admin/employee/edit') . '/' . $user['id']}}>編輯</a>
+                                                    <a class="btn btn-primary" href={{$editUrl . $user['id']}}>編輯</a>
                                                 </td>
-                                                <td >{{$user['id']}}</td>
-                                                <td>{{$user['name']}}</td>
-                                                <td>{{$user['created_at']}}</td>
+                                                @foreach($fields as $filed_key => $field)
+                                                    <td>{{$user[$field] ?? ''}}</td>
+                                                @endforeach
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -72,9 +72,9 @@
                                     <tr>
                                         <th>#</th>
                                         <th></th>
-                                        <th>ID</th>
-                                        <th>NAME</th>
-                                        <th>建立時間</th>
+                                        @foreach($fields as $filed_key => $field)
+                                            <th>{{$filed_key}}</th>
+                                        @endforeach
                                     </tr>
                                     </tfoot>
                                 </table>
@@ -109,7 +109,6 @@
             });
         });
     </script>
-
 
     <!-- DataTables  & Plugins -->
     <script src='<?= asset("admin-layout/plugins/datatables/jquery.dataTables.min.js") ?>'></script>

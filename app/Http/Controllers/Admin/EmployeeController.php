@@ -23,8 +23,18 @@ class EmployeeController extends Controller
      */
     public function list()
     {
+        # 列表欄位
+        $fields = [
+            'ID' => 'id',
+            '姓名' => 'name',
+            '建立時間' => 'created_at',
+        ];
+
         $setData = [
-            'data' => $this->service->fetchAllData()
+            'pageTitle' => '會員管理',
+            'editUrl'   => asset('admin/employee/edit') . '/',
+            'fields'    => $fields,
+            'data'      => $this->service->fetchAllData(),
         ];
         return view('admin-share/page/list', $setData);
     }
