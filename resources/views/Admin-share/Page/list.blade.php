@@ -56,14 +56,14 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($data as $key => $user)
+                                        @foreach($data as $key => $value)
                                             <tr>
                                                 <td>{{$key + 1}}</td>
                                                 <td>
-                                                    <a class="btn btn-primary" href={{$editUrl . $user['id']}}>編輯</a>
+                                                    <a class="btn btn-primary" href={{$editUrl . $value['id']}}>編輯</a>
                                                 </td>
                                                 @foreach($fields as $filed_key => $field)
-                                                    <td>{{$user[$field] ?? ''}}</td>
+                                                    <td>{{$value[$field] ?? ''}}</td>
                                                 @endforeach
                                             </tr>
                                         @endforeach
