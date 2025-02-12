@@ -23,6 +23,8 @@ class EmployeeController extends Controller
      */
     public function list()
     {
+        $user = session(ADMIN_AUTH_SESSION);
+
         # 列表欄位
         $fields = [
             'ID' => 'id',
@@ -31,6 +33,7 @@ class EmployeeController extends Controller
         ];
 
         $setData = [
+            'user'      => $user,
             'pageTitle' => '會員管理',
             'editUrl'   => asset('admin/employee/edit') . '/',
             'fields'    => $fields,
