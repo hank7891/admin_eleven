@@ -11,10 +11,13 @@ class EmployeeController extends Controller
 {
     const POST_SESSION = 'employee_edit_post';
 
+    /** @var \App\Services\Share\SettingService */
+    protected $settingService;
+
     # 建構元
     public function __construct(protected EmployeeService $service)
     {
-        # code...
+        $this->settingService = app('setting');
     }
 
     /**
@@ -23,8 +26,6 @@ class EmployeeController extends Controller
      */
     public function list()
     {
-        $user = session(ADMIN_AUTH_SESSION);
-
         # 列表欄位
         $fields = [
             'ID' => 'id',
@@ -32,14 +33,12 @@ class EmployeeController extends Controller
             '建立時間' => 'created_at',
         ];
 
-        $setData = [
-            'user'      => $user,
-            'pageTitle' => '會員管理',
-            'editUrl'   => asset('admin/employee/edit') . '/',
-            'fields'    => $fields,
-            'data'      => $this->service->fetchAllData(),
-        ];
-        return view('admin-share/page/list', $setData);
+        $this->settingService->setSetData('pageTitle', '會員管理');
+        $this->settingService->setSetData('editUrl', asset('admin/employee/edit') . '/');
+        $this->settingService->setSetData('fields', $fields);
+        $this->settingService->setSetData('data', $this->service->fetchAllData());
+        
+        return view('admin-share/page/list', $this->settingService->fetchSetData());
     }
 
     /**
@@ -59,12 +58,8 @@ class EmployeeController extends Controller
                 session()->forget(self::POST_SESSION);
             }
 
-            $setData = [
-                'user' => $user,
-                'data' => $data,
-            ];
-
-            return view('admin/employee/edit', $setData);
+            $this->settingService->setSetData('data', $data);
+            return view('admin/employee/edit', $this->settingService->fetchSetData());
         } catch (\Exception $e) {
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());

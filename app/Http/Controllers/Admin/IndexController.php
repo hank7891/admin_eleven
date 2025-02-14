@@ -9,18 +9,18 @@ use App\Services\Share\MessageService;
 
 class IndexController extends Controller
 {
+    /** @var \App\Services\Share\SettingService */
+    protected $settingService;
+
     # 建構元
     public function __construct(protected AuthService $authService)
     {
-
+        $this->settingService = app('setting');
     }
 
     public function index()
     {
-        $setData = [
-            'user' => session(ADMIN_AUTH_SESSION),
-        ];
-        return view('admin/index', $setData);
+        return view('admin/index', $this->settingService->fetchSetData());
     }
 
     /**
