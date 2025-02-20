@@ -34,43 +34,34 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
-                <li class="nav-item menu-open">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Dashboard
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?= asset("admin/employee/list") ?>" class="nav-link active">
-                                <i class="nav-icon far fa-image"></i>
+                @foreach($menu as $item)
+                    {{-- 產生表單外誆 --}}
+                    <li class="nav-item {{$item['item_open'] ? 'menu-open' : ''}}">
+                        @if($item['have_item'])
+                            {{-- 產生表單下拉 --}}
+                            <a href="#" class="nav-link {{$item['item_open'] ? 'active' : ''}}">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
-                                    帳號管理
+                                    {{$item['item_name']}}
+                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                        </li>
-                    </ul>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon far fa-image"></i>
-                                <p>
-                                    OOO
-                                </p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= asset("admin/employee/list") ?>" class="nav-link">
-                        <i class="nav-icon far fa-image"></i>
-                        <p>
-                            帳號管理
-                        </p>
-                    </a>
-                </li>
+                        @endif
+                        @foreach($item['details'] as $detail)
+                            {{-- 產生表單內容 --}}
+                            {!! $item['have_item'] ? "<ul class='nav nav-treeview'>" : '' !!}
+                            <li class="nav-item">
+                                <a href="{{asset($detail['url'] ?? '#')}}" class="nav-link {{$detail['is_open'] ? 'active' : ''}}">
+                                    <i class="nav-icon far fa-image"></i>
+                                    <p>
+                                        {{$detail['name']}}
+                                    </p>
+                                </a>
+                            </li>
+                            {!! $item['have_item'] ? "</ul>" : '' !!}
+                        @endforeach
+                    </li>
+                @endforeach
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
