@@ -49,11 +49,16 @@ class SettingService
     protected function setUserMenu(int $userId): array
     {
         $re = [
-            1 => [
+            [
                 'have_item' => true,
                 'item_name' => 'Dashboard',
                 'item_open' => true,
                 'details'   => [
+                    [
+                        'is_open' => false,
+                        'name'    => '角色管理',
+                        'url'     => '/admin/acl.role/list',
+                    ],
                     [
                         'is_open' => true,
                         'name'    => '會員管理',
@@ -62,7 +67,7 @@ class SettingService
                 ],
 
             ],
-            2 => [
+            [
                 'have_item' => false,
                 'item_name' => '',
                 'item_open' => false,
