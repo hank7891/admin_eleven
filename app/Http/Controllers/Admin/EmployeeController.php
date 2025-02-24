@@ -50,7 +50,6 @@ class EmployeeController extends Controller
     public function edit(int $id)
     {
         try {
-            $user = session(ADMIN_AUTH_SESSION);
             $data = ($id > 0) ? $this->service->fetchDataByID($id) : [];
 
             if (session(self::POST_SESSION)) {
