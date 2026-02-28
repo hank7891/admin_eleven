@@ -68,6 +68,19 @@ class SettingService
 
             ],
             [
+                'have_item' => true,
+                'item_name' => '小遊戲',
+                'item_open' => false,
+                'details'   => [
+                    [
+                        'is_open' => false,
+                        'name'    => '貪食蛇',
+                        'url'     => '/admin/game.snake/',
+                    ],
+                ],
+
+            ],
+            [
                 'have_item' => false,
                 'item_name' => '',
                 'item_open' => false,

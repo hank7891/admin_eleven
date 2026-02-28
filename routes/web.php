@@ -29,6 +29,11 @@ Route::prefix('admin')->group(function () {
         Route::get('edit/{id}', [Controllers\Admin\EmployeeController::class, 'edit'])->middleware(Middleware\AdminIsLogin::class);
         Route::post('edit', [Controllers\Admin\EmployeeController::class, 'editDo'])->middleware(Middleware\AdminIsLogin::class);
     });
+
+    # 遊戲 - 貪食蛇
+    Route::prefix('game.snake')->group(function () {
+        Route::get('/', [Controllers\Admin\GameSnakeController::class, 'index'])->middleware(Middleware\AdminIsLogin::class);
+    });
 });
 
 Route::prefix('share')->group(function () {
