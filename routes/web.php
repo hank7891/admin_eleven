@@ -34,6 +34,12 @@ Route::prefix('admin')->group(function () {
     Route::prefix('game.snake')->group(function () {
         Route::get('/', [Controllers\Admin\GameSnakeController::class, 'index'])->middleware(Middleware\AdminIsLogin::class);
     });
+
+    # 操作日誌
+    Route::prefix('admin.log')->group(function () {
+        Route::get('list', [Controllers\Admin\AdminLogController::class, 'list'])->middleware(Middleware\AdminIsLogin::class);
+        Route::get('detail/{id}', [Controllers\Admin\AdminLogController::class, 'detail'])->middleware(Middleware\AdminIsLogin::class);
+    });
 });
 
 Route::prefix('share')->group(function () {

@@ -81,6 +81,19 @@ class SettingService
 
             ],
             [
+                'have_item' => true,
+                'item_name' => '系統',
+                'item_open' => false,
+                'details'   => [
+                    [
+                        'is_open' => false,
+                        'name'    => '操作日誌',
+                        'url'     => '/admin/admin.log/list',
+                    ],
+                ],
+
+            ],
+            [
                 'have_item' => false,
                 'item_name' => '',
                 'item_open' => false,
