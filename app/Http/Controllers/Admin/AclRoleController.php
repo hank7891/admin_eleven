@@ -37,7 +37,61 @@ class AclRoleController extends Controller
         $this->settingService->setSetData('editUrl', asset('admin/acl.role/edit') . '/');
         $this->settingService->setSetData('fields', $fields);
         $this->settingService->setSetData('data', $this->service->fetchAllData());
-        
+
         return view('admin-share/page/list', $this->settingService->fetchSetData());
+    }
+
+    /**
+     * 編輯
+     * @param int $id
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function edit(int $id)
+    {
+        try {
+            $data = ($id > 0) ? $this->service->fetchDataByID($id) : [];
+
+            if (session(self::POST_SESSION)) {
+                $data = session(self::POST_SESSION) + $data;
+                session()->forget(self::POST_SESSION);
+            }
+
+            $this->settingService->setSetData('data', $data);
+            return view('admin/acl-role/edit', $this->settingService->fetchSetData());
+        } catch (\Exception $e) {
+            MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
+            return redirect('admin/acl.role/list');
+        }
+    }
+
+    /**
+     * 編輯實作
+     * @param Request $request
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function editDo(Request $request)
+    {
+        $post = $request->all();
+
+        try {
+            $id = $post['id'];
+            if ($post['id'] == 0) {
+                # 新增
+                $id = $this->service->addData($post);
+            } else {
+                # 編輯
+                $this->service->updateData($post['id'], $post);
+            }
+
+            MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '編輯成功！');
+            return redirect('admin/acl.role/edit/' . $id);
+        } catch (\Exception $e) {
+            session([self::POST_SESSION => $post]);
+
+            MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
+            return redirect('admin/acl.role/edit/' . $id);
+        }
     }
 }

@@ -14,7 +14,7 @@ class AclRoleService
     }
 
     /**
-     * 取得所有會員資料
+     * 取得所有角色資料
      * @return array
      */
     public function fetchAllData(): array
@@ -37,7 +37,7 @@ class AclRoleService
     }
 
     /**
-     * 依照 ID 取得會員資料
+     * 依照 ID 取得角色資料
      * @param int $id
      *
      * @return array
@@ -48,9 +48,47 @@ class AclRoleService
         $data = $this->repository->fetchDataByID($id);
 
         if (empty($data)) {
-            throw new \Exception('查無此會員資料！ #001');
+            throw new \Exception('查無此角色資料！ #001');
         }
 
         return $data;
+    }
+
+    /**
+     * 新增角色
+     *
+     * @param array $data
+     *
+     * @return int
+     * @throws \Exception
+     */
+    public function addData(array $data): int
+    {
+        $role = $this->repository->addData($data);
+
+        if (empty($role->id)) {
+            throw new \Exception('新增角色資料失敗！ #001');
+        }
+
+        return $role->id;
+    }
+
+    /**
+     * 修改角色資料
+     * @param int   $id
+     * @param array $data
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public function updateData(int $id, array $data): bool
+    {
+        $result = $this->repository->updateData($id, $data);
+
+        if (!$result) {
+            throw new \Exception('更新角色資料失敗！ #001');
+        }
+
+        return $id;
     }
 }
