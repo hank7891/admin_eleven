@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Admin\AclRoleService;
+use App\Services\Admin\AdminLogService;
 use App\Services\Share\MessageService;
 
 class AclRoleController extends Controller
@@ -15,8 +16,10 @@ class AclRoleController extends Controller
     protected $settingService;
 
     # 建構元
-    public function __construct(protected AclRoleService $service)
-    {
+    public function __construct(
+        protected AclRoleService $service,
+        protected AdminLogService $logService
+    ) {
         $this->settingService = app('setting');
     }
 
@@ -80,9 +83,26 @@ class AclRoleController extends Controller
             if ($post['id'] == 0) {
                 # 新增
                 $id = $this->service->addData($post);
+
+                # 記錄操作日誌
+                $this->logService->recordSimple($request, 'acl_role', 'create', $id, $post['role_name'] ?? null);
             } else {
+                # 取得修改前資料
+                $oldData = $this->service->fetchDataByID($post['id']);
+
                 # 編輯
                 $this->service->updateData($post['id'], $post);
+
+                # 記錄操作日誌
+                $this->logService->recordUpdate(
+                    $request,
+                    'acl_role',
+                    $post['id'],
+                    $oldData['role_name'] ?? null,
+                    $oldData,
+                    $post,
+                    ['role_name']
+                );
             }
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '編輯成功！');

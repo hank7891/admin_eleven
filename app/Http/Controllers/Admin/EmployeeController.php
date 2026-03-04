@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Admin\EmployeeService;
+use App\Services\Admin\AdminLogService;
 use App\Services\Share\MessageService;
 
 class EmployeeController extends Controller
@@ -15,8 +16,10 @@ class EmployeeController extends Controller
     protected $settingService;
 
     # 建構元
-    public function __construct(protected EmployeeService $service)
-    {
+    public function __construct(
+        protected EmployeeService $service,
+        protected AdminLogService $logService
+    ) {
         $this->settingService = app('setting');
     }
 
@@ -37,7 +40,7 @@ class EmployeeController extends Controller
         $this->settingService->setSetData('editUrl', asset('admin/employee/edit') . '/');
         $this->settingService->setSetData('fields', $fields);
         $this->settingService->setSetData('data', $this->service->fetchAllData());
-        
+
         return view('admin-share/page/list', $this->settingService->fetchSetData());
     }
 
@@ -81,9 +84,26 @@ class EmployeeController extends Controller
             if ($post['id'] == 0) {
                 # 新增
                 $id = $this->service->addData($post);
+
+                # 記錄操作日誌
+                $this->logService->recordSimple($request, 'employee', 'create', $id, $post['name'] ?? null);
             } else {
+                # 取得修改前資料
+                $oldData = $this->service->fetchDataByID($post['id']);
+
                 # 編輯
                 $this->service->updateData($post['id'], $post);
+
+                # 記錄操作日誌
+                $this->logService->recordUpdate(
+                    $request,
+                    'employee',
+                    $post['id'],
+                    $oldData['name'] ?? null,
+                    $oldData,
+                    $post,
+                    ['name', 'account']
+                );
             }
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '編輯成功！');
