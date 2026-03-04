@@ -79,6 +79,11 @@ class EmployeeController extends Controller
     {
         $post = $request->all();
 
+        # 密碼為空時不更新密碼欄位
+        if (empty($post['password'])) {
+            unset($post['password']);
+        }
+
         try {
             $id = $post['id'];
             if ($post['id'] == 0) {
