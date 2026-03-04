@@ -32,54 +32,24 @@ class AdminLogController extends Controller
             $dateFrom = $request->get('date_from');
             $dateTo = $request->get('date_to');
 
-            # 構建查詢條件
-            $conditions = [];
-            if (!empty($module)) {
-                $conditions['module'] = $module;
-            }
-            if (!empty($action)) {
-                $conditions['action'] = $action;
-            }
-            if (!empty($dateFrom)) {
-                $conditions['date_from'] = $dateFrom . ' 00:00:00';
-            }
-            if (!empty($dateTo)) {
-                $conditions['date_to'] = $dateTo . ' 23:59:59';
-            }
-
-            # 取得日誌列表
+            # 取得日誌列表（日期篩選在 SQL 層級處理）
             $logs = $this->service->getLogList(
                 perPage: 20,
                 module: $module,
-                action: $action
+                action: $action,
+                dateFrom: $dateFrom,
+                dateTo: $dateTo
             );
 
-            # 如果有日期篩選，需要手動過濾
-            if (!empty($dateFrom) || !empty($dateTo)) {
-                $items = $logs->getCollection()->filter(function ($log) use ($dateFrom, $dateTo) {
-                    $operatedAt = Carbon::parse($log->operated_at);
-
-                    if (!empty($dateFrom) && $operatedAt->format('Y-m-d') < $dateFrom) {
-                        return false;
-                    }
-                    if (!empty($dateTo) && $operatedAt->format('Y-m-d') > $dateTo) {
-                        return false;
-                    }
-                    return true;
-                });
-
-                $logs->setCollection($items);
-            }
-
-            # 格式化日誌數據
+            # 格式化日誌數據（使用 Model accessor）
             $formattedLogs = $logs->getCollection()->map(function ($log) {
                 return [
                     'id' => $log->id,
                     'operator_name' => $log->operator_name,
                     'module' => $log->module,
                     'action' => $log->action,
-                    'action_display' => $this->getActionDisplay($log->action),
-                    'module_display' => $this->getModuleDisplay($log->module),
+                    'action_display' => $log->action_display,
+                    'module_display' => $log->module_display,
                     'target_name' => $log->target_name,
                     'ip_address' => $log->ip_address,
                     'operated_at' => Carbon::parse($log->operated_at)->format('Y-m-d H:i:s'),
@@ -103,8 +73,10 @@ class AdminLogController extends Controller
             $this->settingService->setSetData('fields', $fields);
             $this->settingService->setSetData('data', $formattedLogs);
             $this->settingService->setSetData('pagination', $logs);
+            $this->settingService->setSetData('showAddButton', false);
+            $this->settingService->setSetData('actionLabel', '詳情');
 
-            return view('admin-share/page/log-list', $this->settingService->fetchSetData());
+            return view('admin-share/page/list', $this->settingService->fetchSetData());
         } catch (\Exception $e) {
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
             return redirect('admin/');
@@ -125,14 +97,14 @@ class AdminLogController extends Controller
                 throw new \Exception('查無此操作日誌！');
             }
 
-            # 格式化數據
+            # 格式化數據（使用 Model accessor）
             $data = [
                 'id' => $log->id,
                 'operator_name' => $log->operator_name,
                 'ip_address' => $log->ip_address,
-                'module_display' => $this->getModuleDisplay($log->module),
+                'module_display' => $log->module_display,
                 'module' => $log->module,
-                'action_display' => $this->getActionDisplay($log->action),
+                'action_display' => $log->action_display,
                 'action' => $log->action,
                 'target_id' => $log->target_id,
                 'target_name' => $log->target_name,
@@ -149,31 +121,4 @@ class AdminLogController extends Controller
             return redirect('admin/admin.log/list');
         }
     }
-
-    /**
-     * 獲取操作行為的顯示名稱
-     */
-    private function getActionDisplay(string $action): string
-    {
-        $actions = [
-            'create' => '新增',
-            'update' => '編輯',
-            'delete' => '刪除',
-        ];
-        return $actions[$action] ?? $action;
-    }
-
-    /**
-     * 獲取模組的顯示名稱
-     */
-    private function getModuleDisplay(string $module): string
-    {
-        $modules = [
-            'employee' => '帳號管理',
-            'acl_role' => '角色管理',
-            'admin_log' => '操作日誌',
-        ];
-        return $modules[$module] ?? $module;
-    }
 }
-

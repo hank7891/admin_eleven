@@ -36,12 +36,13 @@
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <div class="mailbox-controls">
-                                    <!-- Check all button -->
+                                    @if(!isset($showAddButton) || $showAddButton)
                                     <a class="btn btn-default btn-sm" href={{$editUrl . '0'}}>
                                         <i class="fas fa-plus"></i>
                                     </a>
+                                    @endif
 
-                                    <button type="button" class="btn btn-default btn-sm">
+                                    <button type="button" class="btn btn-default btn-sm" onclick="location.reload()">
                                         <i class="fas fa-sync-alt"></i>
                                     </button>
                                 </div>
@@ -60,7 +61,7 @@
                                             <tr>
                                                 <td>{{$key + 1}}</td>
                                                 <td>
-                                                    <a class="btn btn-primary" href={{$editUrl . $value['id']}}>編輯</a>
+                                                    <a class="btn btn-primary btn-sm" href={{$editUrl . $value['id']}}>{{ $actionLabel ?? '編輯' }}</a>
                                                 </td>
                                                 @foreach($fields as $filed_key => $field)
                                                     <td>{{$value[$field] ?? ''}}</td>
@@ -78,6 +79,13 @@
                                     </tr>
                                     </tfoot>
                                 </table>
+
+                                <!-- 分頁 -->
+                                @if(isset($pagination) && $pagination->hasPages())
+                                    <div class="d-flex justify-content-center mt-3">
+                                        {{ $pagination->links('pagination::bootstrap-4') }}
+                                    </div>
+                                @endif
                             </div>
                             <!-- /.card-body -->
                         </div>

@@ -164,8 +164,7 @@ class AdminLogService
      */
     protected function formatChanges(array $changes): array
     {
-        // 過濾掉密碼等敏感字段（可選）
-        $sensitiveFields = ['password', 'token', 'secret'];
+        $sensitiveFields = config('admin_log.sensitive_fields', []);
 
         foreach ($sensitiveFields as $field) {
             if (isset($changes[$field])) {
@@ -184,15 +183,19 @@ class AdminLogService
      */
     protected function getClientIp(Request $request): string
     {
-        // 優先級：X-Forwarded-For > X-Real-IP > REMOTE_ADDR
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        // 優先級：X-Forwarded-For > X-Real-IP > $request->ip()
+        $forwarded = $request->header('X-Forwarded-For');
+        if (!empty($forwarded)) {
+            $ips = explode(',', $forwarded);
             return trim($ips[0]);
-        } elseif (!empty($_SERVER['HTTP_X_REAL_IP'])) {
-            return $_SERVER['HTTP_X_REAL_IP'];
-        } else {
-            return $request->ip() ?? '0.0.0.0';
         }
+
+        $realIp = $request->header('X-Real-IP');
+        if (!empty($realIp)) {
+            return $realIp;
+        }
+
+        return $request->ip() ?? '0.0.0.0';
     }
 
     /**
@@ -201,10 +204,17 @@ class AdminLogService
      * @param int $perPage
      * @param string|null $module
      * @param string|null $action
+     * @param string|null $dateFrom
+     * @param string|null $dateTo
      * @return \Illuminate\Pagination\Paginator
      */
-    public function getLogList(int $perPage = 15, ?string $module = null, ?string $action = null)
-    {
+    public function getLogList(
+        int $perPage = 15,
+        ?string $module = null,
+        ?string $action = null,
+        ?string $dateFrom = null,
+        ?string $dateTo = null
+    ) {
         $query = AdminLog::query();
 
         if (!empty($module)) {
@@ -213,6 +223,14 @@ class AdminLogService
 
         if (!empty($action)) {
             $query->where('action', $action);
+        }
+
+        if (!empty($dateFrom)) {
+            $query->where('operated_at', '>=', $dateFrom . ' 00:00:00');
+        }
+
+        if (!empty($dateTo)) {
+            $query->where('operated_at', '<=', $dateTo . ' 23:59:59');
         }
 
         return $query->orderBy('operated_at', 'desc')
@@ -235,14 +253,14 @@ class AdminLogService
     /**
      * 刪除過期日誌（保留 N 天內的記錄）
      *
-     * @param int $daysToKeep 保留天數（默認保留 90 天）
+     * @param int|null $daysToKeep 保留天數（默認從 config 取值）
      * @return int 刪除的記錄數
      */
-    public function deleteExpiredLogs(int $daysToKeep = 90): int
+    public function deleteExpiredLogs(?int $daysToKeep = null): int
     {
+        $daysToKeep = $daysToKeep ?? config('admin_log.retention_days', 90);
         $cutoffDate = Carbon::now()->subDays($daysToKeep);
 
         return AdminLog::where('operated_at', '<', $cutoffDate)->delete();
     }
 }
-

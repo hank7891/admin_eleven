@@ -56,11 +56,7 @@ class AdminLog extends Model
      */
     public function getActionDisplayAttribute()
     {
-        $actions = [
-            'create' => '新增',
-            'update' => '編輯',
-            'delete' => '刪除',
-        ];
+        $actions = config('admin_log.actions', []);
         return $actions[$this->action] ?? $this->action;
     }
 
@@ -69,11 +65,7 @@ class AdminLog extends Model
      */
     public function getModuleDisplayAttribute()
     {
-        $modules = [
-            'employee' => '帳號管理',
-            'acl_role' => '角色管理',
-        ];
+        $modules = config('admin_log.modules', []);
         return $modules[$this->module] ?? $this->module;
     }
 }
-
