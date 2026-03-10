@@ -81,7 +81,7 @@ class AclRoleService
      * @return bool
      * @throws \Exception
      */
-    public function updateData(int $id, array $data): bool
+    public function updateData(int $id, array $data): int
     {
         $result = $this->repository->updateData($id, $data);
 

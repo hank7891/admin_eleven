@@ -93,10 +93,6 @@ class AdminLogController extends Controller
         try {
             $log = $this->service->getLogDetail($id);
 
-            if (empty($log)) {
-                throw new \Exception('查無此操作日誌！');
-            }
-
             # 格式化數據（使用 Model accessor）
             $data = [
                 'id' => $log->id,

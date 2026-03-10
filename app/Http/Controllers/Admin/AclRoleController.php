@@ -76,7 +76,7 @@ class AclRoleController extends Controller
      */
     public function editDo(Request $request)
     {
-        $post = $request->all();
+        $post = $request->only(['id', 'role_name']);
 
         try {
             $id = $post['id'];

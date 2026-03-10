@@ -77,7 +77,7 @@ class EmployeeController extends Controller
      */
     public function editDo(Request $request)
     {
-        $post = $request->all();
+        $post = $request->only(['id', 'account', 'name', 'password']);
 
         # 密碼為空時不更新密碼欄位
         if (empty($post['password'])) {

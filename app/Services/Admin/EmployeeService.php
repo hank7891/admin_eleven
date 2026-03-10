@@ -85,7 +85,7 @@ class EmployeeService
      * @return bool
      * @throws \Exception
      */
-    public function updateData(int $id, array $data): bool
+    public function updateData(int $id, array $data): int
     {
         # TODO 資料驗證
 
