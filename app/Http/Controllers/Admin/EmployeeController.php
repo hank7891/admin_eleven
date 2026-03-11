@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use App\Services\Admin\EmployeeService;
 use App\Services\Admin\AdminLogService;
 use App\Services\Share\MessageService;
@@ -36,6 +37,7 @@ class EmployeeController extends Controller
             '姓名' => 'name',
             '性別' => 'gender_display',
             '電話' => 'phone',
+            '狀態' => 'is_active_display',
             '建立時間' => 'created_at',
         ];
 
@@ -80,7 +82,14 @@ class EmployeeController extends Controller
      */
     public function editDo(Request $request)
     {
-        $post = $request->only(['id', 'account', 'name', 'password', 'gender', 'birthday', 'phone']);
+        $request->validate([
+            'gender'    => ['nullable', 'integer', Rule::in(array_keys(config('constants.gender')))],
+            'is_active' => ['nullable', 'integer', Rule::in(array_keys(config('constants.status')))],
+            'birthday'  => ['nullable', 'date'],
+            'phone'     => ['nullable', 'string', 'max:30'],
+        ]);
+
+        $post = $request->only(['id', 'account', 'name', 'password', 'gender', 'birthday', 'phone', 'is_active']);
 
         # 密碼為空時不更新密碼欄位
         if (empty($post['password'])) {
@@ -134,7 +143,7 @@ class EmployeeController extends Controller
                     $oldData['name'] ?? null,
                     $oldData,
                     $post,
-                    ['name', 'account', 'gender', 'birthday', 'phone', 'avatar']
+                    ['name', 'account', 'gender', 'birthday', 'phone', 'avatar', 'is_active']
                 );
             }
 

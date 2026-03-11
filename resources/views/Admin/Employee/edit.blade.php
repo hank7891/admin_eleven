@@ -68,7 +68,7 @@
                                     <div class="form-group">
                                         <label for="inputGender">性別</label>
                                         <select class="form-control" id="inputGender" name="gender">
-                                            @foreach (config('options.gender') as $key => $label)
+                                            @foreach (config('constants.gender') as $key => $label)
                                                 <option value="{{ $key }}" {{ ($data['gender'] ?? 0) == $key ? 'selected' : '' }}>{{ $label }}</option>
                                             @endforeach
                                         </select>
@@ -89,6 +89,14 @@
                                                name="phone"
                                                placeholder="Enter phone"
                                                value="{{$data['phone'] ?? ''}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputIsActive">帳號狀態</label>
+                                        <select class="form-control" id="inputIsActive" name="is_active">
+                                            @foreach (config('constants.status') as $key => $label)
+                                                <option value="{{ $key }}" {{ ($data['is_active'] ?? 1) == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="inputAvatar">大頭照</label>

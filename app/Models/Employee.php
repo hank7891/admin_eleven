@@ -51,6 +51,14 @@ class Employee extends Model
      */
     public function getGenderDisplayAttribute(): string
     {
-        return config('options.gender')[$this->gender] ?? '未指定';
+        return config('constants.gender')[$this->gender] ?? '未指定';
+    }
+
+    /**
+     * 啟用狀態顯示文字
+     */
+    public function getIsActiveDisplayAttribute(): string
+    {
+        return config('constants.status')[$this->is_active] ?? '停用';
     }
 }

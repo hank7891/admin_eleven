@@ -38,7 +38,10 @@ class EmployeeService
                 : '';
 
             # 性別顯示文字
-            $value['gender_display'] = config('options.gender')[$value['gender'] ?? 0] ?? '未指定';
+            $value['gender_display'] = config('constants.gender')[$value['gender'] ?? 0] ?? '未指定';
+
+            # 啟用狀態顯示文字
+            $value['is_active_display'] = config('constants.status')[$value['is_active'] ?? 1] ?? '停用';
         }
 
         return $data;
