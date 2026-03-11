@@ -21,6 +21,9 @@ class EmployeeService
     {
         $data = $this->employeeRepository->fetchAllData();
 
+        # 性別對應文字
+        $genderMap = [0 => '未指定', 1 => '男', 2 => '女'];
+
         # 資料解析
         foreach ($data as &$value) {
             # 時間資料調整
@@ -31,6 +34,14 @@ class EmployeeService
             $value['updated_at'] = !empty(trim($value['updated_at']))
                 ? Carbon::parse($value['updated_at'])->format('Y-m-d')
                 : '';
+
+            # 生日格式化
+            $value['birthday'] = !empty($value['birthday'])
+                ? Carbon::parse($value['birthday'])->format('Y-m-d')
+                : '';
+
+            # 性別顯示文字
+            $value['gender_display'] = $genderMap[$value['gender'] ?? 0] ?? '未指定';
         }
 
         return $data;

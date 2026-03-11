@@ -31,7 +31,7 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form action={{asset('admin/employee/edit')}} method="POST">
+                            <form action={{asset('admin/employee/edit')}} method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" name="id" value={{ $data['id'] ?? 0 }}>
                                 <div class="card-body">
@@ -64,6 +64,44 @@
                                                id="exampleInputPassword1"
                                                name="password"
                                                placeholder="Password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputGender">性別</label>
+                                        <select class="form-control" id="inputGender" name="gender">
+                                            <option value="0" {{ ($data['gender'] ?? 0) == 0 ? 'selected' : '' }}>未指定</option>
+                                            <option value="1" {{ ($data['gender'] ?? 0) == 1 ? 'selected' : '' }}>男</option>
+                                            <option value="2" {{ ($data['gender'] ?? 0) == 2 ? 'selected' : '' }}>女</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputBirthday">生日</label>
+                                        <input type="date"
+                                               class="form-control"
+                                               id="inputBirthday"
+                                               name="birthday"
+                                               value="{{ isset($data['birthday']) && $data['birthday'] instanceof \Carbon\Carbon ? $data['birthday']->format('Y-m-d') : ($data['birthday'] ?? '') }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputPhone">電話</label>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="inputPhone"
+                                               name="phone"
+                                               placeholder="Enter phone"
+                                               value="{{$data['phone'] ?? ''}}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputAvatar">大頭照</label>
+                                        @if (!empty($data['avatar']))
+                                            <div class="mb-2">
+                                                <img src="{{ asset('storage/' . $data['avatar']) }}" alt="大頭照" style="max-width: 150px; max-height: 150px;">
+                                            </div>
+                                        @endif
+                                        <input type="file"
+                                               class="form-control-file"
+                                               id="inputAvatar"
+                                               name="avatar"
+                                               accept="image/*">
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
