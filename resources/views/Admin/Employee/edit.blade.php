@@ -68,9 +68,9 @@
                                     <div class="form-group">
                                         <label for="inputGender">性別</label>
                                         <select class="form-control" id="inputGender" name="gender">
-                                            <option value="0" {{ ($data['gender'] ?? 0) == 0 ? 'selected' : '' }}>未指定</option>
-                                            <option value="1" {{ ($data['gender'] ?? 0) == 1 ? 'selected' : '' }}>男</option>
-                                            <option value="2" {{ ($data['gender'] ?? 0) == 2 ? 'selected' : '' }}>女</option>
+                                            @foreach (config('options.gender') as $key => $label)
+                                                <option value="{{ $key }}" {{ ($data['gender'] ?? 0) == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="form-group">

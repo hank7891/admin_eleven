@@ -39,15 +39,6 @@ class Employee extends Model
     ];
 
     /**
-     * 性別對應文字
-     */
-    private const GENDER_MAP = [
-        0 => '未指定',
-        1 => '男',
-        2 => '女',
-    ];
-
-    /**
      * 大頭照完整 URL
      */
     public function getAvatarUrlAttribute(): ?string
@@ -60,6 +51,6 @@ class Employee extends Model
      */
     public function getGenderDisplayAttribute(): string
     {
-        return self::GENDER_MAP[$this->gender] ?? '未指定';
+        return config('options.gender')[$this->gender] ?? '未指定';
     }
 }
