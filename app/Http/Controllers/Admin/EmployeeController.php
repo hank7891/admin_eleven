@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Services\Admin\EmployeeService;
 use App\Services\Admin\AdminLogService;
+use App\Services\Share\FileUploadService;
 use App\Services\Share\MessageService;
 
 class EmployeeController extends Controller
@@ -20,7 +20,8 @@ class EmployeeController extends Controller
     # 建構元
     public function __construct(
         protected EmployeeService $service,
-        protected AdminLogService $logService
+        protected AdminLogService $logService,
+        protected FileUploadService $uploadService
     ) {
         $this->settingService = app('setting');
     }
@@ -99,26 +100,15 @@ class EmployeeController extends Controller
         try {
             # 處理大頭照上傳
             if ($request->hasFile('avatar')) {
-                $file = $request->file('avatar');
-
-                # 白名單驗證：只允許圖片格式
-                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-                $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                $extension = strtolower($file->getClientOriginalExtension());
-                $mime = $file->getMimeType();
-
-                if (!in_array($extension, $allowedExtensions) || !in_array($mime, $allowedMimes)) {
-                    throw new \Exception('大頭照僅允許上傳圖片檔（jpg, jpeg, png, gif, webp）');
-                }
-
                 # 刪除舊檔
                 if ($post['id'] > 0) {
                     $oldData = $this->service->fetchDataByID($post['id']);
                     if (!empty($oldData['avatar'])) {
-                        Storage::disk('public')->delete($oldData['avatar']);
+                        $this->uploadService->delete($oldData['avatar']);
                     }
                 }
-                $post['avatar'] = $file->store('avatars', 'public');
+
+                $post['avatar'] = $this->uploadService->upload($request->file('avatar'), 'image');
             }
 
             $id = $post['id'];

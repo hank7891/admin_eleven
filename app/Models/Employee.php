@@ -51,7 +51,7 @@ class Employee extends Model
      */
     public function getGenderDisplayAttribute(): string
     {
-        return config('constants.gender')[$this->gender] ?? '未指定';
+        return config('constants.gender')[$this->gender] ?? config('constants.gender.' . GENDER_UNSPECIFIED);
     }
 
     /**
@@ -59,6 +59,6 @@ class Employee extends Model
      */
     public function getIsActiveDisplayAttribute(): string
     {
-        return config('constants.status')[$this->is_active] ?? '停用';
+        return config('constants.status')[$this->is_active] ?? config('constants.status.' . STATUS_INACTIVE);
     }
 }

@@ -109,7 +109,7 @@
                                                class="form-control-file"
                                                id="inputAvatar"
                                                name="avatar"
-                                               accept="image/*">
+                                               accept=".jpg,.jpeg,.png,.gif,.webp">
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
