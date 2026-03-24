@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Admin\AuthService;
-use App\Services\Admin\AdminLogService;
+use App\Services\Admin\AdminLoginLogService;
 use App\Services\Share\MessageService;
 
 class IndexController extends Controller
@@ -16,7 +16,7 @@ class IndexController extends Controller
     # 建構元
     public function __construct(
         protected AuthService $authService,
-        protected AdminLogService $logService
+        protected AdminLoginLogService $loginLogService
     ) {
         $this->settingService = app('setting');
     }
@@ -43,22 +43,33 @@ class IndexController extends Controller
      */
     public function loginDo(Request $request)
     {
+        $account = trim($request->account ?? '');
+
         try {
-            $account  = $request->account;
             $password = $request->password;
 
-            if (trim($account) == '' || trim($password) == '') {
+            if ($account == '' || trim($password) == '') {
                 throw new \Exception('請輸入帳號及密碼！ #002');
             }
 
             $this->authService->login($account, $password);
 
-            # 記錄登入日誌（session 已寫入，可取得操作者）
+            # 記錄登入成功日誌
             $employee = session(ADMIN_AUTH_SESSION);
-            $this->logService->recordSimple($request, 'auth', 'login', $employee['id'], $employee['name']);
+            $this->loginLogService->recordLoginSuccess(
+                $request,
+                $employee['id'],
+                $employee['account'],
+                $employee['name']
+            );
 
             return redirect('admin/');
         } catch (\Exception $e) {
+
+            # 記錄登入失敗日誌
+            if (!empty($account)) {
+                $this->loginLogService->recordLoginFail($request, $account, $e->getMessage());
+            }
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
             return redirect('admin/login');
@@ -74,7 +85,12 @@ class IndexController extends Controller
         # 記錄登出日誌（須在清除 session 前執行）
         $employee = session(ADMIN_AUTH_SESSION);
         if (!empty($employee)) {
-            $this->logService->recordSimple($request, 'auth', 'logout', $employee['id'], $employee['name']);
+            $this->loginLogService->recordLogout(
+                $request,
+                $employee['id'],
+                $employee['account'],
+                $employee['name']
+            );
         }
 
         $this->authService->logout();

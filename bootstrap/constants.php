@@ -18,3 +18,15 @@ define('GENDER_FEMALE', 2);
  */
 define('STATUS_ACTIVE', 1);
 define('STATUS_INACTIVE', 0);
+
+/*
+ * 登入日誌 - 操作類型
+ */
+define('LOGIN_LOG_ACTION_LOGIN', 'login');
+define('LOGIN_LOG_ACTION_LOGOUT', 'logout');
+
+/*
+ * 登入日誌 - 狀態
+ */
+define('LOGIN_LOG_STATUS_SUCCESS', 1);
+define('LOGIN_LOG_STATUS_FAIL', 0);

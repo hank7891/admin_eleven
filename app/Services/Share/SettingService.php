@@ -90,6 +90,11 @@ class SettingService
                         'name'    => '操作日誌',
                         'url'     => '/admin/admin.log/list',
                     ],
+                    [
+                        'is_open' => false,
+                        'name'    => '登入日誌',
+                        'url'     => '/admin/admin.login-log/list',
+                    ],
                 ],
 
             ],

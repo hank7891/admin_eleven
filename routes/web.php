@@ -40,6 +40,12 @@ Route::prefix('admin')->group(function () {
         Route::get('list', [Controllers\Admin\AdminLogController::class, 'list'])->middleware(Middleware\AdminIsLogin::class);
         Route::get('detail/{id}', [Controllers\Admin\AdminLogController::class, 'detail'])->middleware(Middleware\AdminIsLogin::class);
     });
+
+    # 登入日誌
+    Route::prefix('admin.login-log')->group(function () {
+        Route::get('list', [Controllers\Admin\AdminLoginLogController::class, 'list'])->middleware(Middleware\AdminIsLogin::class);
+        Route::get('detail/{id}', [Controllers\Admin\AdminLoginLogController::class, 'detail'])->middleware(Middleware\AdminIsLogin::class);
+    });
 });
 
 Route::prefix('share')->group(function () {
