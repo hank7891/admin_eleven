@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Admin\AuthService;
+use App\Services\Admin\AdminLogService;
 use App\Services\Share\MessageService;
 
 class IndexController extends Controller
@@ -13,8 +14,10 @@ class IndexController extends Controller
     protected $settingService;
 
     # 建構元
-    public function __construct(protected AuthService $authService)
-    {
+    public function __construct(
+        protected AuthService $authService,
+        protected AdminLogService $logService
+    ) {
         $this->settingService = app('setting');
     }
 
@@ -49,6 +52,11 @@ class IndexController extends Controller
             }
 
             $this->authService->login($account, $password);
+
+            # 記錄登入日誌（session 已寫入，可取得操作者）
+            $employee = session(ADMIN_AUTH_SESSION);
+            $this->logService->recordSimple($request, 'auth', 'login', $employee['id'], $employee['name']);
+
             return redirect('admin/');
         } catch (\Exception $e) {
 
@@ -61,8 +69,14 @@ class IndexController extends Controller
      * 登出
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function logout()
+    public function logout(Request $request)
     {
+        # 記錄登出日誌（須在清除 session 前執行）
+        $employee = session(ADMIN_AUTH_SESSION);
+        if (!empty($employee)) {
+            $this->logService->recordSimple($request, 'auth', 'logout', $employee['id'], $employee['name']);
+        }
+
         $this->authService->logout();
         return redirect('admin/login');
     }

@@ -131,5 +131,11 @@
                 <i class="fas fa-th-large"></i>
             </a>
         </li>
+        <!-- 登出按鈕 -->
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url('admin/logout') }}" role="button" title="登出">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </li>
     </ul>
 </nav>
