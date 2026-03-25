@@ -99,6 +99,29 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
+                                        <label>指派角色</label>
+                                        <div class="row">
+                                            @foreach ($roles ?? [] as $role)
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="checkbox"
+                                                               name="role_ids[]"
+                                                               value="{{ $role['id'] }}"
+                                                               id="role_{{ $role['id'] }}"
+                                                               {{ in_array($role['id'], $data['role_ids'] ?? []) ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="role_{{ $role['id'] }}">
+                                                            {{ $role['role_name'] }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        @if(empty($roles))
+                                            <small class="form-text text-muted">尚無角色可指派，請先至角色管理新增角色</small>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
                                         <label for="inputAvatar">大頭照</label>
                                         @if (!empty($data['avatar']))
                                             <div class="mb-2">

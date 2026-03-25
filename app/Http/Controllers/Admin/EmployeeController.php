@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Services\Admin\EmployeeService;
+use App\Services\Admin\AclRoleService;
 use App\Services\Admin\AdminLogService;
 use App\Services\Share\FileUploadService;
 use App\Services\Share\MessageService;
@@ -20,6 +21,7 @@ class EmployeeController extends Controller
     # 建構元
     public function __construct(
         protected EmployeeService $service,
+        protected AclRoleService $roleService,
         protected AdminLogService $logService,
         protected FileUploadService $uploadService
     ) {
@@ -36,6 +38,7 @@ class EmployeeController extends Controller
         $fields = [
             'ID' => 'id',
             '姓名' => 'name',
+            '角色' => 'role_names',
             '性別' => 'gender_display',
             '電話' => 'phone',
             '狀態' => 'is_active_display',
@@ -66,7 +69,11 @@ class EmployeeController extends Controller
                 session()->forget(self::POST_SESSION);
             }
 
+            # 取得所有角色（供 checkbox 使用）
+            $roles = $this->roleService->fetchAllData();
+
             $this->settingService->setSetData('data', $data);
+            $this->settingService->setSetData('roles', $roles);
             return view('admin/employee/edit', $this->settingService->fetchSetData());
         } catch (\Exception $e) {
 
@@ -88,9 +95,12 @@ class EmployeeController extends Controller
             'is_active' => ['nullable', 'integer', Rule::in(array_keys(config('constants.status')))],
             'birthday'  => ['nullable', 'date'],
             'phone'     => ['nullable', 'string', 'max:30'],
+            'role_ids'  => ['nullable', 'array'],
+            'role_ids.*' => ['integer', 'exists:acl_role,id'],
         ]);
 
         $post = $request->only(['id', 'account', 'name', 'password', 'gender', 'birthday', 'phone', 'is_active']);
+        $roleIds = $request->input('role_ids', []);
 
         # 密碼為空時不更新密碼欄位
         if (empty($post['password'])) {
@@ -116,6 +126,9 @@ class EmployeeController extends Controller
                 # 新增
                 $id = $this->service->addData($post);
 
+                # 同步角色
+                $this->service->syncRoles($id, $roleIds);
+
                 # 記錄操作日誌
                 $this->logService->recordSimple($request, 'employee', 'create', $id, $post['name'] ?? null);
             } else {
@@ -124,6 +137,9 @@ class EmployeeController extends Controller
 
                 # 編輯
                 $this->service->updateData($post['id'], $post);
+
+                # 同步角色
+                $this->service->syncRoles($post['id'], $roleIds);
 
                 # 記錄操作日誌
                 $this->logService->recordUpdate(

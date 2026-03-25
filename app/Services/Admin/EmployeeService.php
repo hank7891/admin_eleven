@@ -110,4 +110,14 @@ class EmployeeService
 
         return $id;
     }
+
+    /**
+     * 同步帳號角色
+     * @param int $employeeId
+     * @param array $roleIds
+     */
+    public function syncRoles(int $employeeId, array $roleIds): void
+    {
+        $this->employeeRepository->syncRoles($employeeId, $roleIds);
+    }
 }

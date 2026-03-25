@@ -39,6 +39,14 @@ class Employee extends Model
     ];
 
     /**
+     * 多對多關聯角色
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(AclRole::class, 'employee_acl_role', 'employee_id', 'acl_role_id');
+    }
+
+    /**
      * 大頭照完整 URL
      */
     public function getAvatarUrlAttribute(): ?string

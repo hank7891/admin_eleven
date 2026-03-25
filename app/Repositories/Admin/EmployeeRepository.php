@@ -13,16 +13,20 @@ class EmployeeRepository
     }
 
     /**
-     * 取得所有資料
+     * 取得所有資料（含角色）
      * @return array
      */
     public function fetchAllData(): array
     {
-        return $this->employee::all()->toArray();
+        return $this->employee::with('roles')->get()->map(function ($employee) {
+            $data = $employee->toArray();
+            $data['role_names'] = $employee->roles->pluck('role_name')->implode(', ') ?: '--';
+            return $data;
+        })->toArray();
     }
 
     /**
-     * 依照 id 取得資料
+     * 依照 id 取得資料（含角色 IDs）
      * @param int $id
      *
      * @return array
@@ -30,8 +34,26 @@ class EmployeeRepository
      */
     public function fetchDataByID(int $id): array
     {
-        $employee = $this->employee::find($id);
-        return !empty($employee) ? $employee->toArray() : [];
+        $employee = $this->employee::with('roles')->find($id);
+        if (empty($employee)) {
+            return [];
+        }
+        $data = $employee->toArray();
+        $data['role_ids'] = $employee->roles->pluck('id')->toArray();
+        return $data;
+    }
+
+    /**
+     * 同步帳號角色
+     * @param int $employeeId
+     * @param array $roleIds
+     */
+    public function syncRoles(int $employeeId, array $roleIds): void
+    {
+        $employee = $this->employee::find($employeeId);
+        if (!empty($employee)) {
+            $employee->roles()->sync($roleIds);
+        }
     }
 
     /**
