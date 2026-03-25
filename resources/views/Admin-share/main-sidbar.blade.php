@@ -45,27 +45,25 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 @foreach($menu as $item)
-                    {{-- 產生表單外誆 --}}
-                    <li class="nav-item {{$item['item_open'] ? 'menu-open' : ''}}">
+                    {{-- 產生選單群組 --}}
+                    <li class="nav-item {{ $item['item_open'] ? 'menu-open' : '' }}">
                         @if($item['have_item'])
-                            {{-- 產生表單下拉 --}}
-                            <a href="#" class="nav-link {{$item['item_open'] ? 'active' : ''}}">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                            {{-- 群組標題 --}}
+                            <a href="#" class="nav-link {{ $item['item_open'] ? 'active' : '' }}">
+                                <i class="nav-icon {{ $item['item_icon'] ?? 'fas fa-folder' }}"></i>
                                 <p>
-                                    {{$item['item_name']}}
+                                    {{ $item['item_name'] }}
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                         @endif
                         @foreach($item['details'] as $detail)
-                            {{-- 產生表單內容 --}}
+                            {{-- 選單項目 --}}
                             {!! $item['have_item'] ? "<ul class='nav nav-treeview'>" : '' !!}
                             <li class="nav-item">
-                                <a href="{{asset($detail['url'] ?? '#')}}" class="nav-link {{$detail['is_open'] ? 'active' : ''}}">
-                                    <i class="nav-icon far fa-image"></i>
-                                    <p>
-                                        {{$detail['name']}}
-                                    </p>
+                                <a href="{{ asset($detail['url'] ?? '#') }}" class="nav-link {{ $detail['is_open'] ? 'active' : '' }}">
+                                    <i class="nav-icon {{ $detail['icon'] ?? 'far fa-circle' }}"></i>
+                                    <p>{{ $detail['name'] }}</p>
                                 </a>
                             </li>
                             {!! $item['have_item'] ? "</ul>" : '' !!}

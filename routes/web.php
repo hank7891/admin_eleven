@@ -41,6 +41,14 @@ Route::prefix('admin')->group(function () {
         Route::get('detail/{id}', [Controllers\Admin\AdminLogController::class, 'detail'])->middleware(Middleware\AdminIsLogin::class);
     });
 
+    # 選單管理
+    Route::prefix('admin.menu')->group(function () {
+        Route::get('list', [Controllers\Admin\AdminMenuController::class, 'list'])->middleware(Middleware\AdminIsLogin::class);
+        Route::get('edit/{id}', [Controllers\Admin\AdminMenuController::class, 'edit'])->middleware(Middleware\AdminIsLogin::class);
+        Route::post('edit', [Controllers\Admin\AdminMenuController::class, 'editDo'])->middleware(Middleware\AdminIsLogin::class);
+        Route::post('delete/{id}', [Controllers\Admin\AdminMenuController::class, 'delete'])->middleware(Middleware\AdminIsLogin::class);
+    });
+
     # 登入日誌
     Route::prefix('admin.login-log')->group(function () {
         Route::get('list', [Controllers\Admin\AdminLoginLogController::class, 'list'])->middleware(Middleware\AdminIsLogin::class);

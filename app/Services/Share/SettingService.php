@@ -2,6 +2,8 @@
 
 namespace App\Services\Share;
 
+use App\Services\Admin\AdminMenuService;
+
 class SettingService
 {
     protected array $setData = [];
@@ -15,8 +17,8 @@ class SettingService
         # 放置登入者資訊
         $this->setData['user'] = session(ADMIN_AUTH_SESSION);
 
-        # 取得角色可操作選單
-        $this->setData['menu'] = $this->setUserMenu($this->setData['user']['id']);
+        # 取得動態選單
+        $this->setData['menu'] = $this->fetchMenu();
 
         # 若無 data 欄位，則初始化為空陣列
         if (empty($this->setData['data'])) {
@@ -41,78 +43,17 @@ class SettingService
     }
 
     /**
-     * TODO 取得角色可操作選單
-     * @param int $userId
-     *
-     * @return array[]
+     * 從資料庫取得啟用的選單樹狀結構
+     * @return array
      */
-    protected function setUserMenu(int $userId): array
+    protected function fetchMenu(): array
     {
-        $re = [
-            [
-                'have_item' => true,
-                'item_name' => 'Dashboard',
-                'item_open' => true,
-                'details'   => [
-                    [
-                        'is_open' => false,
-                        'name'    => '角色管理',
-                        'url'     => '/admin/acl.role/list',
-                    ],
-                    [
-                        'is_open' => true,
-                        'name'    => '會員管理',
-                        'url'     => '/admin/employee/list',
-                    ],
-                ],
-
-            ],
-            [
-                'have_item' => true,
-                'item_name' => '小遊戲',
-                'item_open' => false,
-                'details'   => [
-                    [
-                        'is_open' => false,
-                        'name'    => '貪食蛇',
-                        'url'     => '/admin/game.snake/',
-                    ],
-                ],
-
-            ],
-            [
-                'have_item' => true,
-                'item_name' => '系統',
-                'item_open' => false,
-                'details'   => [
-                    [
-                        'is_open' => false,
-                        'name'    => '操作日誌',
-                        'url'     => '/admin/admin.log/list',
-                    ],
-                    [
-                        'is_open' => false,
-                        'name'    => '登入日誌',
-                        'url'     => '/admin/admin.login-log/list',
-                    ],
-                ],
-
-            ],
-            [
-                'have_item' => false,
-                'item_name' => '',
-                'item_open' => false,
-                'details'   => [
-                    [
-                        'is_open' => false,
-                        'name' => '會員管理',
-                        'url' => '/admin/employee/list',
-                    ],
-                ],
-
-            ],
-        ];
-
-        return $re;
+        try {
+            $menuService = app(AdminMenuService::class);
+            return $menuService->fetchMenuTree();
+        } catch (\Exception $e) {
+            # 資料庫尚未建立時回傳空陣列
+            return [];
+        }
     }
 }
