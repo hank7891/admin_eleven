@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Repositories\Admin\EmployeeRepository;
+use App\Models\Employee;
 
 class AuthService
 {
@@ -27,7 +28,39 @@ class AuthService
             throw new \Exception('帳號或密碼輸入錯誤！ #001');
         }
 
+        # 取得帳號的角色清單
+        $employeeModel = Employee::with('roles')->find($employee['id']);
+        $roles = $employeeModel ? $employeeModel->roles->toArray() : [];
+        $employee['roles'] = $roles;
+
         session([ADMIN_AUTH_SESSION => $employee]);
+
+        # 角色只有一個時自動選取
+        if (count($roles) === 1) {
+            $this->selectRole($roles[0]['id'], $roles[0]['role_name']);
+        }
+    }
+
+    /**
+     * 選擇 / 切換角色
+     * @param int $roleId
+     * @param string $roleName
+     */
+    public function selectRole(int $roleId, string $roleName): void
+    {
+        session([ADMIN_ROLE_SESSION => [
+            'id'   => $roleId,
+            'name' => $roleName,
+        ]]);
+    }
+
+    /**
+     * 取得當前角色
+     * @return array|null
+     */
+    public function getCurrentRole(): ?array
+    {
+        return session(ADMIN_ROLE_SESSION);
     }
 
     /**
@@ -36,5 +69,6 @@ class AuthService
     public function logout(): void
     {
         session()->forget(ADMIN_AUTH_SESSION);
+        session()->forget(ADMIN_ROLE_SESSION);
     }
 }

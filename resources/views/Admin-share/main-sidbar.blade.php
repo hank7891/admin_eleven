@@ -18,12 +18,33 @@
                 ? asset('storage/' . $avatarPath)
                 : asset('admin-layout/dist/img/user2-160x160.jpg');
         @endphp
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="{{ $avatarUrl }}" class="img-circle elevation-2" alt="User Image">
-            </div>
-            <div class="info">
-                <a href="#" class="d-block">{{ $user['name'] ?? '-' }}</a>
+        @php
+            $currentRole = session(ADMIN_ROLE_SESSION);
+            $roles = $user['roles'] ?? [];
+        @endphp
+        {{-- 使用者資訊面板：角色 + 頭像姓名 --}}
+        <div class="user-panel mt-3 pb-3 mb-3">
+            @if(!empty($currentRole))
+                <div class="d-flex align-items-center mb-2" style="padding-left: 8px;">
+                    @if(count($roles) > 1)
+                        <a href="{{ url('admin/select-role') }}" class="text-sm text-light" title="點擊切換角色">
+                            <i class="fas fa-user-tag mr-1"></i>{{ $currentRole['name'] }}
+                            <i class="fas fa-sync-alt ml-1" style="font-size: 0.7rem;"></i>
+                        </a>
+                    @else
+                        <span class="text-sm text-light">
+                            <i class="fas fa-user-tag mr-1"></i>{{ $currentRole['name'] }}
+                        </span>
+                    @endif
+                </div>
+            @endif
+            <div class="d-flex align-items-center">
+                <div class="image">
+                    <img src="{{ $avatarUrl }}" class="img-circle elevation-2" alt="User Image">
+                </div>
+                <div class="info">
+                    <a href="#" class="d-block">{{ $user['name'] ?? '-' }}</a>
+                </div>
             </div>
         </div>
 

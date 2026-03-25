@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Admin\AuthService;
 use App\Services\Admin\AdminLoginLogService;
+use App\Services\Admin\AdminLogService;
 use App\Services\Share\MessageService;
 
 class IndexController extends Controller
@@ -16,7 +17,8 @@ class IndexController extends Controller
     # 建構元
     public function __construct(
         protected AuthService $authService,
-        protected AdminLoginLogService $loginLogService
+        protected AdminLoginLogService $loginLogService,
+        protected AdminLogService $logService
     ) {
         $this->settingService = app('setting');
     }
@@ -28,7 +30,6 @@ class IndexController extends Controller
 
     /**
      * 登入頁
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\View\View
      */
     public function login()
     {
@@ -37,9 +38,6 @@ class IndexController extends Controller
 
     /**
      * 登入實作
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function loginDo(Request $request)
     {
@@ -63,6 +61,14 @@ class IndexController extends Controller
                 $employee['name']
             );
 
+            # 依角色數決定導向
+            $roles = $employee['roles'] ?? [];
+            if (count($roles) > 1) {
+                # 多角色：導向角色選擇頁
+                return redirect('admin/select-role');
+            }
+
+            # 0 或 1 個角色：直接進入後台（1 個已在 AuthService 自動選取）
             return redirect('admin/');
         } catch (\Exception $e) {
 
@@ -77,8 +83,71 @@ class IndexController extends Controller
     }
 
     /**
+     * 角色選擇頁
+     */
+    public function selectRole()
+    {
+        $employee = session(ADMIN_AUTH_SESSION);
+        $roles = $employee['roles'] ?? [];
+
+        # 無角色或僅一個角色直接導向首頁
+        if (count($roles) <= 1) {
+            return redirect('admin/');
+        }
+
+        return view('admin/select-role', [
+            'roles'       => $roles,
+            'currentRole' => session(ADMIN_ROLE_SESSION),
+        ]);
+    }
+
+    /**
+     * 角色選擇 / 切換實作
+     */
+    public function selectRoleDo(Request $request)
+    {
+        $request->validate([
+            'role_id' => ['required', 'integer'],
+        ]);
+
+        $employee = session(ADMIN_AUTH_SESSION);
+        $roles = collect($employee['roles'] ?? []);
+        $roleId = (int) $request->input('role_id');
+
+        # 驗證此角色是否屬於該帳號
+        $selectedRole = $roles->firstWhere('id', $roleId);
+        if (empty($selectedRole)) {
+            MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, '無此角色權限！');
+            return redirect('admin/select-role');
+        }
+
+        # 記錄舊角色（用於日誌）
+        $oldRole = session(ADMIN_ROLE_SESSION);
+
+        # 設定新角色
+        $this->authService->selectRole($selectedRole['id'], $selectedRole['role_name']);
+
+        # 記錄操作日誌
+        $action = empty($oldRole) ? 'create' : 'update';
+        $remarks = empty($oldRole)
+            ? '選擇角色：' . $selectedRole['role_name']
+            : '切換角色：' . $oldRole['name'] . ' → ' . $selectedRole['role_name'];
+
+        $this->logService->recordSimple(
+            $request,
+            'auth',
+            $action,
+            $employee['id'],
+            $employee['name'],
+            $remarks
+        );
+
+        MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '已切換至角色：' . $selectedRole['role_name']);
+        return redirect('admin/');
+    }
+
+    /**
      * 登出
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function logout(Request $request)
     {

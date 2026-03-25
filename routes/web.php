@@ -15,6 +15,8 @@ Route::prefix('admin')->group(function () {
     Route::get('login', [Controllers\Admin\IndexController::class, 'login'])->middleware(Middleware\AdminNotLogin::class);
     Route::post('login', [Controllers\Admin\IndexController::class, 'loginDo'])->middleware(Middleware\AdminNotLogin::class);
     Route::get('logout', [Controllers\Admin\IndexController::class, 'logout'])->middleware(Middleware\AdminIsLogin::class);
+    Route::get('select-role', [Controllers\Admin\IndexController::class, 'selectRole'])->middleware(Middleware\AdminIsLogin::class);
+    Route::post('select-role', [Controllers\Admin\IndexController::class, 'selectRoleDo'])->middleware(Middleware\AdminIsLogin::class);
 
     # 角色管理
     Route::prefix('acl.role')->group(function () {
