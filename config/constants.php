@@ -41,4 +41,18 @@ return [
         LOGIN_LOG_STATUS_SUCCESS => '成功',
         LOGIN_LOG_STATUS_FAIL    => '失敗',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | 後台訊息頁 - 訊息對照表
+    |--------------------------------------------------------------------------
+    */
+    'admin_notice' => [
+        ADMIN_NOTICE_NO_ROLE => [
+            'icon'    => 'fa-exclamation-triangle',
+            'color'   => 'text-warning',
+            'title'   => '無法進入後台',
+            'message' => '帳號角色未建置，請聯繫系統管理員。',
+        ],
+    ],
 ];

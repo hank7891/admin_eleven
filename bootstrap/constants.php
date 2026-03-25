@@ -4,6 +4,7 @@
  * session key
  */
 define('ADMIN_AUTH_SESSION', 'admin_auth_session');
+define('ADMIN_ROLE_SESSION', 'admin_role_session');
 define('ADMIN_MESSAGE_SESSION', 'admin_message_session');
 
 /*
@@ -30,3 +31,8 @@ define('LOGIN_LOG_ACTION_LOGOUT', 'logout');
  */
 define('LOGIN_LOG_STATUS_SUCCESS', 1);
 define('LOGIN_LOG_STATUS_FAIL', 0);
+
+/*
+ * 後台訊息頁 - 訊息 key
+ */
+define('ADMIN_NOTICE_NO_ROLE', 'no_role');

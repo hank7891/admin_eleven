@@ -63,12 +63,20 @@ class IndexController extends Controller
 
             # 依角色數決定導向
             $roles = $employee['roles'] ?? [];
+
+            if (count($roles) === 0) {
+                # 無角色：登出並導向訊息頁
+                $this->authService->logout();
+                session()->flash('notice_key', ADMIN_NOTICE_NO_ROLE);
+                return redirect('admin/notice');
+            }
+
             if (count($roles) > 1) {
                 # 多角色：導向角色選擇頁
                 return redirect('admin/select-role');
             }
 
-            # 0 或 1 個角色：直接進入後台（1 個已在 AuthService 自動選取）
+            # 1 個角色：直接進入後台（已在 AuthService 自動選取）
             return redirect('admin/');
         } catch (\Exception $e) {
 
@@ -144,6 +152,22 @@ class IndexController extends Controller
 
         MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '已切換至角色：' . $selectedRole['role_name']);
         return redirect('admin/');
+    }
+
+    /**
+     * 後台專用訊息呈現頁
+     */
+    public function notice()
+    {
+        $msgKey = session('notice_key', '');
+        $notice = config("constants.admin_notice.{$msgKey}");
+
+        # 無有效訊息則導向登入頁
+        if (empty($notice)) {
+            return redirect('admin/login');
+        }
+
+        return view('Admin/notice', ['notice' => $notice]);
     }
 
     /**
