@@ -36,4 +36,12 @@ class AclRole extends Model
     {
         return $this->belongsToMany(Employee::class, 'employee_acl_role', 'acl_role_id', 'employee_id');
     }
+
+    /**
+     * 多對多關聯選單
+     */
+    public function menus()
+    {
+        return $this->belongsToMany(AdminMenu::class, 'acl_role_admin_menu');
+    }
 }

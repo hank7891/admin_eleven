@@ -52,6 +52,14 @@ class AuthService
             'id'   => $roleId,
             'name' => $roleName,
         ]]);
+
+        # 載入角色的選單權限到 session
+        $aclRoleService = app(AclRoleService::class);
+        $menuIds = $aclRoleService->fetchMenuIdsByRoleId($roleId);
+        session([ADMIN_PERMISSION_SESSION => $menuIds]);
+
+        # 清除 URL 快取（切換角色時需重新載入）
+        session()->forget('admin_allowed_urls');
     }
 
     /**
@@ -70,5 +78,7 @@ class AuthService
     {
         session()->forget(ADMIN_AUTH_SESSION);
         session()->forget(ADMIN_ROLE_SESSION);
+        session()->forget(ADMIN_PERMISSION_SESSION);
+        session()->forget('admin_allowed_urls');
     }
 }

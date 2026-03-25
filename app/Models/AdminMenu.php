@@ -71,4 +71,12 @@ class AdminMenu extends Model
     {
         return $this->parent_id === 0 ? '群組' : '選單項目';
     }
+
+    /**
+     * 多對多關聯角色
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(AclRole::class, 'acl_role_admin_menu');
+    }
 }

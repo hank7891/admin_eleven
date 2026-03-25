@@ -63,4 +63,32 @@ class AclRoleRepository
         $role->update($data);
         return $role;
     }
+
+    /**
+     * 取得角色已綁定的選單 ID 陣列
+     * @param int $roleId
+     * @return array
+     */
+    public function fetchMenuIdsByRoleId(int $roleId): array
+    {
+        $role = $this->model::find($roleId);
+        if (empty($role)) {
+            return [];
+        }
+
+        return $role->menus()->pluck('admin_menu_id')->toArray();
+    }
+
+    /**
+     * 同步角色與選單的關聯
+     * @param int $roleId
+     * @param array $menuIds
+     */
+    public function syncMenus(int $roleId, array $menuIds): void
+    {
+        $role = $this->model::find($roleId);
+        if (!empty($role)) {
+            $role->menus()->sync($menuIds);
+        }
+    }
 }

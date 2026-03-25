@@ -98,6 +98,109 @@ class AdminMenuService
     }
 
     /**
+     * 取得啟用的選單樹狀結構（角色編輯頁用，含 id）
+     * @return array
+     */
+    public function fetchMenuTreeForEdit(): array
+    {
+        $groups = $this->adminMenuRepository->fetchActiveMenuTree();
+        $menu = [];
+
+        foreach ($groups as $group) {
+            $details = [];
+            foreach ($group->children as $child) {
+                $details[] = [
+                    'id'   => $child->id,
+                    'name' => $child->name,
+                    'url'  => $child->url,
+                    'icon' => $child->icon,
+                ];
+            }
+
+            # 群組沒有子選單時不顯示
+            if (empty($details)) {
+                continue;
+            }
+
+            $menu[] = [
+                'item_name' => $group->name,
+                'item_icon' => $group->icon,
+                'details'   => $details,
+            ];
+        }
+
+        return $menu;
+    }
+
+    /**
+     * 依選單 ID 過濾選單樹狀結構（sidebar 權限用）
+     * @param array $menuIds
+     * @return array
+     */
+    public function fetchMenuTreeByMenuIds(array $menuIds): array
+    {
+        $groups = $this->adminMenuRepository->fetchActiveMenuTree();
+        $menu = [];
+
+        foreach ($groups as $group) {
+            $details = [];
+            foreach ($group->children as $child) {
+                # 只保留有權限的子選單
+                if (!in_array($child->id, $menuIds)) {
+                    continue;
+                }
+
+                $details[] = [
+                    'is_open' => false,
+                    'name'    => $child->name,
+                    'url'     => $child->url,
+                    'icon'    => $child->icon,
+                ];
+            }
+
+            # 群組下無有權限的子選單時不顯示
+            if (empty($details)) {
+                continue;
+            }
+
+            $menu[] = [
+                'have_item' => true,
+                'item_name' => $group->name,
+                'item_open' => false,
+                'item_icon' => $group->icon,
+                'details'   => $details,
+            ];
+        }
+
+        return $menu;
+    }
+
+    /**
+     * 依選單 ID 取得 URL 清單（權限檢查用）
+     * @param array $menuIds
+     * @return array
+     */
+    public function fetchUrlsByMenuIds(array $menuIds): array
+    {
+        if (empty($menuIds)) {
+            return [];
+        }
+
+        $groups = $this->adminMenuRepository->fetchActiveMenuTree();
+        $urls = [];
+
+        foreach ($groups as $group) {
+            foreach ($group->children as $child) {
+                if (in_array($child->id, $menuIds) && !empty($child->url)) {
+                    $urls[] = $child->url;
+                }
+            }
+        }
+
+        return $urls;
+    }
+
+    /**
      * 依照 ID 取得選單資料
      * @param int $id
      *

@@ -43,14 +43,22 @@ class SettingService
     }
 
     /**
-     * 從資料庫取得啟用的選單樹狀結構
+     * 從資料庫取得啟用的選單樹狀結構（依角色權限過濾）
      * @return array
      */
     protected function fetchMenu(): array
     {
         try {
             $menuService = app(AdminMenuService::class);
-            return $menuService->fetchMenuTree();
+            $menuIds = session(ADMIN_PERMISSION_SESSION, []);
+
+            # 有角色權限時依權限過濾選單
+            if (!empty($menuIds)) {
+                return $menuService->fetchMenuTreeByMenuIds($menuIds);
+            }
+
+            # 無權限資料時回傳空選單
+            return [];
         } catch (\Exception $e) {
             # 資料庫尚未建立時回傳空陣列
             return [];

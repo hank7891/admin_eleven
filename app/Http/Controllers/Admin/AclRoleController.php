@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Admin\AclRoleService;
 use App\Services\Admin\AdminLogService;
+use App\Services\Admin\AdminMenuService;
 use App\Services\Share\MessageService;
 
 class AclRoleController extends Controller
@@ -18,7 +19,8 @@ class AclRoleController extends Controller
     # 建構元
     public function __construct(
         protected AclRoleService $service,
-        protected AdminLogService $logService
+        protected AdminLogService $logService,
+        protected AdminMenuService $menuService
     ) {
         $this->settingService = app('setting');
     }
@@ -60,6 +62,8 @@ class AclRoleController extends Controller
                 session()->forget(self::POST_SESSION);
             }
 
+            # 取得選單樹（編輯頁 checkbox 用）
+            $this->settingService->setSetData('menuTree', $this->menuService->fetchMenuTreeForEdit());
             $this->settingService->setSetData('data', $data);
             return view('admin/acl-role/edit', $this->settingService->fetchSetData());
         } catch (\Exception $e) {
@@ -77,6 +81,8 @@ class AclRoleController extends Controller
     public function editDo(Request $request)
     {
         $post = $request->only(['id', 'role_name']);
+        $menuIds = array_map('intval', $request->input('menu_ids', []));
+        $post['menu_ids'] = $menuIds;
 
         try {
             $id = $post['id'];
@@ -93,7 +99,7 @@ class AclRoleController extends Controller
                 # 編輯
                 $this->service->updateData($post['id'], $post);
 
-                # 記錄操作日誌
+                # 記錄操作日誌（角色名稱差異）
                 $this->logService->recordUpdate(
                     $request,
                     'acl_role',
@@ -103,6 +109,19 @@ class AclRoleController extends Controller
                     $post,
                     ['role_name']
                 );
+
+                # 記錄選單權限變更
+                $oldMenuIds = $oldData['menu_ids'] ?? [];
+                if ($oldMenuIds != $menuIds) {
+                    $this->logService->recordSimple(
+                        $request,
+                        'acl_role',
+                        'update',
+                        $post['id'],
+                        $oldData['role_name'] ?? null,
+                        '選單權限變更'
+                    );
+                }
             }
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '編輯成功！');
