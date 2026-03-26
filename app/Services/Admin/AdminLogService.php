@@ -210,12 +210,18 @@ class AdminLogService
      */
     public function getLogList(
         int $perPage = 15,
+        ?string $operatorName = null,
         ?string $module = null,
         ?string $action = null,
         ?string $dateFrom = null,
         ?string $dateTo = null
     ) {
         $query = AdminLog::query();
+
+        # 操作者名稱模糊搜尋
+        if (!empty($operatorName)) {
+            $query->where('operator_name', 'LIKE', '%' . $operatorName . '%');
+        }
 
         if (!empty($module)) {
             $query->where('module', $module);

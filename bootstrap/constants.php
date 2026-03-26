@@ -5,6 +5,7 @@
  */
 define('ADMIN_AUTH_SESSION', 'admin_auth_session');
 define('ADMIN_ROLE_SESSION', 'admin_role_session');
+define('ADMIN_PERMISSION_SESSION', 'admin_permission_session');
 define('ADMIN_MESSAGE_SESSION', 'admin_message_session');
 
 /*
