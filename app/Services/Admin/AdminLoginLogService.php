@@ -83,6 +83,8 @@ class AdminLoginLogService
     /**
      * 取得日誌列表（分頁）
      * @param int $perPage
+     * @param string|null $operatorKeyword 操作者名稱或帳號模糊搜尋
+     * @param string|null $ipAddress IP 位址模糊搜尋
      * @param string|null $action
      * @param int|null $status
      * @param string|null $dateFrom
@@ -92,12 +94,14 @@ class AdminLoginLogService
      */
     public function getLogList(
         int $perPage = 20,
+        ?string $operatorKeyword = null,
+        ?string $ipAddress = null,
         ?string $action = null,
         ?int $status = null,
         ?string $dateFrom = null,
         ?string $dateTo = null
     ) {
-        return $this->adminLoginLogRepository->fetchList($perPage, $action, $status, $dateFrom, $dateTo);
+        return $this->adminLoginLogRepository->fetchList($perPage, $operatorKeyword, $ipAddress, $action, $status, $dateFrom, $dateTo);
     }
 
     /**
