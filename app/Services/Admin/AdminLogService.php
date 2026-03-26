@@ -211,6 +211,7 @@ class AdminLogService
     public function getLogList(
         int $perPage = 15,
         ?string $operatorName = null,
+        ?string $ipAddress = null,
         ?string $module = null,
         ?string $action = null,
         ?string $dateFrom = null,
@@ -221,6 +222,11 @@ class AdminLogService
         # 操作者名稱模糊搜尋
         if (!empty($operatorName)) {
             $query->where('operator_name', 'LIKE', '%' . $operatorName . '%');
+        }
+
+        # IP 位址模糊搜尋
+        if (!empty($ipAddress)) {
+            $query->where('ip_address', 'LIKE', '%' . $ipAddress . '%');
         }
 
         if (!empty($module)) {

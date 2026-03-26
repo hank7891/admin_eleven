@@ -29,6 +29,7 @@ class AdminLogController extends Controller
             # 取得篩選條件
             $filters = [
                 'operator_name' => $request->get('operator_name'),
+                'ip_address'    => $request->get('ip_address'),
                 'module'        => $request->get('module'),
                 'date_from'     => $request->get('date_from'),
                 'date_to'       => $request->get('date_to'),
@@ -45,6 +46,7 @@ class AdminLogController extends Controller
                 $logs = $this->service->getLogList(
                     perPage: 20,
                     operatorName: $filters['operator_name'],
+                    ipAddress: $filters['ip_address'],
                     module: $filters['module'],
                     dateFrom: $filters['date_from'],
                     dateTo: $filters['date_to']
