@@ -52,6 +52,50 @@ class AdminMenuService
     }
 
     /**
+     * 取得分頁選單資料
+     * @param array $filters
+     * @param int $perPage
+     * @return array ['data' => array, 'pagination' => LengthAwarePaginator]
+     */
+    public function fetchPaginatedData(array $filters = [], int $perPage = 20): array
+    {
+        $paginator = $this->adminMenuRepository->fetchPaginatedData($filters, $perPage);
+
+        # 建立群組名稱對應表（從全部資料）
+        $allData = $this->adminMenuRepository->fetchAllData();
+        $groupMap = [];
+        foreach ($allData as $item) {
+            if ($item['parent_id'] === 0) {
+                $groupMap[$item['id']] = $item['name'];
+            }
+        }
+
+        # 資料解析
+        $data = [];
+        foreach ($paginator->items() as $menu) {
+            $value = $menu->toArray();
+
+            $value['created_at'] = !empty(trim($value['created_at']))
+                ? Carbon::parse($value['created_at'])->format('Y-m-d')
+                : '';
+
+            $value['type_display'] = $value['parent_id'] === 0 ? '群組' : '選單項目';
+            $value['parent_display'] = $value['parent_id'] === 0
+                ? '--'
+                : ($groupMap[$value['parent_id']] ?? '未知');
+            $value['is_active_display'] = config('constants.status')[$value['is_active'] ?? STATUS_ACTIVE]
+                ?? config('constants.status.' . STATUS_INACTIVE);
+
+            $data[] = $value;
+        }
+
+        return [
+            'data' => $data,
+            'pagination' => $paginator,
+        ];
+    }
+
+    /**
      * 取得所有啟用的群組（編輯頁下拉選單用）
      * @return array
      */

@@ -16,7 +16,7 @@
         position: relative;
         padding: 0.875rem 2.5rem 0.875rem 1rem;
         border-radius: 0.75rem;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Manrope', sans-serif;
         font-size: 0.9rem;
         line-height: 1.5;
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);

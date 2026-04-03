@@ -1,19 +1,11 @@
 @extends('Admin-share/index')
 @section('content')
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    @vite('resources/css/stitch.css')
-
-    <div class="content-wrapper stitch-page">
+    <div class="content-wrapper">
         <div class="p-6 lg:p-10 space-y-8">
             {{-- 頁面標題區 --}}
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <nav class="flex items-center gap-2 text-[0.75rem] text-outline-variant mb-1 uppercase tracking-widest font-semibold">
-                        <a href="{{ asset('admin/') }}" class="hover:text-primary transition-colors">首頁</a>
-                        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                        <span class="text-primary">選單管理</span>
-                    </nav>
+                    <x-breadcrumb :items="[['label' => '首頁', 'url' => 'admin/'], ['label' => '選單管理']]" />
                     <h2 class="text-[1.5rem] font-bold text-on-surface tracking-tight font-headline">選單管理</h2>
                     <p class="text-[0.8125rem] text-outline mt-1">管理後台側邊欄選單結構與排序</p>
                 </div>
@@ -24,6 +16,37 @@
                     </a>
                 </div>
             </div>
+
+            {{-- 篩選區 --}}
+            <form method="GET" action="{{ url('admin/admin.menu/list') }}">
+                <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                        <div class="space-y-2">
+                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">search</span>
+                                名稱
+                            </label>
+                            <input name="name" value="{{ $filters['name'] ?? '' }}" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-outline-variant" placeholder="請輸入選單名稱" type="text" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">settings_accessibility</span>
+                                狀態
+                            </label>
+                            <select name="is_active" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all appearance-none cursor-pointer">
+                                <option value="">全部狀態</option>
+                                @foreach ($statusOptions as $key => $label)
+                                    <option value="{{ $key }}" {{ (isset($filters['is_active']) && $filters['is_active'] !== '' && (int)$filters['is_active'] === $key) ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="md:col-span-2 flex gap-3 justify-end">
+                            <button type="submit" class="bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white px-8 py-3 rounded-xl font-semibold text-[0.875rem] shadow-lg shadow-indigo-500/10 hover:brightness-110 active:scale-95 transition-all">搜尋</button>
+                            <a href="{{ url('admin/admin.menu/list') }}" class="px-5 bg-surface-container-high text-on-surface py-3 rounded-xl font-semibold text-[0.875rem] hover:bg-surface-container-highest transition-colors active:scale-95 no-underline flex items-center">清除</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
 
             {{-- 資料表格 --}}
             @if (empty($data))
@@ -52,7 +75,7 @@
                             <tbody class="divide-y divide-outline-variant/10">
                             @foreach ($data as $key => $row)
                                 <tr class="hover:bg-surface-container-low transition-colors duration-200">
-                                    <td class="px-6 py-5 text-[0.875rem] font-medium text-outline">{{ $key + 1 }}</td>
+                                    <td class="px-6 py-5 text-[0.875rem] font-medium text-outline">{{ $pagination->firstItem() + $key }}</td>
                                     <td class="px-6 py-5">
                                         <a href="{{ asset('admin/admin.menu/edit/' . $row['id']) }}" class="flex items-center gap-1.5 text-primary hover:bg-primary/5 px-3 py-1.5 rounded-lg transition-colors font-semibold text-[0.875rem] no-underline">
                                             <span class="material-symbols-outlined text-[18px]">edit</span>
@@ -72,10 +95,10 @@
                                     <td class="px-6 py-5 text-[0.875rem] font-mono text-outline">{{ $row['url'] ?? '' }}</td>
                                     <td class="px-6 py-5 text-[0.875rem] text-on-surface">{{ $row['sort_order'] ?? 0 }}</td>
                                     <td class="px-6 py-5">
-                                        @if (($row['is_active'] ?? 1) == 1)
-                                            <span class="px-3 py-1 text-[0.75rem] font-bold rounded-full bg-emerald-50 text-emerald-600">啟用</span>
+                                        @if (($row['is_active'] ?? 1) == STATUS_ACTIVE)
+                                            <span class="px-3 py-1 text-[0.75rem] font-bold rounded-full bg-emerald-50 text-emerald-600">{{ $row['is_active_display'] }}</span>
                                         @else
-                                            <span class="px-3 py-1 text-[0.75rem] font-bold rounded-full bg-slate-100 text-slate-500">停用</span>
+                                            <span class="px-3 py-1 text-[0.75rem] font-bold rounded-full bg-slate-100 text-slate-500">{{ $row['is_active_display'] }}</span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-5 text-[0.875rem] text-outline">{{ $row['created_at'] ?? '' }}</td>
@@ -84,13 +107,15 @@
                             </tbody>
                         </table>
                     </div>
+
+                    {{-- 分頁 --}}
+                    <x-stitch-pagination :paginator="$pagination" :filters="$filters" />
                 </div>
             @endif
         </div>
     </div>
 
-    {{-- DataTables --}}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    @push('scripts')
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script>
         $(function () {
@@ -105,4 +130,5 @@
             });
         });
     </script>
+    @endpush
 @stop

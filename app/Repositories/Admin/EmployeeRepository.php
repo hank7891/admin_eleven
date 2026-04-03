@@ -26,6 +26,34 @@ class EmployeeRepository
     }
 
     /**
+     * 取得分頁資料（含角色、篩選）
+     * @param array $filters
+     * @param int $perPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function fetchPaginatedData(array $filters = [], int $perPage = 20): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        $query = $this->employee::with('roles');
+
+        # 帳號篩選
+        if (!empty($filters['account'])) {
+            $query->where('account', 'like', '%' . $filters['account'] . '%');
+        }
+
+        # 姓名篩選
+        if (!empty($filters['name'])) {
+            $query->where('name', 'like', '%' . $filters['name'] . '%');
+        }
+
+        # 狀態篩選
+        if (isset($filters['is_active']) && $filters['is_active'] !== '') {
+            $query->where('is_active', $filters['is_active']);
+        }
+
+        return $query->orderBy('id', 'desc')->paginate($perPage);
+    }
+
+    /**
      * 依照 id 取得資料（含角色 IDs）
      * @param int $id
      *

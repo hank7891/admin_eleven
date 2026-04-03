@@ -16,9 +16,14 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    @include('Share/message-alert')
+    <!-- Alpine.js（側邊欄摺疊動畫） -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    @stack('styles')
 </head>
 <body class="font-body antialiased bg-surface text-on-surface min-h-screen">
+@include('Share/message-alert')
 <div class="flex min-h-screen">
     {{-- 側邊欄 --}}
     @include('Admin-share/main-sidbar')
@@ -37,5 +42,7 @@
         @include('Admin-share/footer')
     </div>
 </div>
+
+@stack('scripts')
 </body>
 </html>

@@ -1,6 +1,6 @@
 @extends('Admin-share/index')
 @section('content')
-    <div class="content-wrapper stitch-page">
+    <div class="content-wrapper">
         <div class="p-6 lg:p-10 flex items-center justify-center" style="min-height: calc(100vh - 120px);">
             <div class="text-center">
                 <span class="material-symbols-outlined text-[64px] text-outline-variant/30 mb-4 block">dashboard</span>

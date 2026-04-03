@@ -30,25 +30,19 @@ class EmployeeController extends Controller
 
     /**
      * 列表頁面
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
-    public function list()
+    public function list(Request $request)
     {
-        # 列表欄位
-        $fields = [
-            'ID' => 'id',
-            '姓名' => 'name',
-            '角色' => 'role_names',
-            '性別' => 'gender_display',
-            '電話' => 'phone',
-            '狀態' => 'is_active_display',
-            '建立時間' => 'created_at',
-        ];
+        # 篩選條件
+        $filters = $request->only(['account', 'name', 'is_active']);
 
-        $this->settingService->setSetData('pageTitle', '會員管理');
-        $this->settingService->setSetData('editUrl', asset('admin/employee/edit') . '/');
-        $this->settingService->setSetData('fields', $fields);
-        $this->settingService->setSetData('data', $this->service->fetchAllData());
+        # 取得分頁資料
+        $result = $this->service->fetchPaginatedData($filters);
+
+        $this->settingService->setSetData('data', $result['data']);
+        $this->settingService->setSetData('pagination', $result['pagination']);
+        $this->settingService->setSetData('filters', $filters);
+        $this->settingService->setSetData('statusOptions', config('constants.status'));
 
         return view('admin/employee/list', $this->settingService->fetchSetData());
     }

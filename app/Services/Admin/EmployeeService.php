@@ -48,6 +48,46 @@ class EmployeeService
     }
 
     /**
+     * 取得分頁會員資料
+     * @param array $filters
+     * @param int $perPage
+     * @return array ['data' => array, 'pagination' => LengthAwarePaginator]
+     */
+    public function fetchPaginatedData(array $filters = [], int $perPage = 20): array
+    {
+        $paginator = $this->employeeRepository->fetchPaginatedData($filters, $perPage);
+
+        # 資料解析
+        $data = [];
+        foreach ($paginator->items() as $employee) {
+            $value = $employee->toArray();
+            $value['role_names'] = $employee->roles->pluck('role_name')->implode(', ') ?: '--';
+
+            $value['created_at'] = !empty(trim($value['created_at']))
+                ? Carbon::parse($value['created_at'])->format('Y-m-d')
+                : '';
+
+            $value['updated_at'] = !empty(trim($value['updated_at']))
+                ? Carbon::parse($value['updated_at'])->format('Y-m-d')
+                : '';
+
+            $value['birthday'] = !empty($value['birthday'])
+                ? Carbon::parse($value['birthday'])->format('Y-m-d')
+                : '';
+
+            $value['gender_display'] = config('constants.gender')[$value['gender'] ?? GENDER_UNSPECIFIED] ?? config('constants.gender.' . GENDER_UNSPECIFIED);
+            $value['is_active_display'] = config('constants.status')[$value['is_active'] ?? STATUS_ACTIVE] ?? config('constants.status.' . STATUS_INACTIVE);
+
+            $data[] = $value;
+        }
+
+        return [
+            'data' => $data,
+            'pagination' => $paginator,
+        ];
+    }
+
+    /**
      * 依照 ID 取得會員資料
      * @param int $id
      *

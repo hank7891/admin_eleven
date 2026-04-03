@@ -1,73 +1,67 @@
 @extends('Admin-share/index')
 @section('content')
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    @vite('resources/css/stitch.css')
-
-    <div class="content-wrapper stitch-page">
+    <div class="content-wrapper">
         <div class="p-6 lg:p-10 space-y-8">
             {{-- 頁面標題區 --}}
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <nav class="flex items-center gap-2 text-[0.75rem] text-outline-variant mb-1 uppercase tracking-widest font-semibold">
-                        <a href="{{ asset('admin/') }}" class="hover:text-primary transition-colors">首頁</a>
-                        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                        <span class="text-primary">操作日誌</span>
-                    </nav>
+                    <x-breadcrumb :items="[['label' => '首頁', 'url' => 'admin/'], ['label' => '操作日誌']]" />
                     <h2 class="text-[1.5rem] font-bold text-on-surface tracking-tight font-headline">操作日誌</h2>
                     <p class="text-[0.8125rem] text-outline mt-1">追蹤系統中所有的使用者行為與異動記錄</p>
                 </div>
             </div>
 
             {{-- 搜尋篩選卡片 --}}
-            <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-6">
-                <form method="GET" action="{{ asset('admin/admin.log/list') }}">
+            <form method="GET" action="{{ asset('admin/admin.log/list') }}">
+                <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                         <div class="space-y-2">
-                            <label class="text-[0.75rem] font-bold text-outline uppercase tracking-wider">操作者名稱</label>
-                            <input type="text"
-                                   name="operator_name"
-                                   placeholder="輸入名稱..."
-                                   value="{{ $filters['operator_name'] ?? '' }}"
-                                   class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:border-primary focus:ring-primary/30 focus:ring-2 transition-all placeholder:text-outline-variant/60">
+                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">person_search</span>
+                                操作者名稱
+                            </label>
+                            <input type="text" name="operator_name" placeholder="輸入名稱..." value="{{ $filters['operator_name'] ?? '' }}"
+                                   class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-outline-variant" />
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[0.75rem] font-bold text-outline uppercase tracking-wider">IP 位址</label>
-                            <input type="text"
-                                   name="ip_address"
-                                   placeholder="192.168.x.x"
-                                   value="{{ $filters['ip_address'] ?? '' }}"
-                                   class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:border-primary focus:ring-primary/30 focus:ring-2 transition-all placeholder:text-outline-variant/60">
+                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">lan</span>
+                                IP 位址
+                            </label>
+                            <input type="text" name="ip_address" placeholder="192.168.x.x" value="{{ $filters['ip_address'] ?? '' }}"
+                                   class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-outline-variant" />
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[0.75rem] font-bold text-outline uppercase tracking-wider">功能模組</label>
-                            <select name="module"
-                                    class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:border-primary focus:ring-primary/30 focus:ring-2 transition-all">
+                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">widgets</span>
+                                功能模組
+                            </label>
+                            <select name="module" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all appearance-none cursor-pointer">
                                 <option value="">全部</option>
                                 @foreach ($moduleOptions ?? [] as $key => $label)
-                                    <option value="{{ $key }}" {{ ($filters['module'] ?? '') === $key ? 'selected' : '' }}>
-                                        {{ $label }}
-                                    </option>
+                                    <option value="{{ $key }}" {{ ($filters['module'] ?? '') === $key ? 'selected' : '' }}>{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[0.75rem] font-bold text-outline uppercase tracking-wider">開始時間</label>
-                            <input type="date"
-                                   name="date_from"
-                                   value="{{ $filters['date_from'] ?? '' }}"
-                                   class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:border-primary focus:ring-primary/30 focus:ring-2 transition-all">
+                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                                開始時間
+                            </label>
+                            <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}"
+                                   class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all" />
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[0.75rem] font-bold text-outline uppercase tracking-wider">結束時間</label>
-                            <input type="date"
-                                   name="date_to"
-                                   value="{{ $filters['date_to'] ?? '' }}"
-                                   class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:border-primary focus:ring-primary/30 focus:ring-2 transition-all">
+                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[16px]">event</span>
+                                結束時間
+                            </label>
+                            <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}"
+                                   class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all" />
                         </div>
                     </div>
                     <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-outline-variant/20">
-                        <a href="{{ asset('admin/admin.log/list') }}" class="px-6 py-2.5 text-outline hover:text-on-surface font-medium text-[0.875rem] transition-colors">
+                        <a href="{{ asset('admin/admin.log/list') }}" class="px-6 py-2.5 text-outline hover:text-on-surface font-medium text-[0.875rem] transition-colors no-underline">
                             清除條件
                         </a>
                         <button type="submit" class="px-8 py-2.5 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white rounded-xl font-bold text-[0.875rem] shadow-lg shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-2">
@@ -75,18 +69,16 @@
                             搜尋日誌
                         </button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
 
             {{-- 資料表格 --}}
             @if (!($hasFilter ?? false))
-                {{-- 尚未搜尋 --}}
                 <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-12 text-center">
                     <span class="material-symbols-outlined text-[48px] text-outline-variant/40 mb-3 block">search</span>
                     <p class="text-outline text-[0.875rem]">請輸入搜尋條件後查詢</p>
                 </div>
             @elseif (empty($data))
-                {{-- 搜尋無結果 --}}
                 <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-12 text-center">
                     <span class="material-symbols-outlined text-[48px] text-outline-variant/40 mb-3 block">inbox</span>
                     <p class="text-outline text-[0.875rem]">查無符合條件的資料</p>
@@ -111,7 +103,7 @@
                             <tbody class="divide-y divide-outline-variant/10">
                             @foreach ($data as $key => $row)
                                 <tr class="hover:bg-surface-container-low transition-colors duration-200">
-                                    <td class="px-6 py-5 text-[0.875rem] font-medium text-outline">{{ $key + 1 }}</td>
+                                    <td class="px-6 py-5 text-[0.875rem] font-medium text-outline">{{ $pagination->firstItem() + $key }}</td>
                                     <td class="px-6 py-5">
                                         <a href="{{ asset('admin/admin.log/detail/' . $row['id']) }}" class="flex items-center gap-1.5 text-primary hover:bg-primary/5 px-3 py-1.5 rounded-lg transition-colors font-semibold text-[0.875rem] no-underline">
                                             <span class="material-symbols-outlined text-[18px]">visibility</span>
@@ -134,30 +126,30 @@
                     </div>
 
                     {{-- 分頁 --}}
-                    @if (isset($pagination) && $pagination->hasPages())
-                        <div class="px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-outline-variant/20 bg-surface-container-low/50">
-                            {{ $pagination->appends($filters)->links('pagination::bootstrap-4') }}
-                        </div>
+                    @if (isset($pagination))
+                        <x-stitch-pagination :paginator="$pagination" :filters="$filters" />
                     @endif
                 </div>
             @endif
         </div>
     </div>
 
-    {{-- DataTables --}}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    @push('scripts')
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script>
         $(function () {
-            $('#logTable').DataTable({
-                "paging": false,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
-            });
+            if ($('#logTable').length) {
+                $('#logTable').DataTable({
+                    "paging": false,
+                    "lengthChange": false,
+                    "searching": false,
+                    "ordering": true,
+                    "info": false,
+                    "autoWidth": false,
+                    "responsive": true,
+                });
+            }
         });
     </script>
+    @endpush
 @stop

@@ -25,6 +25,29 @@ class AdminMenuRepository
     }
 
     /**
+     * 取得分頁資料（含篩選）
+     * @param array $filters
+     * @param int $perPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function fetchPaginatedData(array $filters = [], int $perPage = 20): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        $query = $this->adminMenu::query();
+
+        # 名稱篩選
+        if (!empty($filters['name'])) {
+            $query->where('name', 'like', '%' . $filters['name'] . '%');
+        }
+
+        # 狀態篩選
+        if (isset($filters['is_active']) && $filters['is_active'] !== '') {
+            $query->where('is_active', $filters['is_active']);
+        }
+
+        return $query->orderBy('parent_id')->orderBy('sort_order')->paginate($perPage);
+    }
+
+    /**
      * 取得所有啟用的群組（parent_id = 0）
      * @return array
      */

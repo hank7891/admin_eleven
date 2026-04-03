@@ -1,35 +1,22 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>YoYoAdmin | 選擇角色</title>
+@extends('Admin-share/guest')
+@section('title', '選擇角色')
+@section('body-class', 'overflow-hidden')
 
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+@push('styles')
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>
+@endpush
 
-    @vite('resources/css/stitch.css')
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    @include('Share/message-alert')
-
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6 font-body text-on-surface overflow-hidden">
-
+@section('background')
     {{-- 裝飾背景元素 --}}
     <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/10 rounded-full blur-[120px] pointer-events-none"></div>
     <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/20 rounded-full blur-[120px] pointer-events-none"></div>
+@endsection
 
+@section('content')
     {{-- 品牌標誌 --}}
     <div class="mb-12 z-10">
         <h1 class="text-4xl font-black text-white tracking-tight font-headline">YoYoAdmin</h1>
@@ -86,6 +73,4 @@
     <footer class="mt-12 text-center z-10">
         <p class="text-white/60 text-[0.75rem]">&copy; {{ date('Y') }} YoYoAdmin. All rights reserved.</p>
     </footer>
-
-</body>
-</html>
+@endsection

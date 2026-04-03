@@ -1,10 +1,6 @@
 @extends('Admin-share/index')
 @section('content')
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    @vite('resources/css/stitch.css')
-
-    <div class="content-wrapper stitch-page">
+    <div class="content-wrapper">
         <div class="p-6 lg:p-10 space-y-8">
             {{-- 頁面標題區 --}}
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">

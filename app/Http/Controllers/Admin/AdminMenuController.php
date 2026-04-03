@@ -27,24 +27,18 @@ class AdminMenuController extends Controller
     /**
      * 列表頁面
      */
-    public function list()
+    public function list(Request $request)
     {
-        # 列表欄位
-        $fields = [
-            'ID'     => 'id',
-            '類型'   => 'type_display',
-            '所屬群組' => 'parent_display',
-            '名稱'   => 'name',
-            'URL'    => 'url',
-            '排序'   => 'sort_order',
-            '狀態'   => 'is_active_display',
-            '建立時間' => 'created_at',
-        ];
+        # 篩選條件
+        $filters = $request->only(['name', 'is_active']);
 
-        $this->settingService->setSetData('pageTitle', '選單管理');
-        $this->settingService->setSetData('editUrl', asset('admin/admin.menu/edit') . '/');
-        $this->settingService->setSetData('fields', $fields);
-        $this->settingService->setSetData('data', $this->service->fetchAllData());
+        # 取得分頁資料
+        $result = $this->service->fetchPaginatedData($filters);
+
+        $this->settingService->setSetData('data', $result['data']);
+        $this->settingService->setSetData('pagination', $result['pagination']);
+        $this->settingService->setSetData('filters', $filters);
+        $this->settingService->setSetData('statusOptions', config('constants.status'));
 
         return view('admin/admin-menu/list', $this->settingService->fetchSetData());
     }

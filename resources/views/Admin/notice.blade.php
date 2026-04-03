@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>YoYoAdmin | 系統通知</title>
+@extends('Admin-share/guest')
+@section('title', '系統通知')
+@section('body-class', 'bg-surface')
 
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-
-    @vite('resources/css/stitch.css')
-</head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6 font-body bg-surface text-on-surface">
-
+@section('content')
     <div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-10 text-center">
         <span class="material-symbols-outlined text-[3rem] text-primary mb-4 block">
             @if(($notice['type'] ?? '') === 'error') error
@@ -29,6 +20,4 @@
     </div>
 
     <p class="mt-8 text-[0.75rem] text-outline">&copy; {{ date('Y') }} YoYoAdmin</p>
-
-</body>
-</html>
+@endsection

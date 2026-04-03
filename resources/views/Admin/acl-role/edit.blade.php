@@ -1,10 +1,6 @@
 @extends('Admin-share/index')
 @section('content')
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    @vite('resources/css/stitch.css')
-
-    <div class="content-wrapper stitch-page">
+    <div class="content-wrapper">
         <div class="p-6 lg:p-10 space-y-8">
             {{-- 頁面標題區 --}}
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -135,7 +131,7 @@
 
     <script>
     $(function() {
-        # 更新群組計數與 checkbox 狀態
+        // 更新群組計數與 checkbox 狀態
         function updateGroupState(groupIndex) {
             var total = $('.group-' + groupIndex).length;
             var checked = $('.group-' + groupIndex + ':checked').length;
@@ -146,14 +142,14 @@
             $('[data-group="' + groupIndex + '"] .checked-count').text(checked);
         }
 
-        # 群組 checkbox 全選/取消
+        // 群組 checkbox 全選/取消
         $('.group-checkbox').on('change', function() {
             var groupIndex = $(this).data('group');
             $('.group-' + groupIndex).prop('checked', this.checked);
             updateGroupState(groupIndex);
         });
 
-        # 子選單 checkbox 變更
+        // 子選單 checkbox 變更
         $('.menu-checkbox').on('change', function() {
             var groupClass = this.className.split(' ').find(function(c) { return c.startsWith('group-'); });
             if (groupClass) {
@@ -161,19 +157,19 @@
             }
         });
 
-        # 全選按鈕
+        // 全選按鈕
         $('#btnSelectAll').on('click', function() {
             $('.menu-checkbox').prop('checked', true);
             $('.group-checkbox').each(function() { updateGroupState($(this).data('group')); });
         });
 
-        # 清除按鈕
+        // 清除按鈕
         $('#btnDeselectAll').on('click', function() {
             $('.menu-checkbox').prop('checked', false);
             $('.group-checkbox').each(function() { updateGroupState($(this).data('group')); });
         });
 
-        # 初始化所有群組狀態
+        // 初始化所有群組狀態
         $('.group-checkbox').each(function() { updateGroupState($(this).data('group')); });
     });
     </script>

@@ -37,6 +37,38 @@ class AclRoleService
     }
 
     /**
+     * 取得分頁角色資料
+     * @param array $filters
+     * @param int $perPage
+     * @return array ['data' => array, 'pagination' => LengthAwarePaginator]
+     */
+    public function fetchPaginatedData(array $filters = [], int $perPage = 20): array
+    {
+        $paginator = $this->repository->fetchPaginatedData($filters, $perPage);
+
+        # 資料解析
+        $data = [];
+        foreach ($paginator->items() as $role) {
+            $value = $role->toArray();
+
+            $value['created_at'] = !empty(trim($value['created_at']))
+                ? Carbon::parse($value['created_at'])->format('Y-m-d')
+                : '';
+
+            $value['updated_at'] = !empty(trim($value['updated_at']))
+                ? Carbon::parse($value['updated_at'])->format('Y-m-d')
+                : '';
+
+            $data[] = $value;
+        }
+
+        return [
+            'data' => $data,
+            'pagination' => $paginator,
+        ];
+    }
+
+    /**
      * 依照 ID 取得角色資料（含已綁定的選單 ID）
      * @param int $id
      *

@@ -83,17 +83,74 @@
     min-height: calc(100vh - 120px);
 }
 
-/* DataTables 整合 */
+/* Glass header */
+.glass-header {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+}
+
+/* ===== DataTables 完整覆蓋（僅用 JS 排序，不載入 DataTables CSS） ===== */
 table.dataTable {
     border-collapse: collapse !important;
+    width: 100% !important;
 }
 
 table.dataTable.no-footer {
     border-bottom: none !important;
 }
 
-/* DataTables 排序箭頭覆蓋，避免預設樣式衝突 */
-table.dataTable thead th {
+/* 移除所有 DataTables 預設邊框、背景、padding */
+table.dataTable thead th,
+table.dataTable thead td {
     background-image: none !important;
-    padding-right: 1.5rem !important;
+    border-bottom: none !important;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+table.dataTable tbody th,
+table.dataTable tbody td {
+    border-bottom: none !important;
+}
+
+/* 排序箭頭：用 CSS 三角形 */
+table.dataTable thead th.sorting::after,
+table.dataTable thead th.sorting_asc::after,
+table.dataTable thead th.sorting_desc::after {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Material Symbols Outlined';
+    font-size: 16px;
+    color: var(--color-outline);
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+}
+
+table.dataTable thead th.sorting::after {
+    content: 'unfold_more';
+    opacity: 0.3;
+}
+
+table.dataTable thead th.sorting_asc::after {
+    content: 'arrow_upward';
+    opacity: 0.8;
+}
+
+table.dataTable thead th.sorting_desc::after {
+    content: 'arrow_downward';
+    opacity: 0.8;
+}
+
+/* DataTables wrapper 移除多餘間距 */
+.dataTables_wrapper {
+    padding: 0 !important;
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate,
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    display: none !important;
 }

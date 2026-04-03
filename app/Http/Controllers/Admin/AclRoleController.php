@@ -27,21 +27,18 @@ class AclRoleController extends Controller
 
     /**
      * 列表頁面
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
-    public function list()
+    public function list(Request $request)
     {
-        # 列表欄位
-        $fields = [
-            'ID' => 'id',
-            '角色名稱' => 'role_name',
-            '建立時間' => 'created_at',
-        ];
+        # 篩選條件
+        $filters = $request->only(['role_name']);
 
-        $this->settingService->setSetData('pageTitle', '角色管理');
-        $this->settingService->setSetData('editUrl', asset('admin/acl.role/edit') . '/');
-        $this->settingService->setSetData('fields', $fields);
-        $this->settingService->setSetData('data', $this->service->fetchAllData());
+        # 取得分頁資料
+        $result = $this->service->fetchPaginatedData($filters);
+
+        $this->settingService->setSetData('data', $result['data']);
+        $this->settingService->setSetData('pagination', $result['pagination']);
+        $this->settingService->setSetData('filters', $filters);
 
         return view('admin/acl-role/list', $this->settingService->fetchSetData());
     }

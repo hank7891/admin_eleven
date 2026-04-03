@@ -22,6 +22,24 @@ class AclRoleRepository
     }
 
     /**
+     * 取得分頁資料（含篩選）
+     * @param array $filters
+     * @param int $perPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function fetchPaginatedData(array $filters = [], int $perPage = 20): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        $query = $this->model::query();
+
+        # 角色名稱篩選
+        if (!empty($filters['role_name'])) {
+            $query->where('role_name', 'like', '%' . $filters['role_name'] . '%');
+        }
+
+        return $query->orderBy('id', 'desc')->paginate($perPage);
+    }
+
+    /**
      * 依照 id 取得資料
      * @param int $id
      *
