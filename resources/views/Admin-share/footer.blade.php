@@ -1,7 +1,3 @@
-<footer class="main-footer">
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
-    All rights reserved.
-    <div class="float-right d-none d-sm-inline-block">
-        <b>Version</b> 3.1.0-rc
-    </div>
+<footer class="px-6 py-4 text-center border-t border-outline-variant/10">
+    <p class="text-[0.75rem] text-outline">&copy; {{ date('Y') }} YoYoAdmin. All rights reserved.</p>
 </footer>

@@ -5,67 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>YoYoAdmin | 登入</title>
 
-    <!-- Google Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{asset('admin-layout/plugins/fontawesome-free/css/all.min.css')}}">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{asset('admin-layout/dist/css/adminlte.min.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
-    <!-- 登入頁樣式 -->
-    @vite('resources/css/login.css')
+    @vite('resources/css/stitch.css')
 
-    <!-- jQuery -->
-    <script src="{{asset('admin-layout/plugins/jquery/jquery.min.js')}}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     @include('Share/message-alert')
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
 </head>
-<body class="hold-transition login-page">
-<div class="login-box">
-    <div class="login-logo">
-        <a href="#"><b>YoYo</b>Admin</a>
+<body class="min-h-screen flex flex-col items-center justify-center p-6 font-body text-on-surface overflow-hidden">
+
+    {{-- 裝飾背景元素 --}}
+    <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/20 rounded-full blur-[120px] pointer-events-none"></div>
+
+    {{-- 品牌標誌 --}}
+    <div class="mb-8 text-center">
+        <h1 class="text-5xl font-black text-white tracking-tight drop-shadow-lg font-headline">YoYoAdmin</h1>
     </div>
 
-    <div class="card">
-        <div class="card-body login-card-body">
-            <p class="login-box-msg">歡迎回來，請登入您的帳號</p>
+    {{-- 登入卡片 --}}
+    <main class="w-full max-w-md bg-white rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] p-10 relative z-10">
+        <div class="flex flex-col gap-8">
+            {{-- 標題 --}}
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-on-surface">歡迎回來</h2>
+                <p class="text-outline font-medium">請登入您的帳號</p>
+            </div>
 
-            <form action="{{ url('admin/login') }}" method="post">
+            {{-- 表單 --}}
+            <form action="{{ url('admin/login') }}" method="post" class="space-y-6">
                 @csrf
-                <div class="input-group mb-3">
-                    <input type="text" name="account" class="form-control" placeholder="帳號" autocomplete="username">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-user"></span>
+
+                {{-- 帳號 --}}
+                <div class="space-y-1.5">
+                    <label class="text-[0.875rem] font-semibold text-on-surface-variant ml-1">帳號</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline-variant group-focus-within:text-primary transition-colors">
+                            <span class="material-symbols-outlined">person</span>
                         </div>
+                        <input type="text" name="account" placeholder="請輸入使用者名稱" autocomplete="username"
+                               class="block w-full pl-11 pr-4 py-3.5 bg-surface-container-low border-0 rounded-lg ring-1 ring-outline-variant/30 focus:ring-2 focus:ring-primary transition-all outline-none text-on-surface placeholder:text-outline-variant/60">
                     </div>
                 </div>
-                <div class="input-group mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="密碼" autocomplete="current-password">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
+
+                {{-- 密碼 --}}
+                <div class="space-y-1.5">
+                    <label class="text-[0.875rem] font-semibold text-on-surface-variant ml-1">密碼</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline-variant group-focus-within:text-primary transition-colors">
+                            <span class="material-symbols-outlined">lock</span>
                         </div>
+                        <input type="password" name="password" placeholder="請輸入您的密碼" autocomplete="current-password"
+                               class="block w-full pl-11 pr-4 py-3.5 bg-surface-container-low border-0 rounded-lg ring-1 ring-outline-variant/30 focus:ring-2 focus:ring-primary transition-all outline-none text-on-surface placeholder:text-outline-variant/60">
                     </div>
                 </div>
-                <div class="row align-items-center">
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary btn-block">登入</button>
-                    </div>
-                </div>
+
+                {{-- 登入按鈕 --}}
+                <button type="submit" class="w-full bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white font-bold py-4 rounded-lg shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+                    登入
+                    <span class="material-symbols-outlined text-[20px]">login</span>
+                </button>
             </form>
         </div>
-    </div>
+    </main>
 
-    <div class="login-footer">
-        &copy; {{ date('Y') }} YoYoAdmin
-    </div>
-</div>
-
-<!-- Bootstrap 4 -->
-<script src="{{asset('admin-layout/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-<!-- AdminLTE App -->
-<script src="{{asset('admin-layout/dist/js/adminlte.min.js')}}"></script>
+    {{-- 頁尾 --}}
+    <footer class="mt-12 text-center">
+        <p class="text-white/60 text-[0.875rem] font-medium tracking-wide">&copy; {{ date('Y') }} YoYoAdmin. All rights reserved.</p>
+    </footer>
 
 </body>
 </html>

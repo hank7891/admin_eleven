@@ -1,10 +1,68 @@
 <style>
     #alert-area {
-        position: absolute;
-        top: 5%;
+        position: fixed;
+        top: 1.5rem;
         left: 50%;
+        transform: translateX(-50%);
         z-index: 9999;
+        width: 100%;
+        max-width: 480px;
+        padding: 0 1rem;
+        box-sizing: border-box;
     }
+
+    /* 自帶 alert 樣式（登入頁等無 Bootstrap 頁面也能顯示） */
+    #alert-area .alert {
+        position: relative;
+        padding: 0.875rem 2.5rem 0.875rem 1rem;
+        border-radius: 0.75rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        backdrop-filter: blur(8px);
+    }
+    #alert-area .alert h4 { display: none; }
+    #alert-area .alert .close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        cursor: pointer;
+        opacity: 0.7;
+        line-height: 1;
+    }
+    #alert-area .alert .close:hover { opacity: 1; }
+
+    #alert-area .alert-danger {
+        background: rgba(239, 68, 68, 0.95);
+        color: #fff;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    #alert-area .alert-danger .close { color: #fff; }
+
+    #alert-area .alert-success {
+        background: rgba(34, 197, 94, 0.95);
+        color: #fff;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    #alert-area .alert-success .close { color: #fff; }
+
+    #alert-area .alert-warning {
+        background: rgba(245, 158, 11, 0.95);
+        color: #fff;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    #alert-area .alert-warning .close { color: #fff; }
+
+    #alert-area .alert-info {
+        background: rgba(59, 130, 246, 0.95);
+        color: #fff;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    #alert-area .alert-info .close { color: #fff; }
 
     .fadeInclass {
         animation: fadeIn ease 5s;
@@ -55,8 +113,7 @@
 
 
         return '<div class="alert ' + alertClass + ' alert-dismissible fadeInclass alert-message">' +
-                    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
-                    '<h4><i class="icon fa ' + icon + '"></i> Alert!</h4>'+
+                    '<button type="button" class="close" onclick="$(this).parent().remove();" aria-hidden="true">×</button>' +
                     message +
                 '</div>';
     }

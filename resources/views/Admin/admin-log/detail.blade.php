@@ -1,213 +1,164 @@
 @extends('Admin-share/index')
 @section('content')
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0">操作日誌詳情</h1>
-                    </div><!-- /.col -->
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="<?= asset('admin/') ?>">Home</a></li>
-                            <li class="breadcrumb-item"><a href="<?= asset('admin/admin.log/list') ?>">操作日誌</a></li>
-                            <li class="breadcrumb-item active">詳情</li>
-                        </ol>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </div>
-        <!-- /.content-header -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    @vite('resources/css/stitch.css')
 
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-8">
-                        <!-- 基本信息卡片 -->
-                        <div class="card card-primary">
-                            <div class="card-header">
-                                <h3 class="card-title">基本信息</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">日誌 ID</label>
-                                    <div class="col-sm-9">
-                                        <div class="form-control-static">{{$data['id']}}</div>
+    <div class="content-wrapper stitch-page">
+        <div class="p-6 lg:p-10 space-y-8">
+            {{-- 頁面標題區 --}}
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <nav class="flex items-center gap-2 text-[0.75rem] text-outline-variant mb-1 uppercase tracking-widest font-semibold">
+                        <a href="{{ asset('admin/') }}" class="hover:text-primary transition-colors">首頁</a>
+                        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                        <a href="{{ asset('admin/admin.log/list') }}" class="hover:text-primary transition-colors">操作日誌</a>
+                        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                        <span class="text-primary">詳情</span>
+                    </nav>
+                    <h2 class="text-[1.5rem] font-bold text-on-surface tracking-tight font-headline">操作日誌詳情</h2>
+                    <p class="text-[0.8125rem] text-outline mt-1">查看系統操作紀錄的完整細節</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6">
+                {{-- 左側：基本信息 + 修改詳情 --}}
+                <div class="w-full lg:w-2/3 space-y-6">
+                    {{-- 基本信息卡片 --}}
+                    <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] overflow-hidden">
+                        <div class="px-6 py-4 border-b border-outline-variant/20 flex items-center gap-3">
+                            <span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                            <h3 class="text-[0.9375rem] font-bold text-on-surface">基本信息</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[0.8125rem] text-outline">日誌 ID</span>
+                                    <div class="bg-surface-container-low px-4 py-2 rounded-lg min-w-[200px] text-right font-mono text-[0.875rem] text-primary font-medium">{{ $data['id'] }}</div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[0.8125rem] text-outline">操作者名稱</span>
+                                    <div class="bg-surface-container-low px-4 py-2 rounded-lg min-w-[200px] text-right text-[0.875rem] text-on-surface">{{ $data['operator_name'] }}</div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[0.8125rem] text-outline">操作者 IP</span>
+                                    <div class="bg-surface-container-low px-4 py-2 rounded-lg min-w-[200px] text-right font-mono text-[0.875rem] text-on-surface-variant">{{ $data['ip_address'] }}</div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[0.8125rem] text-outline">操作模組</span>
+                                    <div class="bg-surface-container-low px-4 py-2 rounded-lg min-w-[200px] text-right">
+                                        <span class="px-3 py-1 text-[0.75rem] font-bold rounded-full bg-blue-50 text-blue-600">{{ $data['module_display'] }}</span>
                                     </div>
                                 </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">操作者名稱</label>
-                                    <div class="col-sm-9">
-                                        <div class="form-control-static">{{$data['operator_name']}}</div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">操作者 IP</label>
-                                    <div class="col-sm-9">
-                                        <div class="form-control-static">{{$data['ip_address']}}</div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">操作模組</label>
-                                    <div class="col-sm-9">
-                                        <div class="form-control-static">
-                                            <span class="badge badge-info">{{$data['module_display']}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">操作類型</label>
-                                    <div class="col-sm-9">
-                                        <div class="form-control-static">
-                                            <span class="badge
-                                                @if($data['action'] === 'create') badge-success
-                                                @elseif($data['action'] === 'update') badge-warning
-                                                @elseif($data['action'] === 'delete') badge-danger
-                                                @else badge-secondary
-                                                @endif
-                                            ">{{$data['action_display']}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">被操作資源</label>
-                                    <div class="col-sm-9">
-                                        <div class="form-control-static">
-                                            @if($data['target_id'])
-                                                ID: <strong>{{$data['target_id']}}</strong>
-                                                @if($data['target_name'])
-                                                    - {{$data['target_name']}}
-                                                @endif
-                                            @else
-                                                --
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[0.8125rem] text-outline">操作類型</span>
+                                    <div class="bg-surface-container-low px-4 py-2 rounded-lg min-w-[200px] text-right">
+                                        <span class="px-3 py-1 text-[0.75rem] font-bold rounded-full
+                                            @if($data['action'] === 'create') bg-emerald-50 text-emerald-600
+                                            @elseif($data['action'] === 'update') bg-amber-50 text-amber-600
+                                            @elseif($data['action'] === 'delete') bg-red-50 text-red-600
+                                            @else bg-slate-100 text-slate-500
                                             @endif
-                                        </div>
+                                        ">{{ $data['action_display'] }}</span>
                                     </div>
                                 </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">操作時間</label>
-                                    <div class="col-sm-9">
-                                        <div class="form-control-static">{{$data['operated_at']}}</div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[0.8125rem] text-outline">被操作資源</span>
+                                    <div class="bg-surface-container-low px-4 py-2 rounded-lg min-w-[200px] text-right text-[0.875rem] text-on-surface">
+                                        @if($data['target_id'])
+                                            ID: <strong class="text-primary">{{ $data['target_id'] }}</strong>
+                                            @if($data['target_name'])
+                                                - {{ $data['target_name'] }}
+                                            @endif
+                                        @else
+                                            --
+                                        @endif
                                     </div>
                                 </div>
-
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">記錄建立時間</label>
-                                    <div class="col-sm-9">
-                                        <div class="form-control-static">{{$data['created_at']}}</div>
-                                    </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[0.8125rem] text-outline">操作時間</span>
+                                    <div class="bg-surface-container-low px-4 py-2 rounded-lg min-w-[200px] text-right font-mono text-[0.875rem] text-outline">{{ $data['operated_at'] }}</div>
                                 </div>
-
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[0.8125rem] text-outline">記錄建立時間</span>
+                                    <div class="bg-surface-container-low px-4 py-2 rounded-lg min-w-[200px] text-right font-mono text-[0.875rem] text-outline">{{ $data['created_at'] }}</div>
+                                </div>
                                 @if($data['remarks'])
-                                    <div class="form-group row">
-                                        <label class="col-sm-3 col-form-label">備註</label>
-                                        <div class="col-sm-9">
-                                            <div class="form-control-static">{{$data['remarks']}}</div>
-                                        </div>
+                                    <div class="flex items-center justify-between md:col-span-2">
+                                        <span class="text-[0.8125rem] text-outline">備註</span>
+                                        <div class="bg-surface-container-low px-4 py-2 rounded-lg min-w-[200px] text-right text-[0.875rem] text-on-surface">{{ $data['remarks'] }}</div>
                                     </div>
                                 @endif
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
-
-                        <!-- 修改詳情卡片 -->
-                        <div class="card card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">修改詳情</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                @if(is_array($data['changes']) && count($data['changes']) > 0)
-                                    <div class="table-responsive">
-                                        <table class="table table-sm table-bordered">
-                                            <thead>
-                                                <tr class="table-header">
-                                                    <th style="width: 25%;">欄位名稱</th>
-                                                    <th style="width: 37.5%;">修改前</th>
-                                                    <th style="width: 37.5%;">修改後</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($data['changes'] as $field => $change)
-                                                    <tr>
-                                                        <td><strong>{{$field}}</strong></td>
-                                                        <td>
-                                                            @if(is_array($change) && isset($change['old']))
-                                                                <code class="bg-light p-2 d-block">{{is_array($change['old']) ? json_encode($change['old'], JSON_UNESCAPED_UNICODE) : ($change['old'] ?? '--')}}</code>
-                                                            @else
-                                                                <code class="bg-light p-2 d-block">{{is_array($change) ? json_encode($change, JSON_UNESCAPED_UNICODE) : ($change ?? '--')}}</code>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @if(is_array($change) && isset($change['new']))
-                                                                <code class="bg-light p-2 d-block">{{is_array($change['new']) ? json_encode($change['new'], JSON_UNESCAPED_UNICODE) : ($change['new'] ?? '--')}}</code>
-                                                            @else
-                                                                <code class="bg-light p-2 d-block">{{is_array($change) ? json_encode($change, JSON_UNESCAPED_UNICODE) : ($change ?? '--')}}</code>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                @else
-                                    <div class="alert alert-info">
-                                        <i class="icon fas fa-info"></i> 無修改詳情
-                                    </div>
-                                @endif
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
                     </div>
 
-                    <!-- 操作欄 -->
-                    <div class="col-md-4">
-                        <div class="card card-outline card-secondary">
-                            <div class="card-header">
-                                <h3 class="card-title">操作</h3>
-                            </div>
-                            <div class="card-body">
-                                <a href="<?= asset('admin/admin.log/list') ?>" class="btn btn-secondary btn-block">
-                                    <i class="fas fa-arrow-left"></i> 返回列表
-                                </a>
-                            </div>
+                    {{-- 修改詳情卡片 --}}
+                    <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] overflow-hidden">
+                        <div class="px-6 py-4 border-b border-outline-variant/20 flex items-center gap-3">
+                            <span class="w-1.5 h-6 bg-secondary rounded-full"></span>
+                            <h3 class="text-[0.9375rem] font-bold text-on-surface">修改詳情</h3>
+                        </div>
+                        <div class="p-6">
+                            @if(is_array($data['changes']) && count($data['changes']) > 0)
+                                <div class="border border-outline-variant/20 rounded-xl overflow-hidden">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead>
+                                        <tr class="bg-surface-container-low">
+                                            <th class="px-6 py-4 text-[0.8125rem] font-bold text-outline" style="width: 25%;">欄位名稱</th>
+                                            <th class="px-6 py-4 text-[0.8125rem] font-bold text-outline" style="width: 37.5%;">修改前</th>
+                                            <th class="px-6 py-4 text-[0.8125rem] font-bold text-outline" style="width: 37.5%;">修改後</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-outline-variant/10">
+                                        @foreach($data['changes'] as $field => $change)
+                                            <tr class="hover:bg-surface-container-low transition-colors duration-200">
+                                                <td class="px-6 py-5 text-[0.875rem] font-medium text-on-surface">{{ $field }}</td>
+                                                <td class="px-6 py-5">
+                                                    @if(is_array($change) && isset($change['old']))
+                                                        <span class="bg-red-50 text-red-600 px-3 py-1 rounded-md text-[0.8125rem] font-medium">{{ is_array($change['old']) ? json_encode($change['old'], JSON_UNESCAPED_UNICODE) : ($change['old'] ?? '--') }}</span>
+                                                    @else
+                                                        <span class="bg-red-50 text-red-600 px-3 py-1 rounded-md text-[0.8125rem] font-medium">{{ is_array($change) ? json_encode($change, JSON_UNESCAPED_UNICODE) : ($change ?? '--') }}</span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-6 py-5">
+                                                    @if(is_array($change) && isset($change['new']))
+                                                        <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-md text-[0.8125rem] font-medium">{{ is_array($change['new']) ? json_encode($change['new'], JSON_UNESCAPED_UNICODE) : ($change['new'] ?? '--') }}</span>
+                                                    @else
+                                                        <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-md text-[0.8125rem] font-medium">{{ is_array($change) ? json_encode($change, JSON_UNESCAPED_UNICODE) : ($change ?? '--') }}</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="flex items-center gap-2 p-4 bg-surface-container-low rounded-xl text-[0.875rem] text-outline">
+                                    <span class="material-symbols-outlined text-[18px]">info</span>
+                                    無修改詳情
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
-        </section>        <!-- /.content -->
+
+                {{-- 右側：操作面板 --}}
+                <div class="w-full lg:w-1/3">
+                    <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] overflow-hidden sticky top-4">
+                        <div class="px-6 py-4 border-b border-outline-variant/20 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-[20px]">bolt</span>
+                            <h3 class="text-[0.9375rem] font-bold text-on-surface">操作面板</h3>
+                        </div>
+                        <div class="p-6">
+                            <a href="{{ asset('admin/admin.log/list') }}" class="w-full py-3 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white rounded-xl font-bold text-[0.875rem] flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-200 no-underline">
+                                <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+                                返回列表
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <style>
-        .form-control-static {
-            padding-top: 7px;
-            padding-bottom: 7px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding-left: 10px;
-            background-color: #f9f9f9;
-        }
-
-        .table-header {
-            background-color: #e8f4f8;
-        }
-
-        code {
-            word-break: break-all;
-            white-space: pre-wrap;
-        }
-    </style>
 @endsection
-

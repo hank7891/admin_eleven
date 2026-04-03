@@ -5,44 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>YoYoAdmin | 系統通知</title>
 
-    <!-- Google Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{asset('admin-layout/plugins/fontawesome-free/css/all.min.css')}}">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{asset('admin-layout/dist/css/adminlte.min.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
-    <!-- 登入頁樣式 -->
-    @vite('resources/css/login.css')
+    @vite('resources/css/stitch.css')
 </head>
-<body class="hold-transition login-page">
-<div class="login-box">
-    <div class="login-logo">
-        <a href="#"><b>YoYo</b>Admin</a>
+<body class="min-h-screen flex flex-col items-center justify-center p-6 font-body bg-surface text-on-surface">
+
+    <div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-10 text-center">
+        <span class="material-symbols-outlined text-[3rem] text-primary mb-4 block">
+            @if(($notice['type'] ?? '') === 'error') error
+            @elseif(($notice['type'] ?? '') === 'warning') warning
+            @elseif(($notice['type'] ?? '') === 'success') check_circle
+            @else info
+            @endif
+        </span>
+        <h2 class="text-[1.25rem] font-bold text-on-surface mb-3 font-headline">{{ $notice['title'] }}</h2>
+        <p class="text-[0.875rem] text-outline mb-6">{{ $notice['message'] }}</p>
+        <a href="{{ url('admin/login') }}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white rounded-xl font-bold text-[0.875rem] shadow-lg shadow-indigo-500/20 active:scale-95 transition-all no-underline">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            返回登入頁
+        </a>
     </div>
 
-    <div class="card">
-        <div class="card-body login-card-body text-center">
-            <div class="mb-3" style="font-size: 3rem;">
-                <i class="fas {{ $notice['icon'] }} {{ $notice['color'] }}"></i>
-            </div>
-            <h5 class="font-weight-bold mb-3">{{ $notice['title'] }}</h5>
-            <p class="text-muted mb-4">{{ $notice['message'] }}</p>
-            <a href="{{ url('admin/login') }}" class="btn btn-primary btn-block">
-                返回登入頁
-            </a>
-        </div>
-    </div>
-
-    <div class="login-footer">
-        &copy; {{ date('Y') }} YoYoAdmin
-    </div>
-</div>
-
-<!-- Bootstrap 4 -->
-<script src="{{asset('admin-layout/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-<!-- AdminLTE App -->
-<script src="{{asset('admin-layout/dist/js/adminlte.min.js')}}"></script>
+    <p class="mt-8 text-[0.75rem] text-outline">&copy; {{ date('Y') }} YoYoAdmin</p>
 
 </body>
 </html>

@@ -46,7 +46,7 @@ class AdminMenuController extends Controller
         $this->settingService->setSetData('fields', $fields);
         $this->settingService->setSetData('data', $this->service->fetchAllData());
 
-        return view('admin-share/page/list', $this->settingService->fetchSetData());
+        return view('admin/admin-menu/list', $this->settingService->fetchSetData());
     }
 
     /**
