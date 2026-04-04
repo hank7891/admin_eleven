@@ -36,6 +36,14 @@ Route::prefix('admin')->group(function () {
             Route::post('edit', [Controllers\Admin\EmployeeController::class, 'editDo']);
         });
 
+        # 國別管理
+        Route::prefix('country')->group(function () {
+            Route::get('list', [Controllers\Admin\CountryController::class, 'list']);
+            Route::get('edit/{id}', [Controllers\Admin\CountryController::class, 'edit']);
+            Route::post('edit', [Controllers\Admin\CountryController::class, 'editDo']);
+            Route::post('delete/{id}', [Controllers\Admin\CountryController::class, 'delete']);
+        });
+
         # 遊戲 - 貪食蛇
         Route::prefix('game.snake')->group(function () {
             Route::get('/', [Controllers\Admin\GameSnakeController::class, 'index']);
