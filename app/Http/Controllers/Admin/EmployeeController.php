@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Services\Admin\EmployeeService;
 use App\Services\Admin\AclRoleService;
@@ -84,19 +85,59 @@ class EmployeeController extends Controller
      */
     public function editDo(Request $request)
     {
-        $request->validate([
-            'gender'    => ['nullable', 'integer', Rule::in(array_keys(config('constants.gender')))],
-            'is_active' => ['nullable', 'integer', Rule::in(array_keys(config('constants.status')))],
-            'birthday'  => ['nullable', 'date'],
-            'phone'     => ['nullable', 'string', 'max:30'],
-            'role_ids'  => ['nullable', 'array'],
-            'role_ids.*' => ['integer', 'exists:acl_role,id'],
+        $id = (int) $request->input('id', 0);
+        $isEdit = $id > 0;
+        $roleIds = $request->input('role_ids', []);
+
+        $rules = [
+            'name'                  => ['required', 'string', 'max:50'],
+            'password'              => [$isEdit ? 'nullable' : 'required', 'string', 'min:6', 'confirmed'],
+            'password_confirmation' => [$isEdit ? 'nullable' : 'required', 'string', 'min:6'],
+            'gender'                => ['nullable', 'integer', Rule::in(array_keys(config('constants.gender')))],
+            'is_active'             => ['nullable', 'integer', Rule::in(array_keys(config('constants.status')))],
+            'birthday'              => ['nullable', 'date'],
+            'phone'                 => ['nullable', 'string', 'max:30'],
+            'role_ids'              => ['nullable', 'array'],
+            'role_ids.*'            => ['integer', 'exists:acl_role,id'],
+        ];
+
+        if (!$isEdit) {
+            $rules['account'] = ['required', 'string', 'max:50', Rule::unique('employee', 'account')];
+        }
+
+        $validator = Validator::make($request->all(), $rules, [
+            'account.required'              => '帳號為必填欄位',
+            'account.unique'                => '此帳號已被使用',
+            'name.required'                 => '姓名為必填欄位',
+            'name.max'                      => '姓名不可超過 50 個字元',
+            'password.required'             => '密碼為必填欄位',
+            'password.min'                  => '密碼至少需要 6 個字元',
+            'password.confirmed'            => '兩次密碼輸入不一致',
+            'password_confirmation.required'=> '請再次輸入確認密碼',
+            'password_confirmation.min'     => '確認密碼至少需要 6 個字元',
+            'birthday.date'                 => '生日格式錯誤',
+            'phone.max'                     => '電話不可超過 30 個字元',
+            'role_ids.*.exists'             => '角色資料不存在',
         ]);
 
         $post = $request->only(['id', 'account', 'name', 'password', 'gender', 'birthday', 'phone', 'is_active']);
-        $roleIds = $request->input('role_ids', []);
 
-        # 密碼為空時不更新密碼欄位
+        if ($isEdit) {
+            # 編輯模式不接收帳號欄位，避免繞過前端唯讀限制
+            unset($post['account']);
+        }
+
+        if ($validator->fails()) {
+            $sessionPost = $request->only(['id', 'account', 'name', 'gender', 'birthday', 'phone', 'is_active']);
+            $sessionPost['role_ids'] = $roleIds;
+            $sessionPost['change_password'] = (int) $request->input('change_password', 0);
+
+            session([self::POST_SESSION => $sessionPost]);
+            MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $validator->errors()->first());
+            return redirect('admin/employee/edit/' . $id);
+        }
+
+        # 編輯模式密碼為空時不更新密碼欄位
         if (empty($post['password'])) {
             unset($post['password']);
         }
@@ -105,8 +146,8 @@ class EmployeeController extends Controller
             # 處理大頭照上傳
             if ($request->hasFile('avatar')) {
                 # 刪除舊檔
-                if ($post['id'] > 0) {
-                    $oldData = $this->service->fetchDataByID($post['id']);
+                if ($id > 0) {
+                    $oldData = $this->service->fetchDataByID($id);
                     if (!empty($oldData['avatar'])) {
                         $this->uploadService->delete($oldData['avatar']);
                     }
@@ -115,8 +156,7 @@ class EmployeeController extends Controller
                 $post['avatar'] = $this->uploadService->upload($request->file('avatar'), 'image');
             }
 
-            $id = $post['id'];
-            if ($post['id'] == 0) {
+            if ($id === 0) {
                 # 新增
                 $id = $this->service->addData($post);
 
@@ -127,19 +167,19 @@ class EmployeeController extends Controller
                 $this->logService->recordSimple($request, 'employee', 'create', $id, $post['name'] ?? null);
             } else {
                 # 取得修改前資料（若尚未取得）
-                $oldData = $oldData ?? $this->service->fetchDataByID($post['id']);
+                $oldData = $oldData ?? $this->service->fetchDataByID($id);
 
                 # 編輯
-                $this->service->updateData($post['id'], $post);
+                $this->service->updateData($id, $post);
 
                 # 同步角色
-                $this->service->syncRoles($post['id'], $roleIds);
+                $this->service->syncRoles($id, $roleIds);
 
                 # 記錄操作日誌
                 $this->logService->recordUpdate(
                     $request,
                     'employee',
-                    $post['id'],
+                    $id,
                     $oldData['name'] ?? null,
                     $oldData,
                     $post,
@@ -150,10 +190,15 @@ class EmployeeController extends Controller
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::SUCCESS, '編輯成功！');
             return redirect('admin/employee/edit/' . $id);
         } catch (\Exception $e) {
-            session([self::POST_SESSION => $post]);
+            $sessionPost = $request->only(['id', 'account', 'name', 'gender', 'birthday', 'phone', 'is_active']);
+            $sessionPost['role_ids'] = $roleIds;
+            $sessionPost['change_password'] = (int) $request->input('change_password', 0);
+            $sessionPost['avatar'] = $post['avatar'] ?? null;
+
+            session([self::POST_SESSION => $sessionPost]);
 
             MessageService::setMessage(ADMIN_MESSAGE_SESSION, MessageService::DANGER, $e->getMessage());
-            return redirect('admin/employee/edit/' . ($post['id'] ?? 0));
+            return redirect('admin/employee/edit/' . $id);
         }
     }
 }

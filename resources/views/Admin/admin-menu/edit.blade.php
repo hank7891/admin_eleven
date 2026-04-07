@@ -94,7 +94,7 @@
                                 <span class="material-symbols-outlined text-primary">bolt</span>
                                 操作面板
                             </h3>
-                            <button type="submit" class="w-full py-3 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white rounded-xl font-bold text-[0.875rem] flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-200">
+                            <button type="submit" class="w-full py-3 btn-primary rounded-xl font-bold text-[0.875rem] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all duration-200">
                                 <span class="material-symbols-outlined text-[20px]">save</span>
                                 儲存
                             </button>

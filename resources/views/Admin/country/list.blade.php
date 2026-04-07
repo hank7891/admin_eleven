@@ -10,7 +10,7 @@
                     <p class="text-[0.8125rem] text-outline mt-1">維護國家名稱、縮寫與國家代碼資料</p>
                 </div>
                 <div class="flex gap-3">
-                    <a href="{{ asset('admin/country/edit/0') }}" class="bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all duration-200 no-underline">
+                    <a href="{{ asset('admin/country/edit/0') }}" class="btn-primary px-6 py-2.5 rounded-xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all duration-200 no-underline">
                         <span class="material-symbols-outlined text-[20px]">add</span>
                         <span class="text-[0.875rem] font-semibold">新增國別</span>
                     </a>
@@ -48,7 +48,7 @@
                             </select>
                         </div>
                         <div class="flex gap-3">
-                            <button type="submit" class="flex-1 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white py-3 rounded-xl font-semibold text-[0.875rem] shadow-lg shadow-indigo-500/10 hover:brightness-110 active:scale-95 transition-all">搜尋</button>
+                            <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-semibold text-[0.875rem] active:scale-95 transition-all">搜尋</button>
                             <a href="{{ url('admin/country/list') }}" class="px-5 bg-surface-container-high text-on-surface py-3 rounded-xl font-semibold text-[0.875rem] hover:bg-surface-container-highest transition-colors active:scale-95 no-underline flex items-center">清除</a>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse" id="dataTable">
                             <thead>
-                            <tr class="bg-surface-container-low">
+                            <tr class="table-header-row">
                                 <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">#</th>
                                 <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">操作</th>
                                 <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">ID</th>
@@ -128,4 +128,5 @@
     </script>
     @endpush
 @stop
+
 

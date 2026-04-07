@@ -13,7 +13,7 @@
 <aside class="fixed left-0 top-0 h-screen w-64 bg-inverse-surface flex flex-col z-50 overflow-y-auto">
     {{-- 品牌 Logo --}}
     <div class="flex items-center gap-3 px-5 py-5 mb-2">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+        <div class="w-10 h-10 rounded-xl brand-mark flex items-center justify-center text-white">
             <span class="material-symbols-outlined text-[22px]">rocket_launch</span>
         </div>
         <div>
@@ -64,7 +64,7 @@
                             <a href="{{ asset($detail['url'] ?? '#') }}"
                                class="flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 no-underline
                                    {{ $detail['is_open']
-                                       ? 'bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-md shadow-indigo-500/20'
+                                       ? 'sidebar-active-item text-white'
                                        : 'text-inverse-on-surface/60 hover:text-inverse-on-surface hover:bg-inverse-on-surface/5' }}">
                                 <i class="{{ $detail['icon'] ?? 'far fa-circle' }} w-4 text-center text-[0.75rem]"></i>
                                 <span class="text-[0.8125rem] font-medium">{{ $detail['name'] }}</span>
@@ -78,7 +78,7 @@
                     <a href="{{ asset($detail['url'] ?? '#') }}"
                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 no-underline
                            {{ $detail['is_open']
-                               ? 'bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white shadow-md shadow-indigo-500/20'
+                               ? 'sidebar-active-item text-white'
                                : 'text-inverse-on-surface/70 hover:text-inverse-on-surface hover:bg-inverse-on-surface/5' }}">
                         <i class="{{ $detail['icon'] ?? 'far fa-circle' }} w-5 text-center text-[0.875rem]"></i>
                         <span class="text-[0.8125rem] font-medium">{{ $detail['name'] }}</span>

@@ -100,7 +100,7 @@
                                 <div class="border border-outline-variant/20 rounded-xl overflow-hidden">
                                     <table class="w-full text-left border-collapse">
                                         <thead>
-                                        <tr class="bg-surface-container-low">
+                                        <tr class="table-header-row">
                                             <th class="px-6 py-4 text-[0.8125rem] font-bold text-outline" style="width: 25%;">欄位名稱</th>
                                             <th class="px-6 py-4 text-[0.8125rem] font-bold text-outline" style="width: 37.5%;">修改前</th>
                                             <th class="px-6 py-4 text-[0.8125rem] font-bold text-outline" style="width: 37.5%;">修改後</th>
@@ -147,7 +147,7 @@
                             <h3 class="text-[0.9375rem] font-bold text-on-surface">操作面板</h3>
                         </div>
                         <div class="p-6">
-                            <a href="{{ asset('admin/admin.log/list') }}" class="w-full py-3 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white rounded-xl font-bold text-[0.875rem] flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-200 no-underline">
+                            <a href="{{ asset('admin/admin.log/list') }}" class="w-full py-3 btn-primary rounded-xl font-bold text-[0.875rem] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all duration-200 no-underline">
                                 <span class="material-symbols-outlined text-[20px]">arrow_back</span>
                                 返回列表
                             </a>

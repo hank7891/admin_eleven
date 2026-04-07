@@ -50,7 +50,7 @@
             {{-- 中間頁碼 --}}
             @for ($i = $start; $i <= $end; $i++)
                 @if ($i == $currentPage)
-                    <span class="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white font-bold text-[0.875rem] shadow-md shadow-indigo-500/20">{{ $i }}</span>
+                    <span class="w-10 h-10 flex items-center justify-center rounded-xl btn-primary text-white font-bold text-[0.875rem]">{{ $i }}</span>
                 @else
                     <a href="{{ $paginator->appends($filters)->url($i) }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-low text-on-surface font-semibold text-[0.875rem] hover:bg-surface-container-high transition-colors no-underline">{{ $i }}</a>
                 @endif

@@ -5,7 +5,7 @@
 @push('styles')
 <style>
     body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4b5e90 0%, #6b5680 100%);
     }
 </style>
 @endpush
@@ -60,7 +60,7 @@
                 </div>
 
                 {{-- 登入按鈕 --}}
-                <button type="submit" class="w-full bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white font-bold py-4 rounded-lg shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+                <button type="submit" class="w-full btn-primary font-bold py-4 rounded-lg active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
                     登入
                     <span class="material-symbols-outlined text-[20px]">login</span>
                 </button>

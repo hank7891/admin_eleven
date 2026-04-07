@@ -64,7 +64,7 @@
                         <a href="{{ asset('admin/admin.log/list') }}" class="px-6 py-2.5 text-outline hover:text-on-surface font-medium text-[0.875rem] transition-colors no-underline">
                             清除條件
                         </a>
-                        <button type="submit" class="px-8 py-2.5 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white rounded-xl font-bold text-[0.875rem] shadow-lg shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-2">
+                        <button type="submit" class="px-8 py-2.5 btn-primary rounded-xl font-bold text-[0.875rem] active:scale-95 transition-all flex items-center gap-2">
                             <span class="material-symbols-outlined text-[18px]">search</span>
                             搜尋日誌
                         </button>
@@ -88,7 +88,7 @@
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse" id="logTable">
                             <thead>
-                            <tr class="bg-surface-container-low">
+                            <tr class="table-header-row">
                                 <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">#</th>
                                 <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">操作</th>
                                 <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">ID</th>

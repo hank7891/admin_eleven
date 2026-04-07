@@ -65,7 +65,7 @@
                                         {{-- 群組標題列 --}}
                                         <div class="flex items-center gap-3 px-6 py-4 bg-surface-container-low/50">
                                             <input type="checkbox"
-                                                   class="group-checkbox w-5 h-5 rounded text-primary focus:ring-primary/20 bg-surface-container-high border-none cursor-pointer"
+                                                   class="group-checkbox stitch-checkbox stitch-checkbox--md cursor-pointer"
                                                    id="group_{{ $loop->index }}"
                                                    data-group="{{ $loop->index }}">
                                             <label for="group_{{ $loop->index }}" class="flex items-center gap-2 text-[0.875rem] font-semibold text-on-surface cursor-pointer flex-1">
@@ -82,7 +82,7 @@
                                                 @foreach ($group['details'] as $detail)
                                                     <label class="flex items-center gap-3 p-3 rounded-lg border border-surface-container hover:bg-surface-container-low transition-colors cursor-pointer">
                                                         <input type="checkbox"
-                                                               class="menu-checkbox group-{{ $loop->parent->index }} w-4 h-4 rounded text-primary focus:ring-primary/20 bg-surface-container-high border-none"
+                                                               class="menu-checkbox group-{{ $loop->parent->index }} stitch-checkbox stitch-checkbox--sm"
                                                                name="menu_ids[]"
                                                                value="{{ $detail['id'] }}"
                                                                id="menu_{{ $detail['id'] }}"
@@ -114,7 +114,7 @@
                                 <span class="material-symbols-outlined text-primary">bolt</span>
                                 操作面板
                             </h3>
-                            <button type="submit" class="w-full py-3 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white rounded-xl font-bold text-[0.875rem] flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-200">
+                            <button type="submit" class="w-full py-3 btn-primary rounded-xl font-bold text-[0.875rem] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all duration-200">
                                 <span class="material-symbols-outlined text-[20px]">save</span>
                                 儲存
                             </button>

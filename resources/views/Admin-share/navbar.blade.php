@@ -7,7 +7,7 @@
 
 <header class="sticky top-0 z-30 glass-header border-b border-outline-variant/20 flex justify-between items-center px-6 py-3 w-full">
     <div class="flex items-center gap-6">
-        <h1 class="text-xl font-bold bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent font-headline">YoYoAdmin</h1>
+        <h1 class="text-xl font-bold text-primary font-headline tracking-tight">YoYoAdmin</h1>
         <div class="hidden sm:flex items-center bg-surface-container-low px-4 py-1.5 rounded-full">
             <span class="material-symbols-outlined text-[18px] text-outline mr-2">search</span>
             <input class="bg-transparent border-none focus:ring-0 text-[0.875rem] w-48 font-body placeholder:text-outline-variant" placeholder="搜尋..." type="text" disabled />

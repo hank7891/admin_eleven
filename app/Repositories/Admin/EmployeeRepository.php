@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Admin;
 
+use Illuminate\Support\Facades\Hash;
 use App\Models\Employee;
 
 class EmployeeRepository
@@ -93,9 +94,37 @@ class EmployeeRepository
      */
     public function fetchDataByAccount(string $account, string $password): array
     {
-        $employee = $this->employee::where('account', $account)
-                        ->where('password', $password)
-                        ->first();
+        $employee = $this->employee::where('account', $account)->first();
+
+        if (empty($employee)) {
+            return [];
+        }
+
+        $storedPassword = (string) ($employee->getRawOriginal('password') ?? '');
+        $passwordInfo = password_get_info($storedPassword);
+        $isHashed = !empty($passwordInfo['algo']);
+
+        if ($isHashed) {
+            if (!Hash::check($password, $storedPassword)) {
+                return [];
+            }
+
+            # 演算法更新時自動重算 hash
+            if (Hash::needsRehash($storedPassword)) {
+                $employee->update([
+                    'password' => Hash::make($password),
+                ]);
+            }
+        } else {
+            if ($storedPassword !== $password) {
+                return [];
+            }
+
+            # 舊明文密碼登入成功後，自動升級為 hash
+            $employee->update([
+                'password' => Hash::make($password),
+            ]);
+        }
 
         return !empty($employee) ? $employee->toArray() : [];
     }

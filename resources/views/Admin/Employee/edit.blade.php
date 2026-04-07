@@ -5,13 +5,7 @@
             {{-- 頁面標題區 --}}
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <nav class="flex items-center gap-2 text-[0.75rem] text-outline-variant mb-1 uppercase tracking-widest font-semibold">
-                        <a href="{{ asset('admin/') }}" class="hover:text-primary transition-colors">首頁</a>
-                        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                        <a href="{{ asset('admin/employee/list') }}" class="hover:text-primary transition-colors">會員管理</a>
-                        <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                        <span class="text-primary">{{ empty($data['id']) ? '新增' : '編輯' }}</span>
-                    </nav>
+                    <x-breadcrumb :items="[['label' => '首頁', 'url' => 'admin/'], ['label' => '會員管理', 'url' => 'admin/employee/list'], ['label' => empty($data['id']) ? '新增' : '編輯']]" />
                     <h2 class="text-[1.5rem] font-bold text-on-surface tracking-tight font-headline">{{ empty($data['id']) ? '新增會員' : '編輯會員' }}</h2>
                     <p class="text-[0.8125rem] text-outline mt-1">{{ empty($data['id']) ? '建立新的系統使用者帳號' : '修改會員資料與角色設定' }}</p>
                 </div>
@@ -33,26 +27,20 @@
                                 </h3>
                             </div>
                             <div class="p-8 space-y-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{ changePassword: {{ !empty($data['change_password']) ? 'true' : 'false' }} }">
                                     <div class="space-y-1.5">
-                                        <label class="block text-[0.875rem] font-medium text-on-surface-variant">帳號</label>
+                                        <label class="block text-[0.875rem] font-medium text-on-surface-variant">帳號 @if (($data['id'] ?? 0) === 0)<span class="text-error">*</span>@endif</label>
                                         @if (($data['id'] ?? 0) > 0)
                                             <input type="text" readonly value="{{ $data['account'] ?? '--' }}"
                                                    class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg px-4 py-2.5 text-[0.875rem] text-outline cursor-not-allowed">
                                         @else
-                                            <input type="text" name="account" placeholder="請輸入帳號" value=""
+                                            <input type="text" name="account" placeholder="請輸入帳號" value="{{ $data['account'] ?? '' }}"
                                                    class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-outline-variant/60">
                                         @endif
                                     </div>
                                     <div class="space-y-1.5">
                                         <label class="block text-[0.875rem] font-medium text-on-surface-variant">姓名 <span class="text-error">*</span></label>
                                         <input type="text" name="name" placeholder="請輸入姓名" value="{{ $data['name'] ?? '' }}"
-                                               class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-outline-variant/60">
-                                    </div>
-                                    <div class="space-y-1.5">
-                                        <label class="block text-[0.875rem] font-medium text-on-surface-variant">密碼</label>
-                                        <input type="password" name="password"
-                                               placeholder="{{ ($data['id'] ?? 0) > 0 ? '留空則不更新密碼' : '請輸入密碼' }}"
                                                class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-outline-variant/60">
                                     </div>
                                     <div class="space-y-1.5">
@@ -84,6 +72,50 @@
                                             @endforeach
                                         </select>
                                     </div>
+
+                                    @if (($data['id'] ?? 0) > 0)
+                                        <div class="md:col-span-2 space-y-4 rounded-xl border border-outline-variant/20 bg-surface-container-low p-5">
+                                            <input type="hidden" name="change_password" :value="changePassword ? 1 : 0">
+                                            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                                <div>
+                                                    <p class="text-[0.875rem] font-medium text-on-surface-variant">密碼</p>
+                                                    <p class="text-[0.75rem] text-outline">目前密碼已設定，如需修改請點擊右側按鈕。</p>
+                                                </div>
+                                                <button type="button" @click="changePassword = !changePassword" class="inline-flex items-center justify-center gap-2 rounded-lg bg-surface-container-high px-4 py-2 text-[0.875rem] font-semibold text-on-surface hover:bg-surface-container transition-colors">
+                                                    <span class="material-symbols-outlined text-[18px]" x-text="changePassword ? 'lock_reset' : 'password'"></span>
+                                                    <span x-text="changePassword ? '取消變更密碼' : '變更密碼'"></span>
+                                                </button>
+                                            </div>
+
+                                            <div x-show="changePassword" x-collapse class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div class="space-y-1.5">
+                                                    <label class="block text-[0.875rem] font-medium text-on-surface-variant">新密碼</label>
+                                                    <input type="password" name="password" autocomplete="new-password"
+                                                           placeholder="留空則不更新密碼"
+                                                           class="w-full bg-surface-container-highest border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-outline-variant/60">
+                                                </div>
+                                                <div class="space-y-1.5">
+                                                    <label class="block text-[0.875rem] font-medium text-on-surface-variant">確認新密碼</label>
+                                                    <input type="password" name="password_confirmation" autocomplete="new-password"
+                                                           placeholder="請再次輸入新密碼"
+                                                           class="w-full bg-surface-container-highest border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-outline-variant/60">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="space-y-1.5">
+                                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">密碼 <span class="text-error">*</span></label>
+                                            <input type="password" name="password" autocomplete="new-password"
+                                                   placeholder="請輸入密碼"
+                                                   class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-outline-variant/60">
+                                        </div>
+                                        <div class="space-y-1.5">
+                                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">確認密碼 <span class="text-error">*</span></label>
+                                            <input type="password" name="password_confirmation" autocomplete="new-password"
+                                                   placeholder="請再次輸入密碼"
+                                                   class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-outline-variant/60">
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -105,7 +137,7 @@
                                                        name="role_ids[]"
                                                        value="{{ $role['id'] }}"
                                                        id="role_{{ $role['id'] }}"
-                                                       class="w-5 h-5 rounded text-primary focus:ring-primary/20 bg-surface-container-high border-none"
+                                                       class="stitch-checkbox stitch-checkbox--md"
                                                        {{ in_array($role['id'], $data['role_ids'] ?? []) ? 'checked' : '' }}>
                                                 <span class="text-[0.875rem] font-medium text-on-surface">{{ $role['role_name'] }}</span>
                                             </label>
@@ -166,7 +198,7 @@
                                 <span class="material-symbols-outlined text-primary">bolt</span>
                                 操作面板
                             </h3>
-                            <button type="submit" class="w-full py-3 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white rounded-xl font-bold text-[0.875rem] flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all duration-200">
+                            <button type="submit" class="w-full py-3 btn-primary rounded-xl font-bold text-[0.875rem] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all duration-200">
                                 <span class="material-symbols-outlined text-[20px]">save</span>
                                 儲存
                             </button>

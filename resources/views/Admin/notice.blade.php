@@ -13,7 +13,7 @@
         </span>
         <h2 class="text-[1.25rem] font-bold text-on-surface mb-3 font-headline">{{ $notice['title'] }}</h2>
         <p class="text-[0.875rem] text-outline mb-6">{{ $notice['message'] }}</p>
-        <a href="{{ url('admin/login') }}" class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white rounded-xl font-bold text-[0.875rem] shadow-lg shadow-indigo-500/20 active:scale-95 transition-all no-underline">
+        <a href="{{ url('admin/login') }}" class="inline-flex items-center gap-2 px-6 py-2.5 btn-primary rounded-xl font-bold text-[0.875rem] active:scale-95 transition-all no-underline">
             <span class="material-symbols-outlined text-[18px]">arrow_back</span>
             返回登入頁
         </a>

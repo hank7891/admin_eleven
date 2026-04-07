@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 use App\Repositories\Admin\EmployeeRepository;
 
 class EmployeeService
@@ -115,7 +116,8 @@ class EmployeeService
      */
     public function addData(array $data): int
     {
-        # TODO 資料驗證
+        # 資料正規化
+        $data = $this->normalizePayload($data, false);
 
         # 資料新增
         $user = $this->employeeRepository->addData($data);
@@ -138,15 +140,11 @@ class EmployeeService
      */
     public function updateData(int $id, array $data): int
     {
-        # TODO 資料驗證
+        # 資料正規化
+        $data = $this->normalizePayload($data, true);
 
         # 資料更新
-        $result = $this->employeeRepository->updateData($id, $data);
-
-        # 回傳結果
-        if (!$result) {
-            throw new \Exception('更新會員資料失敗！ #001');
-        }
+        $this->employeeRepository->updateData($id, $data);
 
         return $id;
     }
@@ -159,5 +157,41 @@ class EmployeeService
     public function syncRoles(int $employeeId, array $roleIds): void
     {
         $this->employeeRepository->syncRoles($employeeId, $roleIds);
+    }
+
+    /**
+     * 正規化儲存資料
+     * @param array $data
+     * @param bool $isUpdate
+     * @return array
+     */
+    protected function normalizePayload(array $data, bool $isUpdate): array
+    {
+        if (isset($data['account'])) {
+            $data['account'] = trim((string) $data['account']);
+        }
+
+        if (isset($data['name'])) {
+            $data['name'] = trim((string) $data['name']);
+        }
+
+        if (isset($data['phone'])) {
+            $data['phone'] = trim((string) $data['phone']);
+            $data['phone'] = $data['phone'] === '' ? null : $data['phone'];
+        }
+
+        if (isset($data['birthday']) && trim((string) $data['birthday']) === '') {
+            $data['birthday'] = null;
+        }
+
+        if (isset($data['password'])) {
+            if ($isUpdate && trim((string) $data['password']) === '') {
+                unset($data['password']);
+            } else {
+                $data['password'] = Hash::make((string) $data['password']);
+            }
+        }
+
+        return $data;
     }
 }

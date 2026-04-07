@@ -5,7 +5,7 @@
 @push('styles')
 <style>
     body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #4b5e90 0%, #6b5680 100%);
     }
 </style>
 @endpush
@@ -40,14 +40,14 @@
                     <form action="{{ url('admin/select-role') }}" method="post">
                         @csrf
                         <input type="hidden" name="role_id" value="{{ $role['id'] }}">
-                        <button type="submit" class="w-full group relative flex flex-col items-center p-8 rounded-xl border-2 transition-all hover:translate-y-[-4px] active:scale-[0.98]
+                        <button type="submit" class="w-full group relative flex flex-col items-center p-8 rounded-xl border-2 transition-all hover:-translate-y-1 active:scale-[0.98]
                             {{ $isActive
                                 ? 'bg-primary/5 border-secondary shadow-lg shadow-primary/10'
                                 : 'bg-surface-container-low border-transparent hover:border-primary/30 hover:bg-surface-container' }}">
                             {{-- 圖示 --}}
                             <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4 shadow-lg
                                 {{ $isActive
-                                    ? 'bg-gradient-to-br from-[#667eea] to-[#764ba2] shadow-indigo-500/20'
+                                    ? 'brand-mark'
                                     : 'bg-surface-container-high group-hover:bg-surface-container transition-colors' }}">
                                 <span class="material-symbols-outlined text-[2rem]
                                     {{ $isActive ? 'text-white' : 'text-outline' }}">shield_person</span>
