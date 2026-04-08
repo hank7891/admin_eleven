@@ -4,9 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
 use App\Http\Middleware;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [Controllers\Frontend\HomeController::class, 'index']);
 
 Route::get('test', [Controllers\TestController::class, 'index'])->middleware(Middleware\Test::class);
 
