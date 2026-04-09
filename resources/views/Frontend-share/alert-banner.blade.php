@@ -1,3 +1,4 @@
+@if (!empty($alertBanner['message']))
 <aside
     id="frontend-alert-banner"
     class="frontend-alert sticky top-0 z-70 w-full border-b border-tertiary/10 bg-tertiary-fixed text-on-tertiary-fixed"
@@ -27,5 +28,6 @@
         </button>
     </div>
 </aside>
+@endif
 
 

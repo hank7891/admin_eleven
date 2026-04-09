@@ -37,3 +37,10 @@ define('LOGIN_LOG_STATUS_FAIL', 0);
  * 後台訊息頁 - 訊息 key
  */
 define('ADMIN_NOTICE_NO_ROLE', 'no_role');
+
+/*
+ * 公告類型
+ */
+define('ANNOUNCEMENT_TYPE_SYSTEM', 1);
+define('ANNOUNCEMENT_TYPE_GENERAL', 2);
+

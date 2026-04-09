@@ -5,6 +5,9 @@ use App\Http\Controllers;
 use App\Http\Middleware;
 
 Route::get('/', [Controllers\Frontend\HomeController::class, 'index']);
+Route::get('announcement', [Controllers\Frontend\AnnouncementController::class, 'list']);
+Route::get('announcement/{id}', [Controllers\Frontend\AnnouncementController::class, 'detail'])
+    ->whereNumber('id');
 
 Route::get('test', [Controllers\TestController::class, 'index'])->middleware(Middleware\Test::class);
 
@@ -40,6 +43,14 @@ Route::prefix('admin')->group(function () {
             Route::get('edit/{id}', [Controllers\Admin\CountryController::class, 'edit']);
             Route::post('edit', [Controllers\Admin\CountryController::class, 'editDo']);
             Route::post('delete/{id}', [Controllers\Admin\CountryController::class, 'delete']);
+        });
+
+        # 公告管理
+        Route::prefix('announcement')->group(function () {
+            Route::get('list', [Controllers\Admin\AnnouncementController::class, 'list']);
+            Route::get('edit/{id}', [Controllers\Admin\AnnouncementController::class, 'edit']);
+            Route::post('edit', [Controllers\Admin\AnnouncementController::class, 'editDo']);
+            Route::post('delete/{id}', [Controllers\Admin\AnnouncementController::class, 'delete']);
         });
 
         # 遊戲 - 貪食蛇

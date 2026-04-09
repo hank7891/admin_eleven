@@ -11,6 +11,7 @@ return [
         'admin_menu' => '選單管理',
         'employee' => '帳號管理',
         'country' => '國別管理',
+        'announcement' => '公告管理',
         'acl_role' => '角色管理',
         'admin_log' => '操作日誌',
     ],

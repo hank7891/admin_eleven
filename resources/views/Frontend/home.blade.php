@@ -89,38 +89,43 @@
     <section id="journal" class="border-y border-outline-variant/30 bg-surface-container-low/66 px-4 py-16 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="journalHeading">
         <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
             <div class="space-y-6 lg:sticky lg:top-36 lg:self-start">
-                <span class="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-primary">The Journal</span>
+                <span class="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-primary">Latest News</span>
                 <h2 id="journalHeading" class="font-headline text-[2.2rem] tracking-[-0.04em] text-on-surface sm:text-[3rem]">把生活過成一種有留白的閱讀體驗</h2>
                 <p class="max-w-md text-[1rem] leading-8 text-on-surface/68">
-                    五則靜態公告與編輯文章，保留足夠呼吸感與節奏，讓資訊像品牌日誌而非訊息牆。
+                    最新五筆已生效一般公告。保留足夠呼吸感與節奏，讓資訊像品牌日誌而非訊息牆。
                 </p>
-                <a href="#" class="inline-flex items-center gap-2 border-b border-outline pb-1 text-[0.9rem] font-medium text-on-surface transition-colors hover:text-primary no-underline">
+                <a href="{{ url('announcement') }}" class="inline-flex items-center gap-2 border-b border-outline pb-1 text-[0.9rem] font-medium text-on-surface transition-colors hover:text-primary no-underline">
                     More Articles
                     <span class="material-symbols-outlined text-[1rem]" aria-hidden="true">arrow_outward</span>
                 </a>
             </div>
 
             <div class="space-y-5">
-                @foreach ($journalEntries as $entry)
+                @forelse ($journalEntries as $entry)
                     <article class="group rounded-[1.2rem] border border-outline-variant/35 bg-surface-container-lowest/86 px-6 py-6 shadow-[0_22px_44px_-34px_rgba(26,28,25,0.28)] transition-transform duration-500 hover:-translate-y-1">
                         <a href="{{ $entry['url'] }}" class="block no-underline" aria-label="閱讀文章：{{ $entry['title'] }}">
                             <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                                 <div class="space-y-3">
                                     <p class="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-secondary">
-                                        {{ \Carbon\Carbon::parse($entry['date'])->format('M d, Y') }}
+                                        {{ $entry['date_display'] ?? '' }}
                                     </p>
                                     <h3 class="font-headline text-[1.5rem] leading-tight tracking-[-0.03em] text-on-surface transition-colors group-hover:text-primary sm:text-[1.8rem]">
                                         {{ $entry['title'] }}
                                     </h3>
                                     <p class="max-w-2xl text-[0.98rem] leading-7 text-on-surface/64">
-                                        {{ $entry['excerpt'] }}
+                                        {{ $entry['content_preview'] ?? ($entry['summary'] ?? '') }}
                                     </p>
                                 </div>
                                 <span class="material-symbols-outlined text-outline transition-transform group-hover:translate-x-1 group-hover:text-primary" aria-hidden="true">arrow_outward</span>
                             </div>
                         </a>
                     </article>
-                @endforeach
+                @empty
+                    <div class="rounded-[1.2rem] border border-outline-variant/35 bg-surface-container-lowest/86 px-6 py-10 text-center shadow-[0_22px_44px_-34px_rgba(26,28,25,0.28)]">
+                        <span class="material-symbols-outlined text-[2.2rem] text-outline-variant/55">article</span>
+                        <p class="mt-4 text-[0.96rem] text-on-surface/66">目前尚無已公開公告。</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Services\Frontend\AnnouncementService;
+use Mockery\MockInterface;
 // use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,6 +14,16 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
+        $this->mock(AnnouncementService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchHomepageAnnouncements')
+                ->once()
+                ->andReturn([]);
+
+            $mock->shouldReceive('fetchSystemAnnouncement')
+                ->once()
+                ->andReturn(null);
+        });
+
         $response = $this->get('/');
 
         $response->assertStatus(200);
