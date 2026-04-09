@@ -3,10 +3,16 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Services\Frontend\AnnouncementService;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
+    # 建構元
+    public function __construct(protected AnnouncementService $announcementService)
+    {
+    }
+
     /**
      * 前台首頁
      */
@@ -24,7 +30,7 @@ class HomeController extends Controller
                     'url' => '/#products',
                 ],
                 'secondary_cta' => [
-                    'label' => '閱讀品牌日誌',
+                    'label' => '閱讀最新公告',
                     'url' => '/#journal',
                 ],
             ],
@@ -60,38 +66,7 @@ class HomeController extends Controller
             ],
         ];
 
-        $journalEntries = [
-            [
-                'date' => '2026-04-02',
-                'title' => '安靜的空間，如何讓生活更有餘裕',
-                'excerpt' => '從材質、光線到留白比例，整理出一個讓人願意慢下來的居家語彙。',
-                'url' => '#',
-            ],
-            [
-                'date' => '2026-03-26',
-                'title' => '亞麻、木質與石材：本季最溫柔的三種層次',
-                'excerpt' => '以自然材質搭配暖色中性底，建立穩定又耐看的空間節奏。',
-                'url' => '#',
-            ],
-            [
-                'date' => '2026-03-18',
-                'title' => '器物不只是器物：收藏感日常的入門方式',
-                'excerpt' => '從杯盤、燈具到單椅，挑選值得長期相處的生活物件。',
-                'url' => '#',
-            ],
-            [
-                'date' => '2026-03-06',
-                'title' => '在快節奏之外，重新理解家的安定感',
-                'excerpt' => '透過慢色調與更低刺激的視覺密度，讓空間回到舒緩。',
-                'url' => '#',
-            ],
-            [
-                'date' => '2026-02-22',
-                'title' => 'The Journal：為何高品質日用品值得被認真對待',
-                'excerpt' => '真正耐用的作品，會在反覆使用裡留下更深刻的生活痕跡。',
-                'url' => '#',
-            ],
-        ];
+        $journalEntries = $this->announcementService->fetchHomepageAnnouncements();
 
         $products = [
             [
@@ -141,7 +116,7 @@ class HomeController extends Controller
         $navItems = [
             ['label' => '首頁', 'url' => '/#top'],
             ['label' => '精選商品', 'url' => '/#products'],
-            ['label' => '品牌日誌', 'url' => '/#journal'],
+            ['label' => '最新公告', 'url' => url('announcement')],
             ['label' => '會員專區', 'url' => '/#member'],
             ['label' => '關於我們', 'url' => '/#footer'],
         ];
@@ -161,12 +136,7 @@ class HomeController extends Controller
             ],
         ];
 
-        $alertBanner = [
-            'title' => '系統公告',
-            'message' => '春夏新作已正式上線，首頁目前為靜態形象頁展示版本，更多功能將於後續階段逐步開放。',
-            'link_label' => '閱讀本季選集',
-            'link_url' => '/#journal',
-        ];
+        $alertBanner = $this->announcementService->fetchSystemAnnouncement();
 
         return view('Frontend.home', [
             'pageTitle' => 'Aura & Heirloom | 前台形象首頁',
