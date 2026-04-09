@@ -26,7 +26,12 @@ class AnnouncementService
             return null;
         }
 
-        return $this->formatItem($announcement->toArray(), true);
+        $data = $this->formatItem($announcement->toArray(), true);
+
+        # 全系統公告 Blade 使用 message 欄位顯示
+        $data['message'] = $data['content'] ?? '';
+
+        return $data;
     }
 
     /**
