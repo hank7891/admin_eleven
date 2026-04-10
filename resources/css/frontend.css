@@ -199,6 +199,20 @@ body.frontend-body {
     transform: scale(1);
 }
 
+.hero-slide-image.is-fallback {
+    background: linear-gradient(135deg, #dde1ff 0%, #f7ecdf 52%, #eadffd 100%);
+    object-fit: cover;
+}
+
+.hero-copy {
+    transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.hero-copy.is-transitioning {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
 .hero-media-card::after {
     content: "";
     position: absolute;
@@ -238,6 +252,13 @@ input:focus-visible {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+
+    .hero-copy,
+    .hero-copy.is-transitioning,
+    .hero-slide-image,
+    .hero-slide-image.is-active {
+        transform: none !important;
     }
 }
 

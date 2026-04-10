@@ -53,6 +53,15 @@ Route::prefix('admin')->group(function () {
             Route::post('delete/{id}', [Controllers\Admin\AnnouncementController::class, 'delete']);
         });
 
+        # 首頁輪播管理
+        Route::prefix('hero-slide')->group(function () {
+            Route::get('list', [Controllers\Admin\HeroSlideController::class, 'list']);
+            Route::get('edit/{id}', [Controllers\Admin\HeroSlideController::class, 'edit']);
+            Route::post('edit', [Controllers\Admin\HeroSlideController::class, 'editDo']);
+            Route::post('delete/{id}', [Controllers\Admin\HeroSlideController::class, 'delete']);
+            Route::post('toggle-active/{id}', [Controllers\Admin\HeroSlideController::class, 'toggleActive']);
+        });
+
         # 遊戲 - 貪食蛇
         Route::prefix('game.snake')->group(function () {
             Route::get('/', [Controllers\Admin\GameSnakeController::class, 'index']);

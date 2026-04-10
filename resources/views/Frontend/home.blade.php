@@ -1,14 +1,16 @@
 @extends('Frontend-share.layout')
 
 @section('content')
+    @if (!empty($slides))
     <section class="relative overflow-hidden px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-24 lg:pt-40" aria-label="首頁主視覺輪播">
-        <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-14">
+        <div id="heroLiveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+        <div id="heroCarouselRegion" class="hero-carousel mx-auto grid max-w-7xl gap-10 focus:outline-none lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-14" tabindex="0" aria-roledescription="carousel" aria-label="首頁主視覺輪播，使用左右方向鍵切換" data-hero-carousel>
             <div class="space-y-8">
                 <span class="inline-flex items-center rounded-full border border-outline-variant/70 bg-surface-container-lowest px-4 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-primary shadow-[0_18px_34px_-28px_rgba(26,28,25,0.35)]">
                     Curated Living, Soft Rhythm
                 </span>
 
-                <div class="space-y-5">
+                <div id="heroTextContent" class="hero-copy space-y-5">
                     <p id="heroEyebrow" class="text-[0.78rem] font-semibold uppercase tracking-[0.28em] text-secondary sm:text-[0.82rem]">
                         {{ $slides[0]['eyebrow'] ?? '' }}
                     </p>
@@ -20,11 +22,11 @@
                     </p>
                 </div>
 
-                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <a id="heroPrimaryCta" href="{{ $slides[0]['primary_cta']['url'] ?? '#' }}" class="frontend-btn-primary inline-flex min-h-12 items-center justify-center rounded-full px-7 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
+                <div class="hero-copy flex flex-col gap-3 sm:flex-row sm:items-center" id="heroCtaGroup">
+                    <a id="heroPrimaryCta" href="{{ $slides[0]['primary_cta']['url'] ?? '#' }}" class="frontend-btn-primary {{ empty($slides[0]['primary_cta']['label']) || empty($slides[0]['primary_cta']['url']) ? 'hidden' : 'inline-flex' }} min-h-12 items-center justify-center rounded-full px-7 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
                         {{ $slides[0]['primary_cta']['label'] ?? 'Explore' }}
                     </a>
-                    <a id="heroSecondaryCta" href="{{ $slides[0]['secondary_cta']['url'] ?? '#' }}" class="frontend-btn-ghost inline-flex min-h-12 items-center justify-center rounded-full px-7 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
+                    <a id="heroSecondaryCta" href="{{ $slides[0]['secondary_cta']['url'] ?? '#' }}" class="frontend-btn-ghost {{ empty($slides[0]['secondary_cta']['label']) || empty($slides[0]['secondary_cta']['url']) ? 'hidden' : 'inline-flex' }} min-h-12 items-center justify-center rounded-full px-7 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
                         {{ $slides[0]['secondary_cta']['label'] ?? 'Learn more' }}
                     </a>
                 </div>
@@ -54,7 +56,7 @@
                 <div class="pointer-events-none absolute -bottom-12 right-0 h-40 w-40 rounded-full bg-tertiary/14 blur-3xl sm:h-52 sm:w-52"></div>
 
                 <div class="hero-media-card relative overflow-hidden rounded-[1.75rem] bg-surface-container-lowest p-3 shadow-[0_40px_80px_-48px_rgba(26,28,25,0.38)] sm:p-4">
-                    <div id="heroSlidePanel" class="relative aspect-[4/5] overflow-hidden rounded-[1.3rem] bg-surface-container-low">
+                    <div id="heroSlidePanel" class="relative aspect-[4/5] overflow-hidden rounded-[1.3rem] bg-surface-container-low" aria-live="off">
                         @foreach ($slides as $index => $slide)
                             <img
                                 src="{{ $slide['image'] }}"
@@ -62,6 +64,7 @@
                                 class="hero-slide-image {{ $index === 0 ? 'is-active' : '' }}"
                                 data-hero-image
                                 data-slide-index="{{ $index }}"
+                                data-fallback-alt="{{ $slide['title'] }}"
                                 @if ($index > 0) loading="lazy" @endif
                             >
                         @endforeach
@@ -85,6 +88,7 @@
             </div>
         </div>
     </section>
+    @endif
 
     <section id="journal" class="border-y border-outline-variant/30 bg-surface-container-low/66 px-4 py-16 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="journalHeading">
         <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
@@ -197,9 +201,11 @@
 @endsection
 
 @push('scripts')
-    <script>
-        window.__FRONTEND_HERO_SLIDES__ = @json($slides);
-    </script>
+    @if (!empty($slides))
+        <script>
+            window.__FRONTEND_HERO_SLIDES__ = @json($slides);
+        </script>
+    @endif
 @endpush
 
 

@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Services\Admin\HeroSlideService;
 use App\Services\Frontend\AnnouncementService;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
     # 建構元
-    public function __construct(protected AnnouncementService $announcementService)
+    public function __construct(
+        protected AnnouncementService $announcementService,
+        protected HeroSlideService $heroSlideService
+    )
     {
     }
 
@@ -18,53 +22,7 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $slides = [
-            [
-                'eyebrow' => 'Spring / Summer 2026',
-                'title' => '以留白與質地，安放日常的節奏',
-                'description' => '從器物、織品到家具，以柔和編排呈現一種「想待在這裡」的生活感。',
-                'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBRAwWD2hQyaFjmrY9eHr-khCMhLx9nSK55uYvxMGTxmvnIjC9lPdph5mmYYGnUcCy7kwJ11jJosbwKgQYLUFpJO5a4t2k-lptrgAiH2rPUM7yUJ673gU6ZebVqVANz9_Sxp1dDSQBDk_toeDGuZIEDFmmbqc_uom_g4KhNzvWut5NKIVEPuprK8cJj238qN3Oqm7C-VFZ1dH7bTtLlFS-ICA52X36JzY0UlMylk_Bf8SSaP70EkjiZGtk2yBtrvLKrWyt2UEiyN2A',
-                'image_alt' => '陽光灑落的高級簡約客廳，米白沙發與石材茶几營造安定與留白感。',
-                'primary_cta' => [
-                    'label' => '探索本季精選',
-                    'url' => '/#products',
-                ],
-                'secondary_cta' => [
-                    'label' => '閱讀最新公告',
-                    'url' => '/#journal',
-                ],
-            ],
-            [
-                'eyebrow' => 'Editorial Living',
-                'title' => '讓家的氣味與光影，都有被珍藏的理由',
-                'description' => '在材質、比例與沉靜色調之間，尋回更鬆弛、更有呼吸感的空間秩序。',
-                'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuAISwqPJM-7zw2HDoxIIYQO3QYzkQPsJqOKRT0cZLkNQaHaRL7_k6NGy07wbGh3dK5KylqdvzIf9lBG-T_sb0PcVvf2BLgj0FInkuaGePTbFNcvtL-Ku-7774cZiDrn6mU0czZF-5vTPGMGoMzfIl8MGgFBoLx8M0bkSsrV4srgp7DUGWCe0VEy4SsujJxzD9WoaKAgmo9pmWVsUHq-B7wrDi3Ho3WP2thU1jPrfjijDR9x791TvbqrGpr6zvPqLBH7TjCRbPF408w',
-                'image_alt' => '米色調生活空間搭配自然光影，呈現安靜而時尚的居家場景。',
-                'primary_cta' => [
-                    'label' => '查看設計靈感',
-                    'url' => '/#journal',
-                ],
-                'secondary_cta' => [
-                    'label' => '會員專屬邀請',
-                    'url' => '/#member',
-                ],
-            ],
-            [
-                'eyebrow' => 'Craft & Heritage',
-                'title' => '每一件作品，都為日常留下更長久的溫度',
-                'description' => '我們關注器物背後的工藝與故事，讓生活用品也成為可傳承的風景。',
-                'image' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuAnShC2M7xfr6TBoGgCKJjF17gQNbAqtOPDjlctdBj02JJGyMkbm3GgiqBEtf_PjiFrbbxaxwq8IH6b1kvWW7pk5Z3DxuvXPl7JdB30XI8L2hBsGTksN6qAtQ1GCeNynd6Q138KZLQUmdpzWuzjnpfy6A7U_vC6r7Eqhnazlr6YacW0EBxIAH91WXLxZoS3q-YzfGImRX2N5gmhZ2ASoFcqRRXUOsOq1VJ5zogPbxo2eLOYZInulcR9YC2REtYPjUnW2c88qf2rYqA',
-                'image_alt' => '帶有柔和光線的人物生活照，傳遞品牌會員與風格生活的連結感。',
-                'primary_cta' => [
-                    'label' => '瀏覽作品選集',
-                    'url' => '/#products',
-                ],
-                'secondary_cta' => [
-                    'label' => '加入內圈會員',
-                    'url' => '/#member',
-                ],
-            ],
-        ];
+        $slides = $this->heroSlideService->fetchActiveSlides();
 
         $journalEntries = $this->announcementService->fetchHomepageAnnouncements();
 

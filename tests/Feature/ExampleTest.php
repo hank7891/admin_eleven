@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Services\Admin\HeroSlideService;
 use App\Services\Frontend\AnnouncementService;
 use Mockery\MockInterface;
 // use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,6 +15,12 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
+        $this->mock(HeroSlideService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchActiveSlides')
+                ->once()
+                ->andReturn([]);
+        });
+
         $this->mock(AnnouncementService::class, function (MockInterface $mock) {
             $mock->shouldReceive('fetchHomepageAnnouncements')
                 ->once()
