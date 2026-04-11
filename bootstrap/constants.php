@@ -44,3 +44,20 @@ define('ADMIN_NOTICE_NO_ROLE', 'no_role');
 define('ANNOUNCEMENT_TYPE_SYSTEM', 1);
 define('ANNOUNCEMENT_TYPE_GENERAL', 2);
 
+/*
+ * 商品狀態
+ */
+define('PRODUCT_STATUS_ONLINE', 1);
+define('PRODUCT_STATUS_OFFLINE', 0);
+
+/*
+ * 商品主打狀態
+ */
+define('PRODUCT_FEATURED_ON', 1);
+define('PRODUCT_FEATURED_OFF', 0);
+
+/*
+ * 商品圖片張數上限
+ */
+define('PRODUCT_MAX_IMAGES', 5);
+

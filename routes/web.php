@@ -62,6 +62,32 @@ Route::prefix('admin')->group(function () {
             Route::post('toggle-active/{id}', [Controllers\Admin\HeroSlideController::class, 'toggleActive']);
         });
 
+        # 商品管理
+        Route::prefix('product')->group(function () {
+            Route::get('list', [Controllers\Admin\ProductController::class, 'list']);
+            Route::get('edit/{id}', [Controllers\Admin\ProductController::class, 'edit']);
+            Route::post('edit', [Controllers\Admin\ProductController::class, 'editDo']);
+            Route::post('delete/{id}', [Controllers\Admin\ProductController::class, 'delete']);
+            Route::post('bulk-status', [Controllers\Admin\ProductController::class, 'bulkStatus'])
+                ->middleware('throttle:30,1');
+        });
+
+        # 商品類別管理
+        Route::prefix('product.category')->group(function () {
+            Route::get('list', [Controllers\Admin\ProductCategoryController::class, 'list']);
+            Route::get('edit/{id}', [Controllers\Admin\ProductCategoryController::class, 'edit']);
+            Route::post('edit', [Controllers\Admin\ProductCategoryController::class, 'editDo']);
+            Route::post('delete/{id}', [Controllers\Admin\ProductCategoryController::class, 'delete']);
+        });
+
+        # 商品標籤管理
+        Route::prefix('product.tag')->group(function () {
+            Route::get('list', [Controllers\Admin\ProductTagController::class, 'list']);
+            Route::get('edit/{id}', [Controllers\Admin\ProductTagController::class, 'edit']);
+            Route::post('edit', [Controllers\Admin\ProductTagController::class, 'editDo']);
+            Route::post('delete/{id}', [Controllers\Admin\ProductTagController::class, 'delete']);
+        });
+
         # 遊戲 - 貪食蛇
         Route::prefix('game.snake')->group(function () {
             Route::get('/', [Controllers\Admin\GameSnakeController::class, 'index']);
