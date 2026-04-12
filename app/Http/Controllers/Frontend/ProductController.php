@@ -4,55 +4,55 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Services\Frontend\AnnouncementService;
+use App\Services\Frontend\ProductService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
-class AnnouncementController extends Controller
+class ProductController extends Controller
 {
-    # 建構元
-    public function __construct(protected AnnouncementService $service)
-    {
+    public function __construct(
+        protected ProductService $service,
+        protected AnnouncementService $announcementService
+    ) {
     }
 
     /**
-     * 前台公告列表
+     * 前台商品列表
      */
     public function list(Request $request): View
     {
-        $filters = $request->only(['keyword', 'date_from', 'date_to']);
+        $filters = $request->only(['keyword', 'date_from', 'date_to', 'category_id', 'tag_id']);
         $result = $this->service->fetchPaginatedData($filters);
 
-        return view('Frontend/announcement/list', [
-            'pageTitle' => 'The Journal | Aura & Heirloom',
+        return view('Frontend/product/list', [
+            'pageTitle' => '全部商品 | Aura & Heirloom',
             'navItems' => $this->buildNavItems(),
             'footerColumns' => $this->buildFooterColumns(),
-            'alertBanner' => $this->service->fetchSystemAnnouncement(),
-            'announcements' => $result['data'],
+            'alertBanner' => $this->announcementService->fetchSystemAnnouncement(),
+            'products' => $result['data'],
             'pagination' => $result['pagination'],
             'filters' => $result['filters'],
+            'filterOptions' => $this->service->fetchFilterOptions(),
         ]);
     }
 
     /**
-     * 前台公告內頁
+     * 前台商品內頁
      */
     public function detail(int $id): View
     {
         $data = $this->service->fetchDetailByID($id);
 
-        return view('Frontend/announcement/detail', [
-            'pageTitle' => $data['title'] . ' | Aura & Heirloom',
+        return view('Frontend/product/detail', [
+            'pageTitle' => $data['name'] . ' | Aura & Heirloom',
             'navItems' => $this->buildNavItems(),
             'footerColumns' => $this->buildFooterColumns(),
-            'alertBanner' => $this->service->fetchSystemAnnouncement(),
+            'alertBanner' => $this->announcementService->fetchSystemAnnouncement(),
             'data' => $data,
-            'moreAnnouncements' => $this->service->fetchMoreAnnouncements($id),
+            'relatedProducts' => $this->service->fetchRelatedByCategory($id, $data['category_id'] ?? null),
         ]);
     }
 
-    /**
-     * 前台導覽資料
-     */
     protected function buildNavItems(): array
     {
         return [
@@ -64,9 +64,6 @@ class AnnouncementController extends Controller
         ];
     }
 
-    /**
-     * 前台頁尾資料
-     */
     protected function buildFooterColumns(): array
     {
         return [
@@ -85,5 +82,4 @@ class AnnouncementController extends Controller
         ];
     }
 }
-
 

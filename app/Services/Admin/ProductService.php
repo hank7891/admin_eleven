@@ -9,6 +9,7 @@ use App\Services\Share\FileUploadService;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -101,6 +102,8 @@ class ProductService
             $this->repository->syncTags((int) $product->id, $this->normalizeTagIDs($data['tag_ids'] ?? []));
 
             DB::commit();
+
+            $this->clearFrontendCache();
 
             return $product->id;
         } catch (\Exception $e) {
@@ -197,6 +200,8 @@ class ProductService
 
             DB::commit();
 
+            $this->clearFrontendCache();
+
             return $id;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -222,6 +227,8 @@ class ProductService
             $result = $this->repository->deleteData($id);
             DB::commit();
 
+            $this->clearFrontendCache();
+
             return $result;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -242,11 +249,15 @@ class ProductService
 
         $ids = array_values(array_unique(array_map('intval', $ids)));
 
-        return $this->repository->bulkUpdateStatus(
+        $affected = $this->repository->bulkUpdateStatus(
             $ids,
             $statusKey,
             session(ADMIN_AUTH_SESSION)['id'] ?? null
         );
+
+        $this->clearFrontendCache();
+
+        return $affected;
     }
 
     protected function normalizeFilters(array $filters): array
@@ -358,6 +369,11 @@ class ProductService
         }
 
         return $images;
+    }
+
+    public function clearFrontendCache(): void
+    {
+        Cache::forget('frontend:product:home_featured');
     }
 }
 

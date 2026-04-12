@@ -4,6 +4,7 @@ namespace Tests\Feature\Frontend;
 
 use App\Services\Admin\HeroSlideService;
 use App\Services\Frontend\AnnouncementService;
+use App\Services\Frontend\ProductService;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
@@ -44,6 +45,10 @@ class HomepageCarouselTest extends TestCase
             $mock->shouldReceive('fetchSystemAnnouncement')
                 ->once()
                 ->andReturn(null);
+        });
+
+        $this->mock(ProductService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchHomepageFeatured')->once()->andReturn([]);
         });
 
         $response = $this->get('/');
@@ -89,6 +94,10 @@ class HomepageCarouselTest extends TestCase
             $mock->shouldReceive('fetchSystemAnnouncement')->once()->andReturn(null);
         });
 
+        $this->mock(ProductService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchHomepageFeatured')->once()->andReturn([]);
+        });
+
         $response = $this->get('/');
 
         $response->assertOk();
@@ -129,6 +138,10 @@ class HomepageCarouselTest extends TestCase
             $mock->shouldReceive('fetchSystemAnnouncement')->once()->andReturn(null);
         });
 
+        $this->mock(ProductService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchHomepageFeatured')->once()->andReturn([]);
+        });
+
         $response = $this->get('/');
 
         $response->assertOk();
@@ -166,6 +179,10 @@ class HomepageCarouselTest extends TestCase
         $this->mock(AnnouncementService::class, function (MockInterface $mock) {
             $mock->shouldReceive('fetchHomepageAnnouncements')->once()->andReturn([]);
             $mock->shouldReceive('fetchSystemAnnouncement')->once()->andReturn(null);
+        });
+
+        $this->mock(ProductService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchHomepageFeatured')->once()->andReturn([]);
         });
 
         $response = $this->get('/');

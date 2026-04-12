@@ -5,6 +5,11 @@ use App\Http\Controllers;
 use App\Http\Middleware;
 
 Route::get('/', [Controllers\Frontend\HomeController::class, 'index']);
+Route::get('product', [Controllers\Frontend\ProductController::class, 'list'])
+    ->middleware('throttle:60,1');
+Route::get('product/{id}', [Controllers\Frontend\ProductController::class, 'detail'])
+    ->whereNumber('id')
+    ->middleware('throttle:120,1');
 Route::get('announcement', [Controllers\Frontend\AnnouncementController::class, 'list']);
 Route::get('announcement/{id}', [Controllers\Frontend\AnnouncementController::class, 'detail'])
     ->whereNumber('id');

@@ -4,6 +4,7 @@ namespace Tests\Feature\Frontend;
 
 use App\Services\Admin\HeroSlideService;
 use App\Services\Frontend\AnnouncementService;
+use App\Services\Frontend\ProductService;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
@@ -58,6 +59,22 @@ class HomepageTest extends TestCase
                 ]);
         });
 
+        $this->mock(ProductService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchHomepageFeatured')
+                ->once()
+                ->andReturn([
+                    [
+                        'id' => 1,
+                        'name' => '首頁商品測試',
+                        'category_name' => '燈具',
+                        'price_display' => 'NT$ 1,200',
+                        'image_url' => 'https://example.com/product.jpg',
+                        'image_alt' => '首頁商品圖片',
+                        'url' => url('product/1'),
+                    ],
+                ]);
+        });
+
         $response = $this->get('/');
 
         $response->assertOk();
@@ -67,6 +84,7 @@ class HomepageTest extends TestCase
         $response->assertSee('會員專區');
         $response->assertSee('首頁輪播測試');
         $response->assertSee('首頁公告測試');
+        $response->assertSee('首頁商品測試');
     }
 }
 

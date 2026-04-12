@@ -134,6 +134,7 @@
         </div>
     </section>
 
+    @if (!empty($products))
     <section id="products" class="px-4 py-18 sm:px-6 lg:px-8 lg:py-28" aria-labelledby="productHeading">
         <div class="mx-auto max-w-7xl space-y-12">
             <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -141,7 +142,7 @@
                     <span class="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-primary">Selected Works</span>
                     <h2 id="productHeading" class="font-headline text-[2.2rem] tracking-[-0.04em] text-on-surface sm:text-[3rem]">六件靜態商品卡，呈現柔和節奏與生活感</h2>
                 </div>
-                <a href="#" class="inline-flex items-center gap-2 border-b border-outline pb-1 text-[0.9rem] font-medium text-on-surface transition-colors hover:text-primary no-underline">
+                <a href="{{ url('product') }}" class="inline-flex items-center gap-2 border-b border-outline pb-1 text-[0.9rem] font-medium text-on-surface transition-colors hover:text-primary no-underline">
                     More Products
                     <span class="material-symbols-outlined text-[1rem]" aria-hidden="true">arrow_outward</span>
                 </a>
@@ -150,10 +151,10 @@
             <div class="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 xl:grid-cols-3">
                 @foreach ($products as $product)
                     <article class="frontend-product-card group {{ in_array($loop->iteration, [2, 5], true) ? 'xl:translate-y-10' : '' }}">
-                        <a href="#" class="block no-underline" aria-label="查看更多商品：{{ $product['name'] }}">
+                        <a href="{{ $product['url'] }}" class="block no-underline" aria-label="查看更多商品：{{ $product['name'] }}">
                             <div class="overflow-hidden rounded-[1.35rem] bg-surface-container-low shadow-[0_24px_56px_-40px_rgba(26,28,25,0.28)]">
                                 <img
-                                    src="{{ $product['image'] }}"
+                                    src="{{ $product['image_url'] }}"
                                     alt="{{ $product['image_alt'] }}"
                                     class="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                                     loading="lazy"
@@ -162,9 +163,9 @@
                             <div class="mt-5 flex items-start justify-between gap-4 px-2">
                                 <div>
                                     <h3 class="font-headline text-[1.3rem] tracking-[-0.02em] text-on-surface">{{ $product['name'] }}</h3>
-                                    <p class="mt-2 text-[0.75rem] font-semibold uppercase tracking-[0.22em] text-on-surface/52">{{ $product['category'] }}</p>
+                                    <p class="mt-2 text-[0.75rem] font-semibold uppercase tracking-[0.22em] text-on-surface/52">{{ $product['category_name'] }}</p>
                                 </div>
-                                <p class="pt-1 text-[0.96rem] font-medium text-primary">{{ $product['price'] }}</p>
+                                <p class="pt-1 text-[0.96rem] font-medium text-primary">{{ $product['price_display'] }}</p>
                             </div>
                         </a>
                     </article>
@@ -172,6 +173,7 @@
             </div>
         </div>
     </section>
+    @endif
 
     <section id="member" class="px-4 pb-20 pt-6 sm:px-6 lg:px-8 lg:pb-28" aria-labelledby="memberHeading">
         <div class="mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-linear-to-br from-tertiary-fixed/60 via-surface-container-high to-surface-container-lowest p-8 shadow-[0_40px_80px_-52px_rgba(26,28,25,0.28)] sm:p-12 lg:p-16">

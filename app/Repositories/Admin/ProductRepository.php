@@ -174,5 +174,98 @@ class ProductRepository
 
         return $this->model::query()->whereIn('id', $ids)->update($payload);
     }
+
+    /**
+     * 前台首頁主打商品
+     */
+    public function fetchFrontendFeatured(int $limit = 6): Collection
+    {
+        return $this->applyFrontendOnlineScope($this->model::query())
+            ->with(['category', 'tags', 'primaryImage'])
+            ->where('is_featured', PRODUCT_FEATURED_ON)
+            ->ordered()
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * 前台商品列表（含篩選）
+     */
+    public function fetchFrontendPaginatedData(array $filters = [], int $perPage = 12): LengthAwarePaginator
+    {
+        $query = $this->applyFrontendOnlineScope($this->model::query())
+            ->with(['category', 'tags', 'primaryImage']);
+
+        if (!empty($filters['keyword'])) {
+            $keyword = addcslashes((string) $filters['keyword'], '%_\\');
+            $query->where(function (Builder $builder) use ($keyword) {
+                $builder->where('name', 'like', '%' . $keyword . '%')
+                    ->orWhere('tagline', 'like', '%' . $keyword . '%');
+            });
+        }
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', (int) $filters['category_id']);
+        }
+
+        if (!empty($filters['tag_id'])) {
+            $tagId = (int) $filters['tag_id'];
+            $query->whereHas('tags', function (Builder $builder) use ($tagId) {
+                $builder->where('product_tags.id', $tagId);
+            });
+        }
+
+        if (!empty($filters['date_from'])) {
+            $query->where('start_at', '>=', $filters['date_from'] . ' 00:00:00');
+        }
+
+        if (!empty($filters['date_to'])) {
+            $query->where('start_at', '<=', $filters['date_to'] . ' 23:59:59');
+        }
+
+        return $query->ordered()->paginate($perPage);
+    }
+
+    /**
+     * 前台商品內頁
+     */
+    public function fetchFrontendDataByID(int $id): ?Product
+    {
+        return $this->applyFrontendOnlineScope($this->model::query())
+            ->with(['category', 'tags', 'images'])
+            ->where('id', $id)
+            ->first();
+    }
+
+    /**
+     * 前台同類別商品
+     */
+    public function fetchFrontendRelated(int $excludeId, ?int $categoryId, int $limit = 3): Collection
+    {
+        if (empty($categoryId)) {
+            return new Collection();
+        }
+
+        return $this->applyFrontendOnlineScope($this->model::query())
+            ->with(['category', 'tags', 'primaryImage'])
+            ->where('id', '!=', $excludeId)
+            ->where('category_id', $categoryId)
+            ->ordered()
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * 前台顯示條件（上架且在有效時段）
+     */
+    protected function applyFrontendOnlineScope(Builder $query): Builder
+    {
+        return $query
+            ->where('status_key', (string) PRODUCT_STATUS_ONLINE)
+            ->where('start_at', '<=', now())
+            ->where(function (Builder $builder) {
+                $builder->whereNull('end_at')->orWhere('end_at', '>=', now());
+            });
+    }
 }
 
