@@ -87,8 +87,8 @@
                                             <div class="font-semibold text-on-surface">{{ $row['end_at_display'] }}</div>
                                         </div>
                                         <div>
-                                            <div class="text-outline-variant">CTA</div>
-                                            <div class="font-semibold text-on-surface">{{ !empty($row['primary_cta_label']) || !empty($row['secondary_cta_label']) ? '已設定' : '未設定' }}</div>
+                                            <div class="text-outline-variant">圖片點擊連結</div>
+                                            <div class="font-semibold text-on-surface">{{ !empty($row['target_url']) ? '已設定' : '未設定' }}</div>
                                         </div>
                                     </div>
 

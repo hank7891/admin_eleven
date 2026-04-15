@@ -4,7 +4,9 @@ namespace Tests\Feature\Admin;
 
 use App\Services\Admin\AdminLogService;
 use App\Services\Admin\HeroSlideService;
+use App\Services\Share\FileUploadService;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\UploadedFile;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
@@ -33,8 +35,7 @@ class HeroSlideControllerTest extends TestCase
                             'end_at_display' => '永久',
                             'image_url' => 'https://example.com/hero.jpg',
                             'image_alt' => '輪播圖片',
-                            'primary_cta_label' => '探索本季精選',
-                            'secondary_cta_label' => '閱讀品牌日誌',
+                            'target_url' => '/product',
                         ],
                     ],
                     'pagination' => new LengthAwarePaginator([['id' => 1]], 1, 20),
@@ -96,7 +97,7 @@ class HeroSlideControllerTest extends TestCase
     }
 
     /**
-     * 編輯輪播時允許站內相對 CTA 連結。
+     * 編輯輪播時允許站內相對目標連結。
      */
     public function test_edit_do_allows_relative_cta_url(): void
     {
@@ -114,8 +115,7 @@ class HeroSlideControllerTest extends TestCase
                 ->once()
                 ->withArgs(function (int $id, array $data) {
                     return $id === 1
-                        && ($data['primary_cta_url'] ?? null) === '/#products'
-                        && ($data['secondary_cta_url'] ?? null) === '/#journal';
+                        && ($data['target_url'] ?? null) === '/product';
                 })
                 ->andReturn(1);
         });
@@ -136,10 +136,7 @@ class HeroSlideControllerTest extends TestCase
                 'eyebrow' => 'Spring / Summer 2026',
                 'title' => '首頁輪播一',
                 'description' => '輪播描述',
-                'primary_cta_label' => '探索本季精選',
-                'primary_cta_url' => '/#products',
-                'secondary_cta_label' => '閱讀品牌日誌',
-                'secondary_cta_url' => '/#journal',
+                'target_url' => '/product',
                 'sort_order' => 1,
                 'is_active' => STATUS_ACTIVE,
                 'start_at' => '2026-04-09T10:00',
@@ -170,10 +167,7 @@ class HeroSlideControllerTest extends TestCase
                 'eyebrow' => 'Spring / Summer 2026',
                 'title' => '首頁輪播一',
                 'description' => '輪播描述',
-                'primary_cta_label' => '探索本季精選',
-                'primary_cta_url' => 'javascript:alert(1)',
-                'secondary_cta_label' => '',
-                'secondary_cta_url' => '',
+                'target_url' => 'javascript:alert(1)',
                 'sort_order' => 1,
                 'is_active' => STATUS_ACTIVE,
                 'start_at' => '2026-04-09T10:00',
@@ -184,9 +178,9 @@ class HeroSlideControllerTest extends TestCase
     }
 
     /**
-     * 編輯輪播時 CTA 文字與連結需成對填寫。
+     * 編輯輪播時應阻擋 scheme-relative 連結。
      */
-    public function test_edit_do_requires_paired_cta_fields(): void
+    public function test_edit_do_rejects_scheme_relative_url(): void
     {
         $this->mock(HeroSlideService::class, function (MockInterface $mock) {
             $mock->shouldNotReceive('updateData');
@@ -204,10 +198,7 @@ class HeroSlideControllerTest extends TestCase
                 'eyebrow' => 'Spring / Summer 2026',
                 'title' => '首頁輪播一',
                 'description' => '輪播描述',
-                'primary_cta_label' => '探索本季精選',
-                'primary_cta_url' => '',
-                'secondary_cta_label' => '',
-                'secondary_cta_url' => '',
+                'target_url' => '//evil.com',
                 'sort_order' => 1,
                 'is_active' => STATUS_ACTIVE,
                 'start_at' => '2026-04-09T10:00',
@@ -215,6 +206,78 @@ class HeroSlideControllerTest extends TestCase
             ]);
 
         $response->assertRedirect('/admin/hero-slide/edit/1');
+    }
+
+    /**
+     * 新增頁應帶入下一個排序值並預設停用。
+     */
+    public function test_create_page_prefills_next_sort_order_and_inactive_status(): void
+    {
+        $this->mock(HeroSlideService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchNextSortOrder')
+                ->once()
+                ->andReturn(9);
+        });
+
+        $response = $this
+            ->withSession([
+                ADMIN_AUTH_SESSION => ['id' => 1, 'name' => 'Tester'],
+                ADMIN_PERMISSION_SESSION => [1],
+                'admin_allowed_urls' => ['/admin/hero-slide/edit/0'],
+            ])
+            ->get('/admin/hero-slide/edit/0');
+
+        $response->assertOk();
+        $response->assertSee('name="sort_order" value="9"', false);
+        $response->assertSee('name="is_active" value="' . STATUS_INACTIVE . '"', false);
+        $response->assertSee('新增後才可於編輯模式切換為啟用');
+    }
+
+    /**
+     * 新增時即使前端送出啟用也應由後端強制改為停用。
+     */
+    public function test_create_forces_inactive_even_if_request_submits_active(): void
+    {
+        $this->mock(HeroSlideService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('addData')
+                ->once()
+                ->withArgs(function (array $data) {
+                    return ($data['is_active'] ?? null) === STATUS_INACTIVE;
+                })
+                ->andReturn(99);
+        });
+
+        $this->mock(AdminLogService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('recordSimple')->once();
+        });
+
+        $this->mock(FileUploadService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('upload')
+                ->once()
+                ->andReturn('uploads/image/2026/04/hero-test.jpg');
+        });
+
+        $response = $this
+            ->withSession([
+                ADMIN_AUTH_SESSION => ['id' => 1, 'name' => 'Tester'],
+                ADMIN_PERMISSION_SESSION => [1],
+                'admin_allowed_urls' => ['/admin/hero-slide/list'],
+            ])
+            ->post('/admin/hero-slide/edit', [
+                'id' => 0,
+                'image' => UploadedFile::fake()->image('hero.jpg', 1920, 1080),
+                'image_alt' => '輪播圖片',
+                'eyebrow' => 'Spring / Summer 2026',
+                'title' => '新增輪播',
+                'description' => '輪播描述',
+                'target_url' => '/product',
+                'sort_order' => 1,
+                'is_active' => STATUS_ACTIVE,
+                'start_at' => '2026-04-15T10:00',
+                'end_at' => '',
+            ]);
+
+        $response->assertRedirect('/admin/hero-slide/edit/99');
     }
 }
 

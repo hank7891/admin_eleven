@@ -189,8 +189,10 @@ body.frontend-body {
     height: 100%;
     width: 100%;
     object-fit: cover;
+    object-position: center top;
     opacity: 0;
     transform: scale(1.04);
+    transform-origin: center top;
     transition: opacity 800ms ease, transform 1400ms ease;
 }
 
@@ -204,11 +206,20 @@ body.frontend-body {
     object-fit: cover;
 }
 
-.hero-copy {
+.hero-slide-link-disabled {
+    pointer-events: none;
+}
+
+.hero-landscape-frame {
+    aspect-ratio: 16 / 9;
+    min-height: 260px;
+}
+
+#heroCtaGroup {
     transition: opacity 220ms ease, transform 220ms ease;
 }
 
-.hero-copy.is-transitioning {
+#heroCtaGroup.is-transitioning {
     opacity: 0;
     transform: translateY(10px);
 }
@@ -223,6 +234,18 @@ body.frontend-body {
     background: rgba(31, 28, 25, 0.12);
     filter: blur(40px);
     z-index: -1;
+}
+
+@media (max-width: 640px) {
+    .hero-landscape-frame {
+        aspect-ratio: 4 / 3;
+        min-height: 220px;
+    }
+
+    .hero-nav-btn {
+        height: 2.55rem;
+        width: 2.55rem;
+    }
 }
 
 .frontend-product-card {
@@ -254,8 +277,8 @@ input:focus-visible {
         scroll-behavior: auto !important;
     }
 
-    .hero-copy,
-    .hero-copy.is-transitioning,
+    #heroCtaGroup,
+    #heroCtaGroup.is-transitioning,
     .hero-slide-image,
     .hero-slide-image.is-active {
         transform: none !important;

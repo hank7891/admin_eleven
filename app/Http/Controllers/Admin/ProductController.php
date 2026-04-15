@@ -156,7 +156,7 @@ class ProductController extends Controller
                 $this->logService->recordSimple($request, 'product', 'create', $id, $post['name'] ?? null);
             } else {
                 $oldData = $this->service->fetchDataByID($id);
-                $this->service->updateData($id, $post, $images, $imageMeta);
+                $this->service->updateData($id, $post, $images, $imageMeta, $oldData);
 
                 $newData = $post;
                 $newData['image_summary'] = '已更新圖片';

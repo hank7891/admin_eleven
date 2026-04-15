@@ -45,12 +45,12 @@
                             </select>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline">開始日期（迄）</label>
-                            <input type="date" name="start_to" value="{{ $filters['start_to'] ?? '' }}" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all" />
-                        </div>
-                        <div class="space-y-2">
                             <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline">開始日期（起）</label>
                             <input type="date" name="start_from" value="{{ $filters['start_from'] ?? '' }}" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline">開始日期（迄）</label>
+                            <input type="date" name="start_to" value="{{ $filters['start_to'] ?? '' }}" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all" />
                         </div>
                         <div class="md:col-span-5 flex gap-3 justify-end">
                             <button type="submit" class="btn-primary px-8 py-3 rounded-xl font-semibold text-[0.875rem] active:scale-95 transition-all">搜尋</button>

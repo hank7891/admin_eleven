@@ -50,7 +50,12 @@ class HeroSlideController extends Controller
     public function edit(int $id)
     {
         try {
-            $data = ($id > 0) ? $this->service->fetchDataByID($id) : [];
+            $data = ($id > 0)
+                ? $this->service->fetchDataByID($id)
+                : [
+                    'sort_order' => $this->service->fetchNextSortOrder(),
+                    'is_active' => STATUS_INACTIVE,
+                ];
 
             if (session(self::POST_SESSION)) {
                 $data = session(self::POST_SESSION) + $data;
@@ -82,16 +87,9 @@ class HeroSlideController extends Controller
             'eyebrow'             => ['nullable', 'string', 'max:100'],
             'title'               => ['required', 'string', 'max:200'],
             'description'         => ['nullable', 'string', 'max:500'],
-            'primary_cta_label'   => ['nullable', 'string', 'max:50'],
-            'primary_cta_url'     => ['nullable', 'string', 'max:500', function ($attribute, $value, $fail) {
+            'target_url'          => ['nullable', 'string', 'max:500', function ($attribute, $value, $fail) {
                 if (!$this->isValidCtaUrl($value)) {
-                    $fail('主按鈕連結格式錯誤');
-                }
-            }],
-            'secondary_cta_label' => ['nullable', 'string', 'max:50'],
-            'secondary_cta_url'   => ['nullable', 'string', 'max:500', function ($attribute, $value, $fail) {
-                if (!$this->isValidCtaUrl($value)) {
-                    $fail('次按鈕連結格式錯誤');
+                    $fail('輪播連結格式錯誤');
                 }
             }],
             'sort_order'          => ['required', 'integer', 'min:0'],
@@ -113,21 +111,13 @@ class HeroSlideController extends Controller
             'end_at.after_or_equal' => '結束呈現時間不可早於開始呈現時間',
         ]);
 
-        $validator->after(function ($validator) use ($request) {
-            $this->validatePairedCta($validator, '主按鈕', (string) $request->input('primary_cta_label', ''), (string) $request->input('primary_cta_url', ''));
-            $this->validatePairedCta($validator, '次按鈕', (string) $request->input('secondary_cta_label', ''), (string) $request->input('secondary_cta_url', ''));
-        });
-
         $post = $request->only([
             'id',
             'image_alt',
             'eyebrow',
             'title',
             'description',
-            'primary_cta_label',
-            'primary_cta_url',
-            'secondary_cta_label',
-            'secondary_cta_url',
+            'target_url',
             'sort_order',
             'is_active',
             'start_at',
@@ -153,6 +143,8 @@ class HeroSlideController extends Controller
 
             if ($id === 0) {
                 # 新增
+                # 新增流程在後端強制停用，避免繞過前端 disabled 欄位
+                $post['is_active'] = STATUS_INACTIVE;
                 $id = $this->service->addData($post);
 
                 # 記錄操作日誌
@@ -169,7 +161,7 @@ class HeroSlideController extends Controller
                     $oldData['title'] ?? null,
                     $oldData,
                     $post,
-                    ['image_path', 'image_alt', 'eyebrow', 'title', 'description', 'primary_cta_label', 'primary_cta_url', 'secondary_cta_label', 'secondary_cta_url', 'sort_order', 'is_active', 'start_at', 'end_at']
+                    ['image_path', 'image_alt', 'eyebrow', 'title', 'description', 'target_url', 'sort_order', 'is_active', 'start_at', 'end_at']
                 );
             }
 
@@ -258,9 +250,13 @@ class HeroSlideController extends Controller
             return true;
         }
 
-        # 允許站內相對路徑與錨點
+        # 允許站內相對路徑與錨點，阻擋 scheme-relative / 反斜線變形
         if (str_starts_with($value, '/')) {
-            return !str_starts_with(strtolower($value), 'javascript:');
+            if (str_starts_with($value, '//') || str_starts_with($value, '/\\')) {
+                return false;
+            }
+
+            return (bool) preg_match('/^\/[A-Za-z0-9_\-\/.#?=&%]*$/', $value);
         }
 
         # 僅允許 http / https 絕對網址
@@ -273,19 +269,5 @@ class HeroSlideController extends Controller
         return in_array($scheme, ['http', 'https'], true);
     }
 
-    /**
-     * 驗證 CTA 欄位成對填寫
-     */
-    protected function validatePairedCta($validator, string $prefix, string $label, string $url): void
-    {
-        $label = trim($label);
-        $url = trim($url);
-
-        if (($label === '' && $url === '') || ($label !== '' && $url !== '')) {
-            return;
-        }
-
-        $validator->errors()->add('cta_pair', $prefix . '文字與連結需成對填寫');
-    }
 }
 

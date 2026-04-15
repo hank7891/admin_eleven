@@ -5,12 +5,30 @@ namespace Tests\Feature\Frontend;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Services\Admin\HeroSlideService;
+use App\Services\Frontend\AnnouncementService;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class FrontendProductScopeTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
+
+    # Mock 非 Product 相關依賴，避免 announcements / hero_slides 表缺失問題
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->mock(AnnouncementService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchSystemAnnouncement')->andReturn(null);
+            $mock->shouldReceive('fetchHomepageAnnouncements')->andReturn([]);
+        });
+
+        $this->mock(HeroSlideService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchActiveSlides')->andReturn([]);
+        });
+    }
 
     # 建立上架商品 + 主圖，回傳 Product
     protected function createOnlineProduct(array $attrs = [], bool $featured = false): Product
@@ -34,7 +52,7 @@ class FrontendProductScopeTest extends TestCase
 
     public function test_list_shows_only_online_and_active_products(): void
     {
-        $visible = $this->createOnlineProduct(['name' => 'Visible Product']);
+        $this->createOnlineProduct(['name' => 'Visible Product']);
         Product::factory()->offline()->create(['name' => 'Offline Product']);
         Product::factory()->upcoming()->create(['name' => 'Upcoming Product']);
         Product::factory()->expired()->create(['name' => 'Expired Product']);
@@ -111,7 +129,7 @@ class FrontendProductScopeTest extends TestCase
         $this->createOnlineProduct(['name' => 'Normal Chair']);
         $this->createOnlineProduct(['name' => '100% Organic']);
 
-        $response = $this->get('/product?keyword=%25');
+        $response = $this->get('/product?keyword=' . urlencode('%'));
 
         $response->assertOk();
         $response->assertDontSee('Normal Chair');

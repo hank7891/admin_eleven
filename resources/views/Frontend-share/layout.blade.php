@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $pageTitle ?? 'Aura & Heirloom' }}</title>
+    <meta name="description" content="@yield('meta_description', 'Aura & Heirloom — 為日常留一個慢下來的位置')">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

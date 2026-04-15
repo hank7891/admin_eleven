@@ -54,6 +54,8 @@ class HeroSlideService
      */
     public function addData(array $data): int
     {
+        # 新增資料一律預設停用，避免透過前端繞過啟用限制
+        $data['is_active'] = STATUS_INACTIVE;
         $data = $this->normalizePayload($data, false);
         $slide = $this->repository->addData($data);
 
@@ -64,6 +66,14 @@ class HeroSlideService
         $this->clearFrontendCache();
 
         return $slide->id;
+    }
+
+    /**
+     * 取得下一個排序值
+     */
+    public function fetchNextSortOrder(): int
+    {
+        return $this->repository->fetchMaxSortOrder() + 1;
     }
 
     /**
@@ -126,19 +136,9 @@ class HeroSlideService
             foreach ($slides as $slide) {
                 $item = $slide->toArray();
                 $data[] = [
-                    'eyebrow' => $item['eyebrow'] ?? '',
-                    'title' => $item['title'] ?? '',
-                    'description' => $item['description'] ?? '',
                     'image' => !empty($item['image_path']) ? Storage::url($item['image_path']) : '',
                     'image_alt' => $item['image_alt'] ?? '',
-                    'primary_cta' => [
-                        'label' => $item['primary_cta_label'] ?? '',
-                        'url' => $item['primary_cta_url'] ?? '',
-                    ],
-                    'secondary_cta' => [
-                        'label' => $item['secondary_cta_label'] ?? '',
-                        'url' => $item['secondary_cta_url'] ?? '',
-                    ],
+                    'target_url' => $item['target_url'] ?? '',
                 ];
             }
 
@@ -159,23 +159,18 @@ class HeroSlideService
      */
     protected function normalizePayload(array $data, bool $isUpdate): array
     {
-        foreach (['image_alt', 'eyebrow', 'title', 'description', 'primary_cta_label', 'secondary_cta_label'] as $field) {
+        foreach (['image_alt', 'eyebrow', 'title', 'description'] as $field) {
             $data[$field] = isset($data[$field])
                 ? trim(strip_tags((string) $data[$field]))
                 : null;
         }
 
-        foreach (['primary_cta_url', 'secondary_cta_url'] as $field) {
-            $data[$field] = isset($data[$field]) ? trim((string) $data[$field]) : null;
-        }
+        $data['target_url'] = isset($data['target_url']) ? trim((string) $data['target_url']) : null;
 
         $data['image_alt'] = $data['image_alt'] === '' ? null : $data['image_alt'];
         $data['eyebrow'] = $data['eyebrow'] === '' ? null : $data['eyebrow'];
         $data['description'] = $data['description'] === '' ? null : $data['description'];
-        $data['primary_cta_label'] = $data['primary_cta_label'] === '' ? null : $data['primary_cta_label'];
-        $data['primary_cta_url'] = $data['primary_cta_url'] === '' ? null : $data['primary_cta_url'];
-        $data['secondary_cta_label'] = $data['secondary_cta_label'] === '' ? null : $data['secondary_cta_label'];
-        $data['secondary_cta_url'] = $data['secondary_cta_url'] === '' ? null : $data['secondary_cta_url'];
+        $data['target_url'] = $data['target_url'] === '' ? null : $data['target_url'];
         $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
         $data['is_active'] = (int) ($data['is_active'] ?? STATUS_ACTIVE);
         $data['start_at'] = Carbon::createFromFormat('Y-m-d\TH:i', (string) $data['start_at'])->format('Y-m-d H:i:s');
@@ -219,6 +214,7 @@ class HeroSlideService
             ? Carbon::parse($data['end_at'])->format('Y-m-d\TH:i')
             : '';
         $data['image_url'] = !empty($data['image_path']) ? Storage::url($data['image_path']) : '';
+        $data['target_url'] = $data['target_url'] ?? '';
 
         if (!$includeDetail) {
             $data['description_preview'] = Str::limit((string) ($data['description'] ?? ''), 80, '...');

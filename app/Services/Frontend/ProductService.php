@@ -23,7 +23,7 @@ class ProductService
      */
     public function fetchHomepageFeatured(int $limit = 6): array
     {
-        $items = Cache::remember('frontend:product:home_featured', now()->addMinutes(5), function () use ($limit) {
+        $items = Cache::remember('frontend:product:home_featured:' . $limit, now()->addMinutes(5), function () use ($limit) {
             return $this->repository->fetchFrontendFeatured($limit);
         });
 
@@ -58,7 +58,7 @@ class ProductService
         return [
             'data' => $data,
             'pagination' => $paginator,
-            'filters' => $filters,
+            'filters' => array_filter($filters, fn ($v) => $v !== ''),
         ];
     }
 
@@ -79,7 +79,6 @@ class ProductService
             'name' => $item['name'] ?? '',
             'tagline' => $item['tagline'] ?? '',
             'price_display' => 'NT$ ' . number_format((int) ($item['price'] ?? 0)),
-            'description' => $item['description'] ?? '',
             'description_html' => nl2br(e((string) ($item['description'] ?? ''))),
             'category_id' => $item['category_id'] ?? null,
             'category_name' => $item['category']['name'] ?? '未分類',

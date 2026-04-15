@@ -1,5 +1,7 @@
 @extends('Frontend-share.layout')
 
+@section('meta_description', e($data['meta_description'] ?? ''))
+
 @section('content')
     <section class="px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-24 lg:pt-40">
         <div class="mx-auto max-w-7xl">

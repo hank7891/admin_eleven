@@ -10,9 +10,11 @@ Route::get('product', [Controllers\Frontend\ProductController::class, 'list'])
 Route::get('product/{id}', [Controllers\Frontend\ProductController::class, 'detail'])
     ->whereNumber('id')
     ->middleware('throttle:120,1');
-Route::get('announcement', [Controllers\Frontend\AnnouncementController::class, 'list']);
+Route::get('announcement', [Controllers\Frontend\AnnouncementController::class, 'list'])
+    ->middleware('throttle:60,1');
 Route::get('announcement/{id}', [Controllers\Frontend\AnnouncementController::class, 'detail'])
-    ->whereNumber('id');
+    ->whereNumber('id')
+    ->middleware('throttle:120,1');
 
 Route::get('test', [Controllers\TestController::class, 'index'])->middleware(Middleware\Test::class);
 
@@ -72,7 +74,8 @@ Route::prefix('admin')->group(function () {
             Route::get('list', [Controllers\Admin\ProductController::class, 'list']);
             Route::get('edit/{id}', [Controllers\Admin\ProductController::class, 'edit']);
             Route::post('edit', [Controllers\Admin\ProductController::class, 'editDo']);
-            Route::post('delete/{id}', [Controllers\Admin\ProductController::class, 'delete']);
+            Route::post('delete/{id}', [Controllers\Admin\ProductController::class, 'delete'])
+                ->middleware('throttle:30,1');
             Route::post('bulk-status', [Controllers\Admin\ProductController::class, 'bulkStatus'])
                 ->middleware('throttle:30,1');
         });

@@ -117,10 +117,10 @@ class ProductService
         }
     }
 
-    public function updateData(int $id, array $data, array $uploadedImages = [], array $imageMeta = []): int
+    public function updateData(int $id, array $data, array $uploadedImages = [], array $imageMeta = [], ?array $preloadedData = null): int
     {
         $payload = $this->normalizePayload($data, true);
-        $current = $this->fetchDataByID($id);
+        $current = $preloadedData ?? $this->fetchDataByID($id);
         $currentImages = $current['images'] ?? [];
 
         $currentImageIds = array_map('intval', array_column($currentImages, 'id'));
@@ -373,7 +373,10 @@ class ProductService
 
     public function clearFrontendCache(): void
     {
-        Cache::forget('frontend:product:home_featured');
+        # 預設 limit=6，列舉清除常見值
+        Cache::forget('frontend:product:home_featured:6');
+        Cache::forget('frontend:product:home_featured:3');
+        Cache::forget('frontend:product:home_featured:12');
     }
 }
 

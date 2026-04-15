@@ -74,7 +74,7 @@
                 </div>
             </form>
 
-            <form method="POST" action="{{ url('admin/product/bulk-status') }}" onsubmit="return confirm('確定要批次更新所選商品狀態嗎？');">
+            <form id="bulkStatusForm" method="POST" action="{{ url('admin/product/bulk-status') }}">
                 @csrf
                 @foreach (($filters ?? []) as $key => $value)
                     @if ($value !== '' && $value !== null)
@@ -84,11 +84,11 @@
 
                 <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)]">
                     <div class="p-4 border-b border-outline-variant/15 flex items-center gap-3">
-                        <select name="status_key" class="bg-surface-container-low rounded-lg border-none px-3 py-2">
+                        <select name="status_key" id="bulkStatusSelect" class="bg-surface-container-low rounded-lg border-none px-3 py-2">
                             <option value="{{ PRODUCT_STATUS_ONLINE }}">批次上架</option>
                             <option value="{{ PRODUCT_STATUS_OFFLINE }}">批次下架</option>
                         </select>
-                        <button type="submit" class="btn-primary px-4 py-2 rounded-lg">執行</button>
+                        <button type="button" id="bulkStatusTrigger" class="btn-primary px-4 py-2 rounded-lg">執行</button>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -154,6 +154,17 @@
     </div>
 @endsection
 
+    <div id="bulkConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-on-surface/40">
+        <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-xl max-w-sm w-full mx-4 space-y-4">
+            <h3 class="text-lg font-semibold text-on-surface">確認批次操作</h3>
+            <p id="bulkConfirmMessage" class="text-sm text-outline"></p>
+            <div class="flex justify-end gap-3">
+                <button type="button" id="bulkConfirmCancel" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface text-sm">取消</button>
+                <button type="button" id="bulkConfirmOk" class="px-4 py-2 rounded-lg btn-primary text-sm">確定執行</button>
+            </div>
+        </div>
+    </div>
+
 @push('scripts')
     <script>
         document.getElementById('checkAll')?.addEventListener('change', function () {
@@ -161,6 +172,36 @@
                 node.checked = this.checked;
             });
         });
+
+        (function () {
+            const trigger = document.getElementById('bulkStatusTrigger');
+            const modal = document.getElementById('bulkConfirmModal');
+            const message = document.getElementById('bulkConfirmMessage');
+            const cancelBtn = document.getElementById('bulkConfirmCancel');
+            const okBtn = document.getElementById('bulkConfirmOk');
+            const form = document.getElementById('bulkStatusForm');
+            const select = document.getElementById('bulkStatusSelect');
+
+            if (!trigger || !modal || !form || !select) return;
+
+            const closeModal = () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            };
+
+            trigger.addEventListener('click', () => {
+                const checked = document.querySelectorAll('.row-checkbox:checked');
+                if (checked.length === 0) return;
+                const action = select.options[select.selectedIndex].text;
+                message.textContent = `即將對 ${checked.length} 件商品執行「${action}」，確定要繼續嗎？`;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            });
+
+            cancelBtn?.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            okBtn?.addEventListener('click', () => { form.submit(); });
+        })();
     </script>
 @endpush
 

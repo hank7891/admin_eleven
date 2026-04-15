@@ -2,61 +2,15 @@
 
 @section('content')
     @if (!empty($slides))
-    <section class="relative overflow-hidden px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-24 lg:pt-40" aria-label="首頁主視覺輪播">
+    <section class="relative overflow-hidden px-4 pb-16 pt-28 sm:px-6 lg:px-8 lg:pb-24 lg:pt-36" aria-label="首頁主視覺輪播">
         <div id="heroLiveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-        <div id="heroCarouselRegion" class="hero-carousel mx-auto grid max-w-7xl gap-10 focus:outline-none lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-14" tabindex="0" aria-roledescription="carousel" aria-label="首頁主視覺輪播，使用左右方向鍵切換" data-hero-carousel>
-            <div class="space-y-8">
-                <span class="inline-flex items-center rounded-full border border-outline-variant/70 bg-surface-container-lowest px-4 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-primary shadow-[0_18px_34px_-28px_rgba(26,28,25,0.35)]">
-                    Curated Living, Soft Rhythm
-                </span>
-
-                <div id="heroTextContent" class="hero-copy space-y-5">
-                    <p id="heroEyebrow" class="text-[0.78rem] font-semibold uppercase tracking-[0.28em] text-secondary sm:text-[0.82rem]">
-                        {{ $slides[0]['eyebrow'] ?? '' }}
-                    </p>
-                    <h1 id="heroTitle" class="max-w-4xl font-headline text-[2.75rem] leading-[1.08] tracking-[-0.04em] text-on-surface sm:text-[4rem] lg:text-[5.4rem]">
-                        {{ $slides[0]['title'] ?? '' }}
-                    </h1>
-                    <p id="heroDescription" class="max-w-2xl text-[1rem] leading-8 text-on-surface/74 sm:text-[1.1rem]">
-                        {{ $slides[0]['description'] ?? '' }}
-                    </p>
-                </div>
-
-                <div class="hero-copy flex flex-col gap-3 sm:flex-row sm:items-center" id="heroCtaGroup">
-                    <a id="heroPrimaryCta" href="{{ $slides[0]['primary_cta']['url'] ?? '#' }}" class="frontend-btn-primary {{ empty($slides[0]['primary_cta']['label']) || empty($slides[0]['primary_cta']['url']) ? 'hidden' : 'inline-flex' }} min-h-12 items-center justify-center rounded-full px-7 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
-                        {{ $slides[0]['primary_cta']['label'] ?? 'Explore' }}
-                    </a>
-                    <a id="heroSecondaryCta" href="{{ $slides[0]['secondary_cta']['url'] ?? '#' }}" class="frontend-btn-ghost {{ empty($slides[0]['secondary_cta']['label']) || empty($slides[0]['secondary_cta']['url']) ? 'hidden' : 'inline-flex' }} min-h-12 items-center justify-center rounded-full px-7 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
-                        {{ $slides[0]['secondary_cta']['label'] ?? 'Learn more' }}
-                    </a>
-                </div>
-
-                <div class="flex items-center gap-3 pt-4" role="tablist" aria-label="首頁輪播切換">
-                    @foreach ($slides as $index => $slide)
-                        <button
-                            type="button"
-                            class="hero-dot {{ $index === 0 ? 'is-active' : '' }}"
-                            data-hero-dot
-                            data-slide-index="{{ $index }}"
-                            role="tab"
-                            aria-selected="{{ $index === 0 ? 'true' : 'false' }}"
-                            aria-controls="heroSlidePanel"
-                            aria-label="切換到第 {{ $index + 1 }} 張輪播：{{ $slide['title'] }}"
-                        ></button>
-                    @endforeach
-                    <div class="ml-auto hidden items-center gap-2 text-[0.75rem] uppercase tracking-[0.18em] text-on-surface/42 sm:flex">
-                        <span>Scroll</span>
-                        <span class="material-symbols-outlined text-[1rem]" aria-hidden="true">south</span>
-                    </div>
-                </div>
-            </div>
-
+        <div id="heroCarouselRegion" class="hero-carousel mx-auto max-w-7xl space-y-6 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4" tabindex="0" aria-roledescription="carousel" aria-label="首頁主視覺輪播，使用左右方向鍵切換" data-hero-carousel>
             <div class="relative">
                 <div class="pointer-events-none absolute -left-10 top-8 h-32 w-32 rounded-full bg-primary/10 blur-3xl sm:h-44 sm:w-44"></div>
                 <div class="pointer-events-none absolute -bottom-12 right-0 h-40 w-40 rounded-full bg-tertiary/14 blur-3xl sm:h-52 sm:w-52"></div>
 
-                <div class="hero-media-card relative overflow-hidden rounded-[1.75rem] bg-surface-container-lowest p-3 shadow-[0_40px_80px_-48px_rgba(26,28,25,0.38)] sm:p-4">
-                    <div id="heroSlidePanel" class="relative aspect-[4/5] overflow-hidden rounded-[1.3rem] bg-surface-container-low" aria-live="off">
+                <div class="hero-media-card relative overflow-hidden rounded-[1.5rem] bg-surface-container-lowest p-2.5 shadow-[0_40px_80px_-48px_rgba(26,28,25,0.38)] sm:p-3.5">
+                    <div id="heroSlidePanel" class="relative hero-landscape-frame overflow-hidden rounded-[1.1rem] bg-surface-container-low" aria-live="off">
                         @foreach ($slides as $index => $slide)
                             <img
                                 src="{{ $slide['image'] }}"
@@ -64,16 +18,20 @@
                                 class="hero-slide-image {{ $index === 0 ? 'is-active' : '' }}"
                                 data-hero-image
                                 data-slide-index="{{ $index }}"
-                                data-fallback-alt="{{ $slide['title'] }}"
+                                data-fallback-alt="{{ $slide['image_alt'] ?? '首頁輪播圖片' }}"
                                 @if ($index > 0) loading="lazy" @endif
                             >
                         @endforeach
-                        <div class="absolute inset-0 bg-linear-to-t from-on-surface/28 via-on-surface/4 to-transparent"></div>
-                        <div class="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-4 p-5 sm:p-7">
-                            <div>
-                                <p class="text-[0.72rem] uppercase tracking-[0.24em] text-white/78">Editorial Interior</p>
-                                <p class="mt-2 font-headline text-[1.15rem] text-white sm:text-[1.4rem]">為日常留一個慢下來的位置</p>
-                            </div>
+                        <a
+                            id="heroSlideLink"
+                            href="{{ $slides[0]['target_url'] ?? '#' }}"
+                            class="absolute inset-0 z-10 {{ empty($slides[0]['target_url']) ? 'hero-slide-link-disabled' : '' }}"
+                            data-link-disabled="{{ empty($slides[0]['target_url']) ? '1' : '0' }}"
+                            aria-label="開啟目前輪播連結"
+                            @if (!empty($slides[0]['target_url']) && str_starts_with((string) $slides[0]['target_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif
+                        ></a>
+                        <div class="absolute inset-0 bg-linear-to-t from-on-surface/35 via-on-surface/8 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 z-20 flex items-end justify-end gap-4 p-4 sm:p-6 lg:p-8">
                             <div class="flex items-center gap-2">
                                 <button type="button" class="hero-nav-btn" data-hero-prev aria-label="上一張輪播">
                                     <span class="material-symbols-outlined text-[1.2rem]" aria-hidden="true">west</span>
@@ -86,23 +44,32 @@
                     </div>
                 </div>
             </div>
+
+            <div class="flex items-center gap-3 px-1" role="tablist" aria-label="首頁輪播切換">
+                    @foreach ($slides as $index => $slide)
+                        <button
+                            type="button"
+                            class="hero-dot {{ $index === 0 ? 'is-active' : '' }}"
+                            data-hero-dot
+                            data-slide-index="{{ $index }}"
+                            role="tab"
+                            aria-selected="{{ $index === 0 ? 'true' : 'false' }}"
+                            aria-controls="heroSlidePanel"
+                            aria-label="切換到第 {{ $index + 1 }} 張輪播：{{ $slide['image_alt'] ?? ($slide['title'] ?? '首頁輪播') }}"
+                        ></button>
+                    @endforeach
+                    <div class="ml-auto hidden items-center gap-2 text-[0.75rem] uppercase tracking-[0.18em] text-on-surface/42 sm:flex">
+                        <span>Scroll</span>
+                        <span class="material-symbols-outlined text-[1rem]" aria-hidden="true">south</span>
+                    </div>
+            </div>
         </div>
     </section>
     @endif
 
     <section id="journal" class="border-y border-outline-variant/30 bg-surface-container-low/66 px-4 py-16 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="journalHeading">
-        <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-            <div class="space-y-6 lg:sticky lg:top-36 lg:self-start">
-                <span class="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-primary">Latest News</span>
-                <h2 id="journalHeading" class="font-headline text-[2.2rem] tracking-[-0.04em] text-on-surface sm:text-[3rem]">把生活過成一種有留白的閱讀體驗</h2>
-                <p class="max-w-md text-[1rem] leading-8 text-on-surface/68">
-                    最新五筆已生效一般公告。保留足夠呼吸感與節奏，讓資訊像品牌日誌而非訊息牆。
-                </p>
-                <a href="{{ url('announcement') }}" class="inline-flex items-center gap-2 border-b border-outline pb-1 text-[0.9rem] font-medium text-on-surface transition-colors hover:text-primary no-underline">
-                    More Articles
-                    <span class="material-symbols-outlined text-[1rem]" aria-hidden="true">arrow_outward</span>
-                </a>
-            </div>
+        <div class="mx-auto max-w-4xl space-y-6">
+            <h2 id="journalHeading" class="sr-only">最新公告</h2>
 
             <div class="space-y-5">
                 @forelse ($journalEntries as $entry)
@@ -131,6 +98,13 @@
                     </div>
                 @endforelse
             </div>
+
+            <div class="pt-1 text-right">
+                <a href="{{ url('announcement') }}" class="inline-flex items-center gap-2 border-b border-outline pb-1 text-[0.9rem] font-medium text-on-surface transition-colors hover:text-primary no-underline">
+                    More Articles
+                    <span class="material-symbols-outlined text-[1rem]" aria-hidden="true">arrow_outward</span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -140,7 +114,7 @@
             <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                 <div class="space-y-4">
                     <span class="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-primary">Selected Works</span>
-                    <h2 id="productHeading" class="font-headline text-[2.2rem] tracking-[-0.04em] text-on-surface sm:text-[3rem]">六件靜態商品卡，呈現柔和節奏與生活感</h2>
+                    <h2 id="productHeading" class="font-headline text-[2.2rem] tracking-[-0.04em] text-on-surface sm:text-[3rem]">精選商品，呈現柔和節奏與生活感</h2>
                 </div>
                 <a href="{{ url('product') }}" class="inline-flex items-center gap-2 border-b border-outline pb-1 text-[0.9rem] font-medium text-on-surface transition-colors hover:text-primary no-underline">
                     More Products
@@ -208,6 +182,31 @@
             window.__FRONTEND_HERO_SLIDES__ = @json($slides);
         </script>
     @endif
+@endpush
+
+@push('styles')
+    <style>
+        /* 保底樣式：避免 CSS 資產尚未重建時 Hero 區塊高度塌陷 */
+        .hero-landscape-frame {
+            aspect-ratio: 16 / 9;
+            min-height: 260px;
+        }
+
+        .hero-slide-image {
+            object-position: center top;
+        }
+
+        .hero-slide-link-disabled {
+            pointer-events: none;
+        }
+
+        @media (max-width: 640px) {
+            .hero-landscape-frame {
+                aspect-ratio: 4 / 3;
+                min-height: 220px;
+            }
+        }
+    </style>
 @endpush
 
 

@@ -39,6 +39,21 @@ class HeroSlideServiceTest extends TestCase
         $this->assertArrayHasKey('description_preview', $result['data'][0]);
         $this->assertNotSame('', $result['data'][0]['description_preview']);
     }
+
+    /**
+     * 下一排序值應取最大排序加一。
+     */
+    public function test_fetch_next_sort_order_returns_max_plus_one(): void
+    {
+        $repository = Mockery::mock(HeroSlideRepository::class);
+        $repository->shouldReceive('fetchMaxSortOrder')
+            ->once()
+            ->andReturn(12);
+
+        $service = new HeroSlideService($repository);
+
+        $this->assertSame(13, $service->fetchNextSortOrder());
+    }
 }
 
 

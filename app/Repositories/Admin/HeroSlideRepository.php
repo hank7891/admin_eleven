@@ -98,5 +98,13 @@ class HeroSlideRepository
             ->ordered()
             ->get();
     }
+
+    /**
+     * 取得目前最大排序值
+     */
+    public function fetchMaxSortOrder(): int
+    {
+        return (int) ($this->model::query()->max('sort_order') ?? 0);
+    }
 }
 

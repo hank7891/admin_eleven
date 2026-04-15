@@ -50,11 +50,18 @@ return new class extends Migration
         }
 
         # 標記 create_users_table 為已執行（users 已存在，其餘表已在上方建立）
-        $batch = DB::table('migrations')->max('batch') + 1;
-        DB::table('migrations')->insert([
-            'migration' => '0001_01_01_000000_create_users_table',
-            'batch' => $batch,
-        ]);
+        # migrate:fresh 情境下此紀錄會由框架自動建立，需先檢查避免重複
+        $exists = DB::table('migrations')
+            ->where('migration', '0001_01_01_000000_create_users_table')
+            ->exists();
+
+        if (!$exists) {
+            $batch = DB::table('migrations')->max('batch') + 1;
+            DB::table('migrations')->insert([
+                'migration' => '0001_01_01_000000_create_users_table',
+                'batch' => $batch,
+            ]);
+        }
     }
 
     public function down(): void

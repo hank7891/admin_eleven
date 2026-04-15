@@ -59,15 +59,9 @@ const setupHeroCarousel = () => {
     const nextButton = document.querySelector('[data-hero-next]');
     const prevButton = document.querySelector('[data-hero-prev]');
     const liveRegion = document.getElementById('heroLiveRegion');
-    const textContent = document.getElementById('heroTextContent');
-    const ctaGroup = document.getElementById('heroCtaGroup');
-    const eyebrow = document.getElementById('heroEyebrow');
-    const title = document.getElementById('heroTitle');
-    const description = document.getElementById('heroDescription');
-    const primaryCta = document.getElementById('heroPrimaryCta');
-    const secondaryCta = document.getElementById('heroSecondaryCta');
+    const slideLink = document.getElementById('heroSlideLink');
 
-    if (!carousel || !images.length || !dots.length || !eyebrow || !title || !description || !primaryCta || !secondaryCta) {
+    if (!carousel || !images.length || !dots.length) {
         return;
     }
 
@@ -78,34 +72,39 @@ const setupHeroCarousel = () => {
         return {
             image,
             dot,
-            eyebrow: image.dataset.eyebrow,
-            title: image.dataset.title,
-            description: image.dataset.description,
-            primaryLabel: image.dataset.primaryLabel,
-            primaryUrl: image.dataset.primaryUrl,
-            secondaryLabel: image.dataset.secondaryLabel,
-            secondaryUrl: image.dataset.secondaryUrl,
+            imageAlt: image.alt,
+            targetUrl: image.dataset.targetUrl,
         };
     });
 
     let currentIndex = 0;
     let timer = null;
-    let textTransitionTimer = null;
     let isPaused = false;
     let touchStartX = 0;
     let touchStartY = 0;
     let hasRenderedOnce = false;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const syncCta = (element, label, url, fallbackLabel) => {
-        const hasLabel = Boolean(label);
-        const hasUrl = Boolean(url);
-        const shouldHide = !hasLabel || !hasUrl;
+    const syncSlideLink = (slide) => {
+        if (!slideLink) {
+            return;
+        }
 
-        element.textContent = label || fallbackLabel;
-        element.setAttribute('href', url || '#');
-        element.classList.toggle('hidden', shouldHide);
-        element.classList.toggle('inline-flex', !shouldHide);
+        const targetUrl = (slide?.targetUrl || '').trim();
+        const hasUrl = targetUrl.length > 0;
+        const isExternal = hasUrl && /^https?:\/\//i.test(targetUrl);
+
+        slideLink.setAttribute('href', hasUrl ? targetUrl : '#');
+        slideLink.classList.toggle('hero-slide-link-disabled', !hasUrl);
+        slideLink.dataset.linkDisabled = hasUrl ? '0' : '1';
+
+        if (isExternal) {
+            slideLink.setAttribute('target', '_blank');
+            slideLink.setAttribute('rel', 'noopener noreferrer');
+        } else {
+            slideLink.removeAttribute('target');
+            slideLink.removeAttribute('rel');
+        }
     };
 
     const updateLiveRegion = (index) => {
@@ -113,35 +112,7 @@ const setupHeroCarousel = () => {
             return;
         }
 
-        liveRegion.textContent = `第 ${index + 1} 張，共 ${slides.length} 張：${slides[index]?.title || ''}`;
-    };
-
-    const updateTextContent = (slide) => {
-        eyebrow.textContent = slide.eyebrow || '';
-        title.textContent = slide.title || '';
-        description.textContent = slide.description || '';
-        syncCta(primaryCta, slide.primaryLabel, slide.primaryUrl, 'Explore');
-        syncCta(secondaryCta, slide.secondaryLabel, slide.secondaryUrl, 'Learn more');
-    };
-
-    const animateTextUpdate = (slide) => {
-        if (prefersReducedMotion || !textContent || !ctaGroup) {
-            updateTextContent(slide);
-            return;
-        }
-
-        window.clearTimeout(textTransitionTimer);
-        textContent.classList.add('is-transitioning');
-        ctaGroup.classList.add('is-transitioning');
-
-        textTransitionTimer = window.setTimeout(() => {
-            updateTextContent(slide);
-
-            window.requestAnimationFrame(() => {
-                textContent.classList.remove('is-transitioning');
-                ctaGroup.classList.remove('is-transitioning');
-            });
-        }, 170);
+        liveRegion.textContent = `第 ${index + 1} 張，共 ${slides.length} 張：${slides[index]?.imageAlt || ''}`;
     };
 
     const stopTimer = () => {
@@ -174,11 +145,7 @@ const setupHeroCarousel = () => {
         });
 
         const currentSlide = slides[currentIndex];
-        if (immediate || !hasRenderedOnce) {
-            updateTextContent(currentSlide);
-        } else {
-            animateTextUpdate(currentSlide);
-        }
+        syncSlideLink(currentSlide);
 
         if (announce) {
             updateLiveRegion(currentIndex);
@@ -307,13 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        image.dataset.eyebrow = slide.eyebrow;
-        image.dataset.title = slide.title;
-        image.dataset.description = slide.description;
-        image.dataset.primaryLabel = slide.primary_cta?.label || '';
-        image.dataset.primaryUrl = slide.primary_cta?.url || '';
-        image.dataset.secondaryLabel = slide.secondary_cta?.label || '';
-        image.dataset.secondaryUrl = slide.secondary_cta?.url || '';
+        image.dataset.targetUrl = slide.target_url || '';
     });
 
     setupAlertBanner();

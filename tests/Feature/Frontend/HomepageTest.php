@@ -20,19 +20,9 @@ class HomepageTest extends TestCase
                 ->once()
                 ->andReturn([
                     [
-                        'eyebrow' => 'Spring / Summer 2026',
-                        'title' => '首頁輪播測試',
-                        'description' => '這是一則首頁輪播描述。',
                         'image' => 'https://example.com/hero.jpg',
                         'image_alt' => '首頁輪播圖片',
-                        'primary_cta' => [
-                            'label' => '探索本季精選',
-                            'url' => '/#products',
-                        ],
-                        'secondary_cta' => [
-                            'label' => '閱讀品牌日誌',
-                            'url' => '/#journal',
-                        ],
+                        'target_url' => '/product',
                     ],
                 ]);
         });
@@ -79,10 +69,17 @@ class HomepageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Aura & Heirloom');
-        $response->assertSee('The Journal');
         $response->assertSee('Selected Works');
         $response->assertSee('會員專區');
-        $response->assertSee('首頁輪播測試');
+        $response->assertSee('id="heroSlideLink"', false);
+        $response->assertDontSee('id="heroPrimaryCta"', false);
+        $response->assertDontSee('id="heroSecondaryCta"', false);
+        $response->assertDontSee('id="heroTitle"', false);
+        $response->assertDontSee('id="heroDescription"', false);
+        $response->assertDontSee('把生活過成一種有留白的閱讀體驗');
+        $response->assertDontSee('最新五筆已生效一般公告。保留足夠呼吸感與節奏，讓資訊像品牌日誌而非訊息牆。');
+        $response->assertSee('href="' . url('announcement') . '"', false);
+        $response->assertSee('More Articles');
         $response->assertSee('首頁公告測試');
         $response->assertSee('首頁商品測試');
     }
