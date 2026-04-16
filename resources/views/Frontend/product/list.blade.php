@@ -1,6 +1,7 @@
 @extends('Frontend-share.layout')
 
 @section('content')
+    @php($selectedTagIds = array_map('intval', $filters['tag_ids'] ?? []))
     <section class="px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-24 lg:pt-40">
         <div class="mx-auto max-w-7xl">
             <header class="mb-14 lg:mb-20">
@@ -34,14 +35,17 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="space-y-2">
-                        <label class="block text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-on-surface/54">Tag</label>
-                        <select name="tag_id" class="w-full rounded-xl border-none bg-surface-container px-4 py-3.5 text-[0.95rem] text-on-surface focus:ring-2 focus:ring-primary/30">
-                            <option value="">全部標籤</option>
+                    <div class="space-y-2 md:col-span-6">
+                        <label class="block text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-on-surface/54">Tags</label>
+                        <div class="flex flex-wrap gap-2">
                             @foreach (($filterOptions['tags'] ?? []) as $tag)
-                                <option value="{{ $tag['id'] }}" {{ (string) ($filters['tag_id'] ?? '') === (string) $tag['id'] ? 'selected' : '' }}>{{ $tag['name'] }}</option>
+                                @php($tagId = (int) ($tag['id'] ?? 0))
+                                <label data-tag-chip class="inline-flex min-h-10 cursor-pointer items-center rounded-full border px-3.5 py-2 text-[0.82rem] font-medium transition-colors {{ in_array($tagId, $selectedTagIds, true) ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/60 bg-surface-container-lowest text-on-surface/75 hover:border-primary/50 hover:text-primary' }}">
+                                    <input data-tag-checkbox type="checkbox" name="tag_ids[]" value="{{ $tagId }}" class="sr-only" {{ in_array($tagId, $selectedTagIds, true) ? 'checked' : '' }}>
+                                    <span>{{ $tag['name'] }}</span>
+                                </label>
                             @endforeach
-                        </select>
+                        </div>
                     </div>
                     <div class="md:col-span-6 flex gap-3 justify-end">
                         <button type="submit" class="frontend-btn-primary inline-flex min-h-12 items-center justify-center rounded-xl px-6 py-3 text-[0.82rem] font-semibold uppercase tracking-[0.18em]">Filter</button>

@@ -256,6 +256,27 @@ body.frontend-body {
     transform: translateY(-4px);
 }
 
+.product-thumb-btn {
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.product-thumb-btn:hover {
+    transform: translateY(-1px);
+}
+
+.frontend-product-dialog::backdrop {
+    background: rgba(31, 28, 25, 0.72);
+}
+
+.frontend-product-dialog {
+    max-width: 96vw;
+}
+
+.frontend-product-dialog[open] {
+    display: grid;
+    place-items: center;
+}
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible {

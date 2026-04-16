@@ -19,12 +19,12 @@ class ProductController extends FrontendController
     # 前台商品列表
     public function list(Request $request): View
     {
-        $filters = $request->only(['keyword', 'date_from', 'date_to', 'category_id', 'tag_id']);
+        $filters = $request->only(['keyword', 'date_from', 'date_to', 'category_id', 'tag_id', 'tag_ids']);
         $result = $this->service->fetchPaginatedData($filters);
 
         return view('Frontend/product/list', [
             'pageTitle' => '全部商品 | Aura & Heirloom',
-            'navItems' => $this->buildNavItems(),
+            'navItems' => $this->buildNavItems('product'),
             'footerColumns' => $this->buildFooterColumns(),
             'alertBanner' => $this->buildAlertBanner(),
             'products' => $result['data'],
@@ -41,7 +41,7 @@ class ProductController extends FrontendController
 
         return view('Frontend/product/detail', [
             'pageTitle' => $data['name'] . ' | Aura & Heirloom',
-            'navItems' => $this->buildNavItems(),
+            'navItems' => $this->buildNavItems('product'),
             'footerColumns' => $this->buildFooterColumns(),
             'alertBanner' => $this->buildAlertBanner(),
             'data' => $data,

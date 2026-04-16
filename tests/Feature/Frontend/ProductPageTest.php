@@ -30,7 +30,7 @@ class ProductPageTest extends TestCase
                         ],
                     ],
                     'pagination' => new LengthAwarePaginator([['id' => 1]], 1, 12),
-                    'filters' => ['keyword' => '', 'date_from' => '', 'date_to' => '', 'category_id' => '', 'tag_id' => ''],
+                    'filters' => ['keyword' => '', 'date_from' => '', 'date_to' => '', 'category_id' => '', 'tag_ids' => []],
                 ]);
 
             $mock->shouldReceive('fetchFilterOptions')

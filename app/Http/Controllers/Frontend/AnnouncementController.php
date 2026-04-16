@@ -22,7 +22,7 @@ class AnnouncementController extends FrontendController
 
         return view('Frontend/announcement/list', [
             'pageTitle' => 'The Journal | Aura & Heirloom',
-            'navItems' => $this->buildNavItems(),
+            'navItems' => $this->buildNavItems('announcement'),
             'footerColumns' => $this->buildFooterColumns(),
             'alertBanner' => $this->buildAlertBanner(),
             'announcements' => $result['data'],
@@ -38,7 +38,7 @@ class AnnouncementController extends FrontendController
 
         return view('Frontend/announcement/detail', [
             'pageTitle' => $data['title'] . ' | Aura & Heirloom',
-            'navItems' => $this->buildNavItems(),
+            'navItems' => $this->buildNavItems('announcement'),
             'footerColumns' => $this->buildFooterColumns(),
             'alertBanner' => $this->buildAlertBanner(),
             'data' => $data,

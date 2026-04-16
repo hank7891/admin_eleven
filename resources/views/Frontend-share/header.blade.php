@@ -21,7 +21,7 @@
             @foreach ($navItems ?? [] as $item)
                 <a
                     href="{{ $item['url'] }}"
-                    class="text-[0.95rem] font-medium tracking-[0.01em] text-on-surface/70 transition-colors hover:text-primary no-underline first:border-b first:border-primary first:pb-1 first:text-primary"
+                    class="text-[0.95rem] font-medium tracking-[0.01em] transition-colors hover:text-primary no-underline {{ !empty($item['is_active']) ? 'border-b border-primary pb-1 text-primary' : 'text-on-surface/70' }}"
                 >
                     {{ $item['label'] }}
                 </a>
@@ -42,7 +42,7 @@
     <div id="frontend-mobile-menu" class="frontend-mobile-menu hidden border-t border-outline-variant/30 bg-background/96 px-4 py-4 shadow-[0_24px_40px_-24px_rgba(26,28,25,0.28)] backdrop-blur lg:hidden" data-mobile-menu>
         <nav class="flex flex-col gap-1" aria-label="前台手機導覽">
             @foreach ($navItems ?? [] as $item)
-                <a href="{{ $item['url'] }}" class="rounded-xl px-4 py-3 text-[0.95rem] font-medium text-on-surface/80 transition-colors hover:bg-surface-container-low hover:text-primary no-underline">
+                <a href="{{ $item['url'] }}" class="rounded-xl px-4 py-3 text-[0.95rem] font-medium transition-colors hover:bg-surface-container-low hover:text-primary no-underline {{ !empty($item['is_active']) ? 'bg-surface-container-low text-primary' : 'text-on-surface/80' }}">
                     {{ $item['label'] }}
                 </a>
             @endforeach

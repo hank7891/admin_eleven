@@ -13,15 +13,21 @@ class FrontendController extends Controller
     }
 
     # 前台共用導覽列
-    protected function buildNavItems(): array
+    protected function buildNavItems(?string $activeKey = null): array
     {
-        return [
-            ['label' => '首頁', 'url' => '/#top'],
-            ['label' => '精選商品', 'url' => url('product')],
-            ['label' => '最新公告', 'url' => url('announcement')],
-            ['label' => '會員專區', 'url' => '/#member'],
-            ['label' => '關於我們', 'url' => '/#footer'],
+        $items = [
+            ['key' => 'home', 'label' => '首頁', 'url' => '/#top'],
+            ['key' => 'product', 'label' => '精選商品', 'url' => url('product')],
+            ['key' => 'announcement', 'label' => '最新公告', 'url' => url('announcement')],
+            ['key' => 'member', 'label' => '會員專區', 'url' => '/#member'],
+            ['key' => 'about', 'label' => '關於我們', 'url' => '/#footer'],
         ];
+
+        return array_map(function (array $item) use ($activeKey) {
+            $item['is_active'] = $activeKey === ($item['key'] ?? null);
+
+            return $item;
+        }, $items);
     }
 
     # 前台共用頁尾

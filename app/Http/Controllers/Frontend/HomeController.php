@@ -23,7 +23,7 @@ class HomeController extends FrontendController
     {
         return view('Frontend.home', [
             'pageTitle' => 'Aura & Heirloom | 前台形象首頁',
-            'navItems' => $this->buildNavItems(),
+            'navItems' => $this->buildNavItems('home'),
             'footerColumns' => $this->buildFooterColumns(),
             'alertBanner' => $this->buildAlertBanner(),
             'slides' => $this->heroSlideService->fetchActiveSlides(),

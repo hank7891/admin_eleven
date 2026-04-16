@@ -31,7 +31,14 @@ class ProductRepository
             $query->where('category_id', (int) $filters['category_id']);
         }
 
-        if (!empty($filters['tag_id'])) {
+        if (!empty($filters['tag_ids']) && is_array($filters['tag_ids'])) {
+            $tagIds = array_values(array_filter(array_map('intval', $filters['tag_ids']), fn ($id) => $id > 0));
+            if (!empty($tagIds)) {
+                $query->whereHas('tags', function (Builder $builder) use ($tagIds) {
+                    $builder->whereIn('product_tags.id', $tagIds);
+                });
+            }
+        } elseif (!empty($filters['tag_id'])) {
             $tagId = (int) $filters['tag_id'];
             $query->whereHas('tags', function (Builder $builder) use ($tagId) {
                 $builder->where('product_tags.id', $tagId);
@@ -208,7 +215,14 @@ class ProductRepository
             $query->where('category_id', (int) $filters['category_id']);
         }
 
-        if (!empty($filters['tag_id'])) {
+        if (!empty($filters['tag_ids']) && is_array($filters['tag_ids'])) {
+            $tagIds = array_values(array_filter(array_map('intval', $filters['tag_ids']), fn ($id) => $id > 0));
+            if (!empty($tagIds)) {
+                $query->whereHas('tags', function (Builder $builder) use ($tagIds) {
+                    $builder->whereIn('product_tags.id', $tagIds);
+                });
+            }
+        } elseif (!empty($filters['tag_id'])) {
             $tagId = (int) $filters['tag_id'];
             $query->whereHas('tags', function (Builder $builder) use ($tagId) {
                 $builder->where('product_tags.id', $tagId);

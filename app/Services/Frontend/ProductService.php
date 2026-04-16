@@ -58,7 +58,13 @@ class ProductService
         return [
             'data' => $data,
             'pagination' => $paginator,
-            'filters' => array_filter($filters, fn ($v) => $v !== ''),
+            'filters' => array_filter($filters, function ($value) {
+                if (is_array($value)) {
+                    return !empty($value);
+                }
+
+                return $value !== '';
+            }),
         ];
     }
 
@@ -126,13 +132,43 @@ class ProductService
 
     protected function normalizeFilters(array $filters): array
     {
+        $rawTagIds = $filters['tag_ids'] ?? [];
+
         $filters = [
             'keyword' => trim((string) ($filters['keyword'] ?? '')),
             'date_from' => trim((string) ($filters['date_from'] ?? '')),
             'date_to' => trim((string) ($filters['date_to'] ?? '')),
             'category_id' => trim((string) ($filters['category_id'] ?? '')),
             'tag_id' => trim((string) ($filters['tag_id'] ?? '')),
+            'tag_ids' => [],
         ];
+
+        $tagIds = $rawTagIds;
+        if (!is_array($tagIds)) {
+            $tagIds = [];
+        }
+
+        $tagIds = array_map(function ($value) {
+            $value = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+            return $value === false ? null : (int) $value;
+        }, $tagIds);
+        $tagIds = array_values(array_unique(array_filter($tagIds, fn ($value) => $value !== null)));
+
+        # 向下相容：若未提供 tag_ids，沿用單值 tag_id
+        if (empty($tagIds) && $filters['tag_id'] !== '') {
+            $legacyTagId = filter_var($filters['tag_id'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+            if ($legacyTagId !== false) {
+                $tagIds[] = (int) $legacyTagId;
+            }
+        }
+
+        # 限制 whereIn 筆數，避免惡意 querystring 放大查詢
+        $filters['tag_ids'] = array_slice($tagIds, 0, 20);
+
+        if (!empty($filters['tag_ids'])) {
+            $filters['tag_id'] = '';
+        }
 
         foreach (['date_from', 'date_to'] as $field) {
             if ($filters[$field] === '') {

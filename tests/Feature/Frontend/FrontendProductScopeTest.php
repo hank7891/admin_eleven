@@ -5,6 +5,7 @@ namespace Tests\Feature\Frontend;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
+use App\Models\ProductTag;
 use App\Services\Admin\HeroSlideService;
 use App\Services\Frontend\AnnouncementService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -144,6 +145,39 @@ class FrontendProductScopeTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Any Product');
+    }
+
+    public function test_list_accepts_multiple_tag_ids_and_matches_any_tag(): void
+    {
+        $category = ProductCategory::factory()->create();
+        $tagA = ProductTag::factory()->create(['name' => 'TagA']);
+        $tagB = ProductTag::factory()->create(['name' => 'TagB']);
+        $tagC = ProductTag::factory()->create(['name' => 'TagC']);
+
+        $productA = $this->createOnlineProduct([
+            'name' => 'Match Tag A',
+            'category_id' => $category->id,
+        ]);
+        $productA->tags()->sync([$tagA->id]);
+
+        $productB = $this->createOnlineProduct([
+            'name' => 'Match Tag B',
+            'category_id' => $category->id,
+        ]);
+        $productB->tags()->sync([$tagB->id]);
+
+        $productC = $this->createOnlineProduct([
+            'name' => 'No Match Tag',
+            'category_id' => $category->id,
+        ]);
+        $productC->tags()->sync([$tagC->id]);
+
+        $response = $this->get('/product?tag_ids[]=' . $tagA->id . '&tag_ids[]=' . $tagB->id);
+
+        $response->assertOk();
+        $response->assertSee('Match Tag A');
+        $response->assertSee('Match Tag B');
+        $response->assertDontSee('href="' . url('product/' . $productC->id) . '"', false);
     }
 
     # --- 白名單：回應不含管理欄位 ---

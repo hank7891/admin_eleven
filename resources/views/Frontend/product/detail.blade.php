@@ -14,15 +14,52 @@
                 <div>
                     @php($mainImage = collect($data['images'] ?? [])->firstWhere('is_primary', 1) ?? (($data['images'] ?? [])[0] ?? null))
                     @if (!empty($mainImage))
-                        <img src="{{ $mainImage['image_url'] }}" alt="{{ $mainImage['image_alt'] ?: $data['name'] }}" class="w-full rounded-[1.4rem] object-cover aspect-[4/5] shadow-[0_24px_56px_-40px_rgba(26,28,25,0.28)]">
+                        <button type="button" class="block w-full cursor-zoom-in" data-open-product-image-dialog aria-label="開啟商品大圖">
+                            <img
+                                id="productMainImage"
+                                src="{{ $mainImage['image_url'] }}"
+                                alt="{{ $mainImage['image_alt'] ?: $data['name'] }}"
+                                class="w-full rounded-[1.4rem] object-cover aspect-[4/5] shadow-[0_24px_56px_-40px_rgba(26,28,25,0.28)]"
+                                data-main-image
+                            >
+                        </button>
+                    @else
+                        <div class="flex aspect-[4/5] w-full items-center justify-center rounded-[1.4rem] bg-surface-container-high text-outline shadow-[0_24px_56px_-40px_rgba(26,28,25,0.28)]">
+                            <div class="text-center">
+                                <span class="material-symbols-outlined text-[2.2rem]">image</span>
+                                <p class="mt-2 text-[0.86rem]">目前尚無商品圖片</p>
+                            </div>
+                        </div>
                     @endif
 
                     @if (!empty($data['images']) && count($data['images']) > 1)
                         <div class="mt-5 grid grid-cols-5 gap-3">
-                            @foreach ($data['images'] as $image)
-                                <img src="{{ $image['image_url'] }}" alt="{{ $image['image_alt'] ?: $data['name'] }}" class="aspect-square w-full rounded-xl object-cover {{ ($image['is_primary'] ?? 0) === 1 ? 'ring-2 ring-primary' : '' }}">
+                            @foreach ($data['images'] as $index => $image)
+                                @php($isActive = ($image['is_primary'] ?? 0) === 1)
+                                <button
+                                    type="button"
+                                    class="product-thumb-btn overflow-hidden rounded-xl border {{ $isActive ? 'border-primary ring-2 ring-primary/30' : 'border-transparent' }}"
+                                    data-thumb
+                                    data-index="{{ $index }}"
+                                    data-image-url="{{ $image['image_url'] }}"
+                                    data-image-alt="{{ $image['image_alt'] ?: $data['name'] }}"
+                                    aria-label="切換商品圖片 {{ $index + 1 }}"
+                                >
+                                    <img src="{{ $image['image_url'] }}" alt="{{ $image['image_alt'] ?: $data['name'] }}" class="aspect-square w-full object-cover">
+                                </button>
                             @endforeach
                         </div>
+                    @endif
+
+                    @if (!empty($mainImage))
+                        <dialog id="productImageDialog" class="frontend-product-dialog fixed left-1/2 top-1/2 m-0 -translate-x-1/2 -translate-y-1/2 rounded-2xl border-0 p-0 backdrop:bg-on-surface/70">
+                            <div class="relative bg-surface-container-lowest p-2 sm:p-3">
+                                <button type="button" class="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-on-surface/70 text-white" data-close-product-image-dialog aria-label="關閉商品大圖">
+                                    <span class="material-symbols-outlined text-[1.2rem]">close</span>
+                                </button>
+                                <img id="productDialogImage" src="{{ $mainImage['image_url'] ?? '' }}" alt="{{ $mainImage['image_alt'] ?? ($data['name'] ?? '') }}" class="max-h-[84vh] w-auto max-w-[92vw] rounded-xl object-contain">
+                            </div>
+                        </dialog>
                     @endif
                 </div>
 
