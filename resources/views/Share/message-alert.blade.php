@@ -87,6 +87,8 @@
 
 <div id="alert-area"></div>
 <script>
+    const uploadErrorFallback = @json(request()->query('upload_error'));
+
     function fetchMsgDiv(type, message) {
         switch (type) {
             case 'danger':
@@ -142,6 +144,17 @@
             }
         });
     }();
+
+    if (uploadErrorFallback === 'too_large') {
+        newAlert('danger', '上傳檔案過大，請選擇較小檔案後重試。');
+
+        // 顯示一次後移除 query，避免重整重複提示
+        if (window.history && window.history.replaceState) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('upload_error');
+            window.history.replaceState({}, document.title, url.pathname + (url.searchParams.toString() ? ('?' + url.searchParams.toString()) : ''));
+        }
+    }
 </script>
 
 

@@ -130,7 +130,7 @@
                                 <img
                                     src="{{ $product['image_url'] }}"
                                     alt="{{ $product['image_alt'] }}"
-                                    class="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                                    class="aspect-[4/5] w-full bg-surface-container-high object-contain p-2 transition-transform duration-700 group-hover:scale-[1.04]"
                                     loading="lazy"
                                 >
                             </div>

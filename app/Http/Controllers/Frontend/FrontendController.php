@@ -20,7 +20,7 @@ class FrontendController extends Controller
             ['key' => 'product', 'label' => '精選商品', 'url' => url('product')],
             ['key' => 'announcement', 'label' => '最新公告', 'url' => url('announcement')],
             ['key' => 'member', 'label' => '會員專區', 'url' => '/#member'],
-            ['key' => 'about', 'label' => '關於我們', 'url' => '/#footer'],
+            ['key' => 'about', 'label' => '關於我們', 'url' => url('about')],
         ];
 
         return array_map(function (array $item) use ($activeKey) {

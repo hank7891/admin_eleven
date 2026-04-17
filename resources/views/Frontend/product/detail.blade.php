@@ -19,7 +19,7 @@
                                 id="productMainImage"
                                 src="{{ $mainImage['image_url'] }}"
                                 alt="{{ $mainImage['image_alt'] ?: $data['name'] }}"
-                                class="w-full rounded-[1.4rem] object-cover aspect-[4/5] shadow-[0_24px_56px_-40px_rgba(26,28,25,0.28)]"
+                                class="w-full rounded-[1.4rem] bg-surface-container-high object-contain p-2 aspect-[4/5] shadow-[0_24px_56px_-40px_rgba(26,28,25,0.28)]"
                                 data-main-image
                             >
                         </button>
@@ -105,7 +105,7 @@
                 <div class="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3">
                     @foreach ($relatedProducts as $product)
                         <a href="{{ $product['url'] }}" class="group rounded-[1.3rem] bg-surface-container-lowest p-6 no-underline shadow-[0_24px_50px_-36px_rgba(26,28,25,0.24)] transition-transform duration-500 hover:-translate-y-1">
-                            <img src="{{ $product['image_url'] }}" alt="{{ $product['image_alt'] }}" class="aspect-[4/5] w-full rounded-[1rem] object-cover">
+                            <img src="{{ $product['image_url'] }}" alt="{{ $product['image_alt'] }}" class="aspect-[4/5] w-full rounded-[1rem] bg-surface-container-high object-contain p-2">
                             <h3 class="mt-5 font-headline text-[1.45rem] leading-tight tracking-[-0.03em] text-on-surface transition-colors group-hover:text-primary">{{ $product['name'] }}</h3>
                             <p class="mt-3 text-[0.9rem] text-on-surface/62">{{ $product['category_name'] }}</p>
                             <p class="mt-2 text-[0.95rem] font-medium text-primary">{{ $product['price_display'] }}</p>

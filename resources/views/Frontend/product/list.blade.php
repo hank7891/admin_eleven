@@ -68,7 +68,7 @@
                         <article class="frontend-product-card group">
                             <a href="{{ $product['url'] }}" class="block no-underline" aria-label="查看更多商品：{{ $product['name'] }}">
                                 <div class="overflow-hidden rounded-[1.35rem] bg-surface-container-low shadow-[0_24px_56px_-40px_rgba(26,28,25,0.28)]">
-                                    <img src="{{ $product['image_url'] }}" alt="{{ $product['image_alt'] }}" class="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" loading="lazy">
+                                    <img src="{{ $product['image_url'] }}" alt="{{ $product['image_alt'] }}" class="aspect-[4/5] w-full bg-surface-container-high object-contain p-2 transition-transform duration-700 group-hover:scale-[1.04]" loading="lazy">
                                 </div>
                                 <div class="mt-5 flex items-start justify-between gap-4 px-2">
                                     <div>

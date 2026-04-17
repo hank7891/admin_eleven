@@ -13,6 +13,7 @@ return [
         'country' => '國別管理',
         'announcement' => '公告管理',
         'hero_slide' => '輪播管理',
+        'about' => '關於我們',
         'product' => '商品管理',
         'product_category' => '商品類別管理',
         'product_tag' => '商品標籤管理',

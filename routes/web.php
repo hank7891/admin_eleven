@@ -15,6 +15,8 @@ Route::get('announcement', [Controllers\Frontend\AnnouncementController::class, 
 Route::get('announcement/{id}', [Controllers\Frontend\AnnouncementController::class, 'detail'])
     ->whereNumber('id')
     ->middleware('throttle:120,1');
+Route::get('about', [Controllers\Frontend\AboutController::class, 'index'])
+    ->middleware('throttle:60,1');
 
 Route::get('test', [Controllers\TestController::class, 'index'])->middleware(Middleware\Test::class);
 
@@ -94,6 +96,12 @@ Route::prefix('admin')->group(function () {
             Route::get('edit/{id}', [Controllers\Admin\ProductTagController::class, 'edit']);
             Route::post('edit', [Controllers\Admin\ProductTagController::class, 'editDo']);
             Route::post('delete/{id}', [Controllers\Admin\ProductTagController::class, 'delete']);
+        });
+
+        # 關於我們
+        Route::prefix('about')->group(function () {
+            Route::get('edit', [Controllers\Admin\AboutController::class, 'edit']);
+            Route::post('edit', [Controllers\Admin\AboutController::class, 'editDo']);
         });
 
         # 遊戲 - 貪食蛇
