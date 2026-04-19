@@ -20,7 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (PostTooLargeException $e, Request $request) {
-            $maxUploadSizeMB = round((config('upload.image.max_size', 5120)) / 1024, 2);
+            $contextKey = match (true) {
+                $request->is('member/*') => 'upload.member_avatar.max_size',
+                default => 'upload.image.max_size',
+            };
+            $maxUploadSizeMB = round((config($contextKey, 5120)) / 1024, 2);
             $message = '上傳檔案過大，請選擇小於 ' . $maxUploadSizeMB . 'MB 的檔案後重試。';
 
             if ($request->expectsJson()) {
@@ -48,6 +52,21 @@ return Application::configure(basePath: dirname(__DIR__))
                 $separator = Str::contains($targetPath, '?') ? '&' : '?';
 
                 return redirect($targetPath . $separator . 'upload_error=too_large');
+            }
+
+            if ($request->is('member/*')) {
+                MessageService::setMessage(MEMBER_MESSAGE_SESSION, MessageService::DANGER, $message);
+
+                $referer = (string) $request->headers->get('referer', '');
+                $refererPath = (string) parse_url($referer, PHP_URL_PATH);
+                $targetPath = 'member/profile';
+
+                # 優先導回前台會員來源頁，避免回到首頁
+                if ($refererPath !== '' && str_starts_with($refererPath, '/member')) {
+                    $targetPath = ltrim($refererPath, '/');
+                }
+
+                return redirect($targetPath)->withErrors(['upload' => $message]);
             }
 
             return redirect()->back()->withErrors(['upload' => $message]);

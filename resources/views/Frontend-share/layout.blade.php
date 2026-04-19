@@ -18,6 +18,71 @@
     @include('Frontend-share.alert-banner')
     @include('Frontend-share.header')
 
+    @php
+        $frontendMessages = session(MEMBER_MESSAGE_SESSION, []);
+        session()->forget(MEMBER_MESSAGE_SESSION);
+    @endphp
+    @if (is_array($frontendMessages) && !empty($frontendMessages))
+        <div class="fixed left-1/2 top-24 z-[80] w-full max-w-md -translate-x-1/2 px-4" role="status" aria-live="polite" data-frontend-flash>
+            @foreach ($frontendMessages as $message)
+                @php
+                    $type = $message['type'] ?? 'info';
+                    $toneClass = match ($type) {
+                        'success' => 'border-primary/30 bg-primary-container text-on-primary-container',
+                        'danger' => 'border-error/40 bg-error-container text-on-error-container',
+                        'warning' => 'border-tertiary/40 bg-tertiary-container text-on-tertiary-container',
+                        default => 'border-outline-variant/40 bg-surface-container-lowest text-on-surface',
+                    };
+                @endphp
+                <div
+                    class="frontend-flash-item mb-2 flex cursor-pointer items-start gap-3 rounded-xl border {{ $toneClass }} px-4 py-3 text-sm shadow-[0_16px_36px_-24px_rgba(26,28,25,0.32)]"
+                    role="button"
+                    tabindex="0"
+                    aria-label="點擊關閉訊息"
+                    data-frontend-flash-item
+                >
+                    <span class="flex-1 leading-relaxed">{{ $message['message'] ?? '' }}</span>
+                    <span class="material-symbols-outlined text-[1.05rem] opacity-60" aria-hidden="true">close</span>
+                </div>
+            @endforeach
+        </div>
+        <script>
+            (function () {
+                const items = document.querySelectorAll('[data-frontend-flash-item]');
+                if (!items.length) {
+                    return;
+                }
+
+                const AUTO_DISMISS_MS = 6000;
+                const FADE_MS = 260;
+
+                function dismiss(item) {
+                    if (!item || item.dataset.dismissed === '1') {
+                        return;
+                    }
+                    item.dataset.dismissed = '1';
+                    item.classList.add('is-leaving');
+                    window.setTimeout(function () {
+                        if (item.parentNode) {
+                            item.parentNode.removeChild(item);
+                        }
+                    }, FADE_MS);
+                }
+
+                items.forEach(function (item) {
+                    item.addEventListener('click', function () { dismiss(item); });
+                    item.addEventListener('keydown', function (event) {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            dismiss(item);
+                        }
+                    });
+                    window.setTimeout(function () { dismiss(item); }, AUTO_DISMISS_MS);
+                });
+            })();
+        </script>
+    @endif
+
     <main class="frontend-main">
         @yield('content')
     </main>

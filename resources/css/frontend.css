@@ -99,6 +99,21 @@ body.frontend-body {
     border-bottom-width: 0;
 }
 
+.frontend-flash-item {
+    transition: opacity 260ms ease, transform 260ms ease;
+    will-change: opacity, transform;
+}
+
+.frontend-flash-item:hover {
+    transform: translateY(-1px);
+}
+
+.frontend-flash-item.is-leaving {
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+}
+
 .frontend-mobile-menu.is-open {
     display: block;
 }

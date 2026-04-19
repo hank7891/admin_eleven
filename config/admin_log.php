@@ -10,6 +10,7 @@ return [
         'auth' => '認證操作',
         'admin_menu' => '選單管理',
         'employee' => '帳號管理',
+        'member' => '會員管理',
         'country' => '國別管理',
         'announcement' => '公告管理',
         'hero_slide' => '輪播管理',

@@ -155,20 +155,43 @@
                 <div class="pointer-events-none absolute -right-12 -top-10 h-36 w-36 rounded-full bg-primary/10 blur-3xl sm:h-52 sm:w-52"></div>
                 <div class="pointer-events-none absolute -bottom-10 -left-10 h-28 w-28 rounded-full bg-secondary/10 blur-3xl sm:h-44 sm:w-44"></div>
 
+                @php($homeMember = session(MEMBER_AUTH_SESSION))
                 <div class="relative z-10 mx-auto max-w-3xl text-center">
                     <span class="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-secondary">The Inner Circle</span>
-                    <h2 id="memberHeading" class="mt-5 font-headline text-[2.4rem] tracking-[-0.04em] text-on-surface sm:text-[3.4rem]">會員專區，是更靠近品牌日常的入口</h2>
+                    <h2 id="memberHeading" class="mt-5 font-headline text-[2.4rem] tracking-[-0.04em] text-on-surface sm:text-[3.4rem]">
+                        @if (!empty($homeMember))
+                            {{ $homeMember['name'] ?? '會員' }},歡迎回到這裡
+                        @else
+                            會員專區,是更靠近品牌日常的入口
+                        @endif
+                    </h2>
                     <p class="mx-auto mt-6 max-w-2xl text-[1rem] leading-8 text-on-surface/68 sm:text-[1.05rem]">
-                        本階段先提供靜態 CTA，後續可逐步串接登入、收藏、公告與會員專屬內容。現在先讓這裡像一封溫柔邀請，而不是催促性的表單。
+                        @if (!empty($homeMember))
+                            可在會員專區管理個人資料、頭像與登入密碼,未來也會延伸到收藏與會員限定內容。
+                        @else
+                            建立帳號後即可管理個人資料、頭像與登入密碼,未來也會延伸到收藏與會員限定內容。
+                        @endif
                     </p>
 
                     <div class="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-                        <a href="#" class="frontend-btn-dark inline-flex min-h-12 items-center justify-center rounded-full px-8 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
-                            建立會員帳號
-                        </a>
-                        <a href="#" class="frontend-btn-ghost inline-flex min-h-12 items-center justify-center rounded-full px-8 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
-                            會員登入
-                        </a>
+                        @if (!empty($homeMember))
+                            <a href="{{ url('member/profile') }}" class="frontend-btn-dark inline-flex min-h-12 items-center justify-center rounded-full px-8 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
+                                進入會員專區
+                            </a>
+                            <form method="POST" action="{{ url('member/logout') }}" class="inline-flex justify-center">
+                                @csrf
+                                <button type="submit" class="frontend-btn-ghost inline-flex min-h-12 items-center justify-center rounded-full px-8 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em]">
+                                    會員登出
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ url('member/register') }}" class="frontend-btn-dark inline-flex min-h-12 items-center justify-center rounded-full px-8 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
+                                建立會員帳號
+                            </a>
+                            <a href="{{ url('member/login') }}" class="frontend-btn-ghost inline-flex min-h-12 items-center justify-center rounded-full px-8 py-3.5 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">
+                                會員登入
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>

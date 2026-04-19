@@ -83,5 +83,54 @@ class HomepageTest extends TestCase
         $response->assertSee('首頁公告測試');
         $response->assertSee('首頁商品測試');
     }
+
+    public function test_home_member_section_shows_login_and_register_cta_for_guest(): void
+    {
+        $this->mockHomeServices();
+
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('建立會員帳號');
+        $response->assertSee('會員登入');
+        $response->assertSee('href="' . url('member/register') . '"', false);
+        $response->assertSee('href="' . url('member/login') . '"', false);
+        $response->assertDontSee('進入會員專區');
+    }
+
+    public function test_home_member_section_shows_profile_entry_for_logged_in_member(): void
+    {
+        $this->mockHomeServices();
+
+        $response = $this->withSession([
+            MEMBER_AUTH_SESSION => [
+                'id' => 9001,
+                'email' => 'member@example.com',
+                'name' => '首頁會員',
+                'avatar_url' => null,
+            ],
+        ])->get('/');
+
+        $response->assertOk();
+        $response->assertSee('進入會員專區');
+        $response->assertSee('會員登出');
+        $response->assertSee('href="' . url('member/profile') . '"', false);
+        $response->assertSee('action="' . url('member/logout') . '"', false);
+        $response->assertDontSee('建立會員帳號');
+    }
+
+    protected function mockHomeServices(): void
+    {
+        $this->mock(HeroSlideService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchActiveSlides')->andReturn([]);
+        });
+        $this->mock(AnnouncementService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchHomepageAnnouncements')->andReturn([]);
+            $mock->shouldReceive('fetchSystemAnnouncement')->andReturn(null);
+        });
+        $this->mock(ProductService::class, function (MockInterface $mock) {
+            $mock->shouldReceive('fetchHomepageFeatured')->andReturn([]);
+        });
+    }
 }
 

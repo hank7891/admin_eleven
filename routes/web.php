@@ -18,6 +18,25 @@ Route::get('announcement/{id}', [Controllers\Frontend\AnnouncementController::cl
 Route::get('about', [Controllers\Frontend\AboutController::class, 'index'])
     ->middleware('throttle:60,1');
 
+Route::prefix('member')->group(function () {
+    Route::get('login', [Controllers\Frontend\MemberAuthController::class, 'login'])
+        ->middleware([Middleware\MemberNotLogin::class, 'throttle:20,1']);
+    Route::post('login', [Controllers\Frontend\MemberAuthController::class, 'loginDo'])
+        ->middleware([Middleware\MemberNotLogin::class, 'throttle:10,1']);
+    Route::get('register', [Controllers\Frontend\MemberAuthController::class, 'register'])
+        ->middleware([Middleware\MemberNotLogin::class, 'throttle:10,1']);
+    Route::post('register', [Controllers\Frontend\MemberAuthController::class, 'registerDo'])
+        ->middleware([Middleware\MemberNotLogin::class, 'throttle:10,1']);
+    Route::get('profile', [Controllers\Frontend\MemberAuthController::class, 'profile'])
+        ->middleware([Middleware\MemberIsLogin::class, 'throttle:60,1']);
+    Route::post('profile', [Controllers\Frontend\MemberAuthController::class, 'profileDo'])
+        ->middleware([Middleware\MemberIsLogin::class, 'throttle:20,1']);
+    Route::post('profile/password', [Controllers\Frontend\MemberAuthController::class, 'changePasswordDo'])
+        ->middleware([Middleware\MemberIsLogin::class, 'throttle:10,1']);
+    Route::post('logout', [Controllers\Frontend\MemberAuthController::class, 'logout'])
+        ->middleware([Middleware\MemberIsLogin::class, 'throttle:20,1']);
+});
+
 Route::get('test', [Controllers\TestController::class, 'index'])->middleware(Middleware\Test::class);
 
 Route::prefix('admin')->group(function () {
@@ -44,6 +63,14 @@ Route::prefix('admin')->group(function () {
             Route::get('list', [Controllers\Admin\EmployeeController::class, 'list']);
             Route::get('edit/{id}', [Controllers\Admin\EmployeeController::class, 'edit']);
             Route::post('edit', [Controllers\Admin\EmployeeController::class, 'editDo']);
+        });
+
+        # 會員管理
+        Route::prefix('member')->group(function () {
+            Route::get('list', [Controllers\Admin\MemberController::class, 'list']);
+            Route::get('edit/{id}', [Controllers\Admin\MemberController::class, 'edit']);
+            Route::post('edit', [Controllers\Admin\MemberController::class, 'editDo']);
+            Route::post('resetPassword/{id}', [Controllers\Admin\MemberController::class, 'resetPassword']);
         });
 
         # 國別管理
