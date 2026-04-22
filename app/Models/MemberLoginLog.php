@@ -48,5 +48,23 @@ class MemberLoginLog extends Model
     {
         return $this->belongsTo(Member::class, 'member_id');
     }
+
+    /**
+     * 取得操作行為顯示名稱
+     */
+    public function getActionDisplayAttribute()
+    {
+        $actions = config('constants.member_login_log_action', []);
+        return $actions[$this->action] ?? $this->action;
+    }
+
+    /**
+     * 取得狀態顯示名稱
+     */
+    public function getStatusDisplayAttribute()
+    {
+        $statuses = config('constants.member_login_log_status', []);
+        return $statuses[$this->status] ?? $this->status;
+    }
 }
 
