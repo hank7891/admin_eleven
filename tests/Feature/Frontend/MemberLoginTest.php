@@ -89,20 +89,14 @@ class MemberLoginTest extends TestCase
             ['email' => 'inactive-member@example.com', 'password' => 'Abcd1234'],
         ];
 
-        $beforeFailMaxId = (int) DB::table('member_login_logs')
-            ->where('status', MEMBER_LOGIN_LOG_STATUS_FAIL)
-            ->max('id');
-
         foreach ($cases as $case) {
             $response = $this->from('/member/login')->post('/member/login', $case);
             $response->assertRedirect('/member/login');
             $response->assertSessionHasErrors('login');
         }
 
-        # 僅比對本次測試新增的 fail logs，避免被先前殘留資料干擾
         $logs = DB::table('member_login_logs')
             ->where('status', MEMBER_LOGIN_LOG_STATUS_FAIL)
-            ->where('id', '>', $beforeFailMaxId)
             ->orderBy('id')
             ->get();
 
@@ -165,4 +159,3 @@ class MemberLoginTest extends TestCase
         $response->assertRedirect('member/login');
     }
 }
-

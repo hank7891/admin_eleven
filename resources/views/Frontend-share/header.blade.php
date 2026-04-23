@@ -34,7 +34,7 @@
                 <span class="material-symbols-outlined text-[1.2rem]" aria-hidden="true">search</span>
             </a>
             @if (!empty($currentMember))
-                <a href="{{ url('member/profile') }}" class="inline-flex items-center gap-2 rounded-full border border-outline-variant/60 bg-surface-container-lowest/75 px-4 py-2.5 text-[0.875rem] font-medium text-on-surface transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary no-underline">
+                <a href="/#member" class="inline-flex items-center gap-2 rounded-full border border-outline-variant/60 bg-surface-container-lowest/75 px-4 py-2.5 text-[0.875rem] font-medium text-on-surface transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary no-underline">
                     <span class="material-symbols-outlined text-[1.1rem]" aria-hidden="true">person</span>
                     <span class="hidden sm:inline">{{ $currentMember['name'] ?? '會員' }}</span>
                 </a>
@@ -45,7 +45,7 @@
                     </button>
                 </form>
             @else
-                <a href="{{ url('member/login') }}" class="inline-flex items-center gap-2 rounded-full border border-outline-variant/60 bg-surface-container-lowest/75 px-4 py-2.5 text-[0.875rem] font-medium text-on-surface transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary no-underline">
+                <a href="{{ url('member/register') }}" class="inline-flex items-center gap-2 rounded-full border border-outline-variant/60 bg-surface-container-lowest/75 px-4 py-2.5 text-[0.875rem] font-medium text-on-surface transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary no-underline">
                     <span class="material-symbols-outlined text-[1.1rem]" aria-hidden="true">person</span>
                     <span class="hidden sm:inline">會員入口</span>
                 </a>

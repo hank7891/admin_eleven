@@ -15,15 +15,11 @@ class FrontendController extends Controller
     # 前台共用導覽列
     protected function buildNavItems(?string $activeKey = null): array
     {
-        $memberUrl = !empty(session(MEMBER_AUTH_SESSION))
-            ? url('member/profile')
-            : url('member/login');
-
         $items = [
             ['key' => 'home', 'label' => '首頁', 'url' => '/#top'],
             ['key' => 'product', 'label' => '精選商品', 'url' => url('product')],
             ['key' => 'announcement', 'label' => '最新公告', 'url' => url('announcement')],
-            ['key' => 'member', 'label' => '會員專區', 'url' => $memberUrl],
+            ['key' => 'member', 'label' => '會員專區', 'url' => url('member/register')],
             ['key' => 'about', 'label' => '關於我們', 'url' => url('about')],
         ];
 

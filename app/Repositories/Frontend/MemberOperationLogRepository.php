@@ -19,4 +19,3 @@ class MemberOperationLogRepository
         return $this->memberOperationLog::create($data);
     }
 }
-

@@ -90,4 +90,3 @@ class MemberOperationLogTest extends TestCase
         $this->assertArrayNotHasKey('secret', $changes);
     }
 }
-

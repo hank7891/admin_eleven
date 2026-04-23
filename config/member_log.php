@@ -20,4 +20,3 @@ return [
     ],
     'retention_days' => 180,
 ];
-

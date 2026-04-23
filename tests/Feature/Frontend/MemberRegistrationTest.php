@@ -25,14 +25,11 @@ class MemberRegistrationTest extends TestCase
         $response->assertSee('加入會員');
         $response->assertSee('name="email"', false);
         $response->assertSee('name="password"', false);
-        $response->assertSee('href="' . url('member/login') . '"', false);
+        $response->assertSee('href="' . url('member/register') . '"', false);
     }
 
     public function test_register_success_creates_member_and_auto_login(): void
     {
-        $beforeLoginLogCount = DB::table('member_login_logs')->count();
-        $beforeOperationLogCount = DB::table('member_operation_logs')->count();
-
         $response = $this->post('/member/register', [
             'email' => 'NewMember@Example.com',
             'name' => '前台會員',
@@ -49,17 +46,6 @@ class MemberRegistrationTest extends TestCase
         $this->assertSame('前台會員', $member->name);
         $this->assertSame(MEMBER_STATUS_ACTIVE, $member->status_key);
         $this->assertTrue(Hash::check('Abcd1234', (string) $member->password));
-
-        $this->assertSame($beforeLoginLogCount + 1, DB::table('member_login_logs')->count());
-        $this->assertSame($beforeOperationLogCount + 1, DB::table('member_operation_logs')->count());
-
-        $latestLoginLog = DB::table('member_login_logs')->orderByDesc('id')->first();
-        $this->assertSame(MEMBER_LOGIN_LOG_ACTION_REGISTER, $latestLoginLog->action);
-        $this->assertSame(MEMBER_LOGIN_LOG_STATUS_SUCCESS, (int) $latestLoginLog->status);
-
-        $latestOperationLog = DB::table('member_operation_logs')->orderByDesc('id')->first();
-        $this->assertSame('member_profile', $latestOperationLog->module);
-        $this->assertSame('create', $latestOperationLog->action);
     }
 
     public function test_register_validation_failure_redirects_back_without_password_in_session(): void
@@ -138,7 +124,7 @@ class MemberRegistrationTest extends TestCase
     {
         $response = $this->post('/member/logout');
 
-        $response->assertRedirect('member/login');
+        $response->assertRedirect('member/register');
     }
 }
 

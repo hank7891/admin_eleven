@@ -102,4 +102,3 @@ class MemberLoginLogService
         return $request->ip() ?? '0.0.0.0';
     }
 }
-

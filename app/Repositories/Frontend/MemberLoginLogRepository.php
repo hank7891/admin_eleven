@@ -19,4 +19,3 @@ class MemberLoginLogRepository
         return $this->memberLoginLog::create($data);
     }
 }
-

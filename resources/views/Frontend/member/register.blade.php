@@ -95,7 +95,7 @@
             </div>
 
             <div class="mt-8 text-center">
-                <a href="{{ url('member/login') }}" class="border-b border-transparent pb-0.5 text-sm text-tertiary transition-colors hover:border-primary hover:text-primary no-underline">已經有帳號？立即登入</a>
+                <p class="border-b border-transparent pb-0.5 text-sm text-tertiary transition-colors hover:border-primary hover:text-primary">已經有帳號？登入功能即將開放</p>
             </div>
         </div>
     </section>

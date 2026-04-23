@@ -19,17 +19,13 @@
 
                     <h2 class="mb-6 text-xl font-semibold text-on-surface">基本資料</h2>
 
-                    @if ($errors->getBag('default')->any())
+                    @if ($errors->any())
                         <div class="mb-6 rounded-lg border-l-2 border-error bg-error-container/30 p-4 text-sm leading-relaxed text-on-error-container">
-                            {{ $errors->getBag('default')->first() }}
+                            {{ $errors->first() }}
                         </div>
                     @endif
 
-                    <div class="mb-6 hidden rounded-lg border-l-2 border-error bg-error-container/30 p-4 text-sm leading-relaxed text-on-error-container opacity-0 transition-opacity duration-200" data-profile-client-alert>
-                        <p data-profile-client-alert-text></p>
-                    </div>
-
-                    <form method="POST" action="{{ url('member/profile') }}" enctype="multipart/form-data" class="space-y-6" data-profile-basic-form>
+                    <form method="POST" action="{{ url('member/profile') }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
                         <div class="space-y-2">
@@ -102,12 +98,9 @@
                                 type="file"
                                 name="avatar"
                                 accept=".jpg,.jpeg,.png,.gif,.webp"
-                                data-avatar-input
-                                data-avatar-max-kb="{{ (int) (config('upload.member_avatar.max_size', 5120)) }}"
-                                data-avatar-accept="jpg,jpeg,png,gif,webp"
                                 class="block w-full text-sm text-on-surface/85 file:mr-4 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-on-primary hover:file:bg-[#3148a8]"
                             >
-                            <p class="text-xs text-outline">建議尺寸 800 x 800，最大 {{ rtrim(rtrim(number_format(((int) config('upload.member_avatar.max_size', 5120)) / 1024, 2, '.', ''), '0'), '.') }}MB。</p>
+                            <p class="text-xs text-outline">建議尺寸 800 x 800，最大 5MB。</p>
                             @if (!empty($data['avatar_url']))
                                 <img src="{{ $data['avatar_url'] }}" alt="會員頭像" class="h-24 w-24 rounded-full border border-outline-variant/40 object-cover">
                             @endif
@@ -178,77 +171,3 @@
         </div>
     </section>
 @endsection
-
-@push('scripts')
-    <script>
-        (function () {
-            const form = document.querySelector('[data-profile-basic-form]');
-            const avatarInput = document.querySelector('[data-avatar-input]');
-            const alertBox = document.querySelector('[data-profile-client-alert]');
-            const alertText = document.querySelector('[data-profile-client-alert-text]');
-
-            if (!form || !avatarInput) {
-                return;
-            }
-
-            const maxKB = parseInt(avatarInput.getAttribute('data-avatar-max-kb'), 10) || 5120;
-            const maxBytes = maxKB * 1024;
-            const maxMBDisplay = (maxKB / 1024).toFixed(maxKB % 1024 === 0 ? 0 : 1);
-            const acceptList = (avatarInput.getAttribute('data-avatar-accept') || '').split(',').map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
-
-            function showAlert(msg) {
-                if (!alertBox || !alertText) {
-                    return;
-                }
-                alertText.textContent = msg;
-                alertBox.classList.remove('hidden');
-                requestAnimationFrame(function () {
-                    alertBox.classList.add('opacity-100');
-                });
-                alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-
-            function hideAlert() {
-                if (!alertBox) {
-                    return;
-                }
-                alertBox.classList.add('hidden');
-                alertBox.classList.remove('opacity-100');
-            }
-
-            function validateAvatar(file) {
-                if (!file) {
-                    return null;
-                }
-                const ext = (file.name.split('.').pop() || '').toLowerCase();
-                if (acceptList.length > 0 && acceptList.indexOf(ext) === -1) {
-                    return '大頭照格式不支援，僅接受 ' + acceptList.join('、').toUpperCase() + '。';
-                }
-                if (file.size > maxBytes) {
-                    return '大頭照檔案超過 ' + maxMBDisplay + 'MB 上限，請壓縮後再選擇。';
-                }
-                return null;
-            }
-
-            avatarInput.addEventListener('change', function () {
-                hideAlert();
-                const file = avatarInput.files && avatarInput.files[0];
-                const err = validateAvatar(file);
-                if (err) {
-                    showAlert(err);
-                    avatarInput.value = '';
-                }
-            });
-
-            form.addEventListener('submit', function (event) {
-                const file = avatarInput.files && avatarInput.files[0];
-                const err = validateAvatar(file);
-                if (err) {
-                    event.preventDefault();
-                    showAlert(err);
-                    avatarInput.focus();
-                }
-            });
-        })();
-    </script>
-@endpush

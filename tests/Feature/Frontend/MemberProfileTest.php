@@ -69,10 +69,6 @@ class MemberProfileTest extends TestCase
             return (int) ($auth['id'] ?? 0) === $memberId
                 && ($auth['name'] ?? '') === '新姓名';
         });
-        $response->assertSessionHas(MEMBER_MESSAGE_SESSION, function ($messages) {
-            return is_array($messages)
-                && collect($messages)->contains(fn ($m) => ($m['message'] ?? '') === '個人資料已更新');
-        });
 
         $member = DB::table('member')->where('id', $memberId)->first();
         $this->assertSame('新姓名', $member->name);
@@ -97,86 +93,6 @@ class MemberProfileTest extends TestCase
         $this->assertArrayNotHasKey('password', $changes);
 
         $this->assertSame($beforeAdminLogCount, DB::table('admin_logs')->count());
-    }
-
-    public function test_profile_success_flash_message_is_visible_after_redirect(): void
-    {
-        Storage::fake('public');
-        $memberId = $this->createMember('profile-flash@example.com', '提示會員');
-
-        $this->withSession([
-            MEMBER_AUTH_SESSION => [
-                'id' => $memberId,
-                'email' => 'profile-flash@example.com',
-                'name' => '提示會員',
-                'avatar_url' => null,
-            ],
-        ])->followingRedirects()->post('/member/profile', [
-            'name' => '提示會員新',
-            'phone' => '',
-            'birthday' => '',
-            'gender_key' => (string) GENDER_UNSPECIFIED,
-        ])->assertOk()->assertSee('個人資料已更新');
-    }
-
-    public function test_profile_update_rejects_oversized_avatar_with_chinese_error_and_flash(): void
-    {
-        Storage::fake('public');
-        $memberId = $this->createMember('profile-oversized@example.com', '大檔會員');
-
-        $oversized = UploadedFile::fake()->create('huge.gif', 6144, 'image/gif'); // 6MB，超過 5MB max
-
-        $response = $this->withSession([
-            MEMBER_AUTH_SESSION => [
-                'id' => $memberId,
-                'email' => 'profile-oversized@example.com',
-                'name' => '大檔會員',
-                'avatar_url' => null,
-            ],
-        ])->from('/member/profile')->post('/member/profile', [
-            'name' => '大檔會員',
-            'phone' => '',
-            'birthday' => '',
-            'gender_key' => (string) GENDER_UNSPECIFIED,
-            'avatar' => $oversized,
-        ]);
-
-        $response->assertRedirect('/member/profile');
-        $response->assertSessionHasErrors(['avatar']);
-        $response->assertSessionHas(MEMBER_MESSAGE_SESSION, function ($messages) {
-            return is_array($messages)
-                && collect($messages)->contains(function ($m) {
-                    return ($m['type'] ?? '') === 'danger'
-                        && str_contains((string) ($m['message'] ?? ''), '大頭照')
-                        && str_contains((string) ($m['message'] ?? ''), 'MB');
-                });
-        });
-
-        $member = DB::table('member')->where('id', $memberId)->first();
-        $this->assertEmpty($member->avatar_path);
-    }
-
-    public function test_profile_oversized_avatar_message_is_visible_after_redirect(): void
-    {
-        Storage::fake('public');
-        $memberId = $this->createMember('profile-oversized-flash@example.com', '大檔提示會員');
-
-        $oversized = UploadedFile::fake()->create('huge.gif', 6144, 'image/gif');
-
-        $this->withSession([
-            MEMBER_AUTH_SESSION => [
-                'id' => $memberId,
-                'email' => 'profile-oversized-flash@example.com',
-                'name' => '大檔提示會員',
-                'avatar_url' => null,
-            ],
-        ])->followingRedirects()->post('/member/profile', [
-            'name' => '大檔提示會員',
-            'phone' => '',
-            'birthday' => '',
-            'gender_key' => (string) GENDER_UNSPECIFIED,
-            'avatar' => $oversized,
-        ])->assertOk()->assertSee('大頭照檔案大小超過');
     }
 
     public function test_change_password_success_updates_hash_and_writes_log_without_sensitive_changes(): void
@@ -254,5 +170,4 @@ class MemberProfileTest extends TestCase
         ]);
     }
 }
-
 

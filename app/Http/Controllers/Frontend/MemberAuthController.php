@@ -250,7 +250,6 @@ class MemberAuthController extends FrontendController
         $avatarConfig = config('upload.member_avatar', config('upload.image', []));
         $avatarMimes = implode(',', $avatarConfig['mimes'] ?? ['jpg', 'jpeg', 'png', 'gif', 'webp']);
         $avatarMax = (int) ($avatarConfig['max_size'] ?? 5120);
-        $avatarMaxMB = rtrim(rtrim(number_format($avatarMax / 1024, 2, '.', ''), '0'), '.');
 
         $input = $request->only(['name', 'phone', 'birthday', 'gender_key']);
         $validator = Validator::make($request->all(), [
@@ -265,10 +264,8 @@ class MemberAuthController extends FrontendController
             'birthday.date_format' => '生日格式錯誤',
             'gender_key.required' => '請選擇性別',
             'gender_key.in' => '性別格式錯誤',
-            'avatar.mimes' => '大頭照格式不支援，僅接受 ' . strtoupper(str_replace(',', '、', $avatarMimes)),
-            'avatar.max' => "大頭照檔案大小超過 {$avatarMaxMB}MB 上限，請壓縮後再試",
-            'avatar.uploaded' => "大頭照上傳失敗，檔案可能超過伺服器允許大小（{$avatarMaxMB}MB），請壓縮後再試",
-            'avatar.file' => '大頭照必須為檔案',
+            'avatar.mimes' => '大頭照格式不支援',
+            'avatar.max' => '大頭照檔案大小超過限制',
         ]);
 
         $sessionPost = [
@@ -280,7 +277,6 @@ class MemberAuthController extends FrontendController
 
         if ($validator->fails()) {
             session([self::PROFILE_BASIC_POST_SESSION => $sessionPost]);
-            MessageService::setMessage(MEMBER_MESSAGE_SESSION, MessageService::DANGER, (string) $validator->errors()->first());
 
             return redirect('member/profile')
                 ->withErrors($validator)
