@@ -73,6 +73,10 @@ class MemberLoginTest extends TestCase
 
     public function test_login_fail_cases_write_unified_fail_message_log(): void
     {
+        $beforeFailCount = DB::table('member_login_logs')
+            ->where('status', MEMBER_LOGIN_LOG_STATUS_FAIL)
+            ->count();
+
         DB::table('member')->insert([
             'email' => 'inactive-member@example.com',
             'password' => Hash::make('Abcd1234'),
@@ -100,8 +104,8 @@ class MemberLoginTest extends TestCase
             ->orderBy('id')
             ->get();
 
-        $this->assertSame(3, $logs->count());
-        foreach ($logs as $log) {
+        $this->assertSame($beforeFailCount + 3, $logs->count());
+        foreach ($logs->slice(-3) as $log) {
             $this->assertSame(MEMBER_LOGIN_LOG_ACTION_LOGIN, $log->action);
             $this->assertSame('電子信箱或密碼錯誤，或此帳號已停用', $log->fail_reason);
         }

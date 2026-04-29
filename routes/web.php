@@ -155,6 +155,18 @@ Route::prefix('admin')->group(function () {
             Route::get('list', [Controllers\Admin\AdminLoginLogController::class, 'list']);
             Route::get('detail/{id}', [Controllers\Admin\AdminLoginLogController::class, 'detail']);
         });
+
+        # 會員登入日誌
+        Route::prefix('member.login-log')->group(function () {
+            Route::get('list', [Controllers\Admin\MemberLoginLogController::class, 'list']);
+            Route::get('detail/{id}', [Controllers\Admin\MemberLoginLogController::class, 'detail']);
+        });
+
+        # 會員操作日誌
+        Route::prefix('member.operation-log')->group(function () {
+            Route::get('list', [Controllers\Admin\MemberOperationLogController::class, 'list']);
+            Route::get('detail/{id}', [Controllers\Admin\MemberOperationLogController::class, 'detail']);
+        });
     });
 });
 

@@ -124,7 +124,7 @@ class MemberRegistrationTest extends TestCase
     {
         $response = $this->post('/member/logout');
 
-        $response->assertRedirect('member/register');
+        $response->assertRedirect('member/login');
     }
 }
 

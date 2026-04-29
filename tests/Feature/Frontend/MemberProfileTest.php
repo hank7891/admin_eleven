@@ -157,6 +157,109 @@ class MemberProfileTest extends TestCase
         $this->assertSame($beforeLogCount, DB::table('member_operation_logs')->count());
     }
 
+    public function test_profile_shows_last_login_at_when_login_log_exists(): void
+    {
+        $memberId = $this->createMember('last-login-exists@example.com', '有登入紀錄會員');
+
+        # 寫入兩筆 LOGIN+SUCCESS 紀錄；profile 應顯示最新一筆
+        $earlier = '2026-04-25 10:00:00';
+        $latest = '2026-04-25 14:30:45';
+
+        DB::table('member_login_logs')->insert([
+            [
+                'member_id' => $memberId,
+                'account' => 'last-login-exists@example.com',
+                'member_name' => '有登入紀錄會員',
+                'action' => MEMBER_LOGIN_LOG_ACTION_LOGIN,
+                'status' => MEMBER_LOGIN_LOG_STATUS_SUCCESS,
+                'ip_address' => '127.0.0.1',
+                'user_agent' => 'phpunit',
+                'operated_at' => $earlier,
+                'created_at' => $earlier,
+                'updated_at' => $earlier,
+            ],
+            [
+                'member_id' => $memberId,
+                'account' => 'last-login-exists@example.com',
+                'member_name' => '有登入紀錄會員',
+                'action' => MEMBER_LOGIN_LOG_ACTION_LOGIN,
+                'status' => MEMBER_LOGIN_LOG_STATUS_SUCCESS,
+                'ip_address' => '127.0.0.1',
+                'user_agent' => 'phpunit',
+                'operated_at' => $latest,
+                'created_at' => $latest,
+                'updated_at' => $latest,
+            ],
+        ]);
+
+        $response = $this->withSession([
+            MEMBER_AUTH_SESSION => [
+                'id' => $memberId,
+                'email' => 'last-login-exists@example.com',
+                'name' => '有登入紀錄會員',
+                'avatar_url' => null,
+            ],
+        ])->get('/member/profile');
+
+        $response->assertOk();
+        $response->assertSee('最後登入時間');
+        $response->assertSee($latest);
+        # 不應顯示「尚未有登入紀錄」與較早那筆
+        $response->assertDontSee('尚未有登入紀錄');
+        $response->assertDontSee($earlier);
+    }
+
+    public function test_profile_shows_no_login_record_message_when_no_success_login_log(): void
+    {
+        $memberId = $this->createMember('no-login@example.com', '無登入紀錄會員');
+
+        # 寫入一筆 LOGIN+FAIL 與一筆 REGISTER+SUCCESS；都不應被視為「最後登入」
+        DB::table('member_login_logs')->insert([
+            [
+                'member_id' => null,
+                'account' => 'no-login@example.com',
+                'member_name' => null,
+                'action' => MEMBER_LOGIN_LOG_ACTION_LOGIN,
+                'status' => MEMBER_LOGIN_LOG_STATUS_FAIL,
+                'fail_reason' => '密碼錯誤',
+                'ip_address' => '127.0.0.1',
+                'user_agent' => 'phpunit',
+                'operated_at' => '2026-04-25 09:00:00',
+                'created_at' => '2026-04-25 09:00:00',
+                'updated_at' => '2026-04-25 09:00:00',
+            ],
+            [
+                'member_id' => $memberId,
+                'account' => 'no-login@example.com',
+                'member_name' => '無登入紀錄會員',
+                'action' => MEMBER_LOGIN_LOG_ACTION_REGISTER,
+                'status' => MEMBER_LOGIN_LOG_STATUS_SUCCESS,
+                'fail_reason' => null,
+                'ip_address' => '127.0.0.1',
+                'user_agent' => 'phpunit',
+                'operated_at' => '2026-04-25 09:30:00',
+                'created_at' => '2026-04-25 09:30:00',
+                'updated_at' => '2026-04-25 09:30:00',
+            ],
+        ]);
+
+        $response = $this->withSession([
+            MEMBER_AUTH_SESSION => [
+                'id' => $memberId,
+                'email' => 'no-login@example.com',
+                'name' => '無登入紀錄會員',
+                'avatar_url' => null,
+            ],
+        ])->get('/member/profile');
+
+        $response->assertOk();
+        $response->assertSee('最後登入時間');
+        $response->assertSee('尚未有登入紀錄');
+        # 不應誤抓 FAIL 或 REGISTER 紀錄的時間
+        $response->assertDontSee('2026-04-25 09:00:00');
+        $response->assertDontSee('2026-04-25 09:30:00');
+    }
+
     protected function createMember(string $email, string $name, string $password = 'Abcd1234'): int
     {
         return DB::table('member')->insertGetId([

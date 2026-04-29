@@ -50,4 +50,24 @@ class MemberOperationLog extends Model
     {
         return $this->belongsTo(Member::class, 'member_id');
     }
+
+    /**
+     * 取得操作行為顯示名稱
+     */
+    public function getActionDisplayAttribute()
+    {
+        $actions = config('member_log.actions', []);
+
+        return $actions[$this->action] ?? $this->action;
+    }
+
+    /**
+     * 取得模組顯示名稱
+     */
+    public function getModuleDisplayAttribute()
+    {
+        $modules = config('member_log.modules', []);
+
+        return $modules[$this->module] ?? $this->module;
+    }
 }

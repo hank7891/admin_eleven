@@ -215,6 +215,9 @@ class MemberAuthController extends FrontendController
         $postBasic = session(self::PROFILE_BASIC_POST_SESSION, []);
         session()->forget(self::PROFILE_BASIC_POST_SESSION);
 
+        # 取得最新一次成功登入時間（含本次當前 session 的登入；無紀錄為 null）
+        $lastLoginAt = $this->memberLoginLogService->getLastLoginAt($memberId);
+
         $data = [
             'id' => (int) $member->id,
             'email' => (string) $member->email,
@@ -223,6 +226,7 @@ class MemberAuthController extends FrontendController
             'birthday' => !empty($member->birthday) ? $member->birthday->format('Y-m-d') : null,
             'gender_key' => (string) $member->gender_key,
             'avatar_url' => $member->avatar_url,
+            'last_login_at' => $lastLoginAt?->format('Y-m-d H:i:s'),
         ];
 
         return view('Frontend.member.profile', [

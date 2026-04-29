@@ -5,12 +5,21 @@ namespace App\Services\Frontend;
 use App\Models\MemberLoginLog;
 use App\Repositories\Frontend\MemberLoginLogRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class MemberLoginLogService
 {
     # 建構元
     public function __construct(protected MemberLoginLogRepository $memberLoginLogRepository)
     {
+    }
+
+    /**
+     * 取得會員最新一次成功登入時間
+     */
+    public function getLastLoginAt(int $memberId): ?Carbon
+    {
+        return $this->memberLoginLogRepository->getLastLoginAtByMemberId($memberId);
     }
 
     /**

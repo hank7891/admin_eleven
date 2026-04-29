@@ -29,6 +29,19 @@
                         @csrf
 
                         <div class="space-y-2">
+                            <label class="block font-label text-[0.78rem] uppercase tracking-[0.14em] text-tertiary">最後登入時間</label>
+                            @if (!empty($data['last_login_at']))
+                                <p class="px-0 py-2 text-[1.02rem] font-light text-on-surface/65">
+                                    {{ $data['last_login_at'] }}
+                                </p>
+                            @else
+                                <p class="px-0 py-2 text-[1.02rem] font-light text-on-surface-variant/60">
+                                    尚未有登入紀錄
+                                </p>
+                            @endif
+                        </div>
+
+                        <div class="space-y-2">
                             <label for="email" class="block font-label text-[0.78rem] uppercase tracking-[0.14em] text-tertiary">電子信箱</label>
                             <input
                                 id="email"

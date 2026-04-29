@@ -36,6 +36,19 @@ define('LOGIN_LOG_STATUS_SUCCESS', 1);
 define('LOGIN_LOG_STATUS_FAIL', 0);
 
 /*
+ * 會員登入日誌（前台）- 操作類型
+ */
+define('MEMBER_LOGIN_LOG_ACTION_LOGIN', 'login');
+define('MEMBER_LOGIN_LOG_ACTION_LOGOUT', 'logout');
+define('MEMBER_LOGIN_LOG_ACTION_REGISTER', 'register');
+
+/*
+ * 會員登入日誌（前台）- 狀態
+ */
+define('MEMBER_LOGIN_LOG_STATUS_SUCCESS', 1);
+define('MEMBER_LOGIN_LOG_STATUS_FAIL', 0);
+
+/*
  * 後台訊息頁 - 訊息 key
  */
 define('ADMIN_NOTICE_NO_ROLE', 'no_role');
