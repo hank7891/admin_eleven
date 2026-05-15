@@ -1,17 +1,15 @@
 @props(['items'])
 
-<nav class="flex items-center gap-2 text-[0.75rem] text-outline-variant mb-1 uppercase tracking-widest font-semibold">
+<nav class="admin-crumbs" aria-label="麵包屑">
     @foreach ($items as $index => $item)
         @if ($index > 0)
-            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
         @endif
 
         @if (isset($item['url']) && $index < count($items) - 1)
-            <a href="{{ asset($item['url']) }}" class="hover:text-primary transition-colors no-underline text-outline-variant">{{ $item['label'] }}</a>
-        @elseif ($index === count($items) - 1)
-            <span class="text-primary">{{ $item['label'] }}</span>
+            <a href="{{ asset($item['url']) }}">{{ $item['label'] }}</a>
         @else
-            <span>{{ $item['label'] }}</span>
+            <span @if ($index === count($items) - 1) aria-current="page" @endif>{{ $item['label'] }}</span>
         @endif
     @endforeach
 </nav>

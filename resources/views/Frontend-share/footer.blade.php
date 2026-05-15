@@ -1,41 +1,55 @@
-<footer id="footer" class="border-t border-outline-variant/30 bg-surface-container-low text-on-surface">
-    <div class="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.2fr_repeat(3,1fr)] lg:px-8 lg:py-20">
-        <div class="space-y-6">
-            <h2 class="font-headline text-[1.5rem] font-semibold tracking-tight">Aura &amp; Heirloom</h2>
-            <p class="max-w-sm text-[0.95rem] leading-7 text-on-surface/72">
-                以選物、工藝與編輯視角，為當代生活保留一種更緩慢、更耐看的質地。
-            </p>
-            <div class="flex items-center gap-3">
-                <a href="#" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant/70 bg-surface-container-lowest text-on-surface/70 transition-colors hover:border-primary hover:text-primary no-underline" aria-label="Language">
-                    <span class="material-symbols-outlined text-[1.1rem]" aria-hidden="true">language</span>
-                </a>
-                <a href="#" class="inline-flex h-11 items-center justify-center rounded-full border border-outline-variant/70 bg-surface-container-lowest px-4 text-[0.75rem] font-semibold tracking-[0.16em] text-on-surface/70 uppercase transition-colors hover:border-primary hover:text-primary no-underline" aria-label="Instagram">Instagram</a>
-                <a href="#" class="inline-flex h-11 items-center justify-center rounded-full border border-outline-variant/70 bg-surface-container-lowest px-4 text-[0.75rem] font-semibold tracking-[0.16em] text-on-surface/70 uppercase transition-colors hover:border-primary hover:text-primary no-underline" aria-label="Pinterest">Pinterest</a>
+<footer class="fe-footer" role="contentinfo" id="footer">
+    <div class="fe-container">
+        <div class="fe-footer-inner">
+            <div class="fe-footer-brand">
+                <div class="fe-brand fe-footer-brand-name">Aura &amp; Heirloom</div>
+                <p class="fe-meta fe-footer-tagline">
+                    為日常留一個慢下來的位置。<br>關於選物、生活與一點點儀式感。
+                </p>
+            </div>
+
+            <div class="fe-footer-cols">
+                @forelse ($footerColumns ?? [] as $column)
+                    <div class="fe-footer-col">
+                        <h4>{{ $column['title'] }}</h4>
+                        <ul>
+                            @foreach ($column['links'] as $link)
+                                <li><a href="#">{{ $link }}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @empty
+                    <div class="fe-footer-col">
+                        <h4>探索</h4>
+                        <ul>
+                            <li><a href="{{ url('product') }}">商品列表</a></li>
+                            <li><a href="{{ url('announcement') }}">最新公告</a></li>
+                            <li><a href="{{ url('about') }}">關於我們</a></li>
+                        </ul>
+                    </div>
+                    <div class="fe-footer-col">
+                        <h4>會員</h4>
+                        <ul>
+                            <li><a href="{{ url('member/login') }}">會員登入</a></li>
+                            <li><a href="{{ url('member/register') }}">會員註冊</a></li>
+                            <li><a href="{{ url('member/profile') }}">會員專區</a></li>
+                        </ul>
+                    </div>
+                    <div class="fe-footer-col">
+                        <h4>聯絡</h4>
+                        <ul>
+                            <li><a href="#">hello@aura-heirloom.com</a></li>
+                            <li><a href="#">客服 LINE</a></li>
+                            <li><a href="#">隱私權政策</a></li>
+                        </ul>
+                    </div>
+                @endforelse
             </div>
         </div>
 
-        @foreach ($footerColumns ?? [] as $column)
-            <div>
-                <h3 class="font-label text-[0.7rem] font-semibold tracking-[0.22em] text-on-surface/48 uppercase">{{ $column['title'] }}</h3>
-                <ul class="mt-6 space-y-4">
-                    @foreach ($column['links'] as $link)
-                        <li>
-                            <a href="#" class="text-[0.9rem] text-on-surface/72 transition-colors hover:text-primary no-underline">{{ $link }}</a>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-        @endforeach
-    </div>
-
-    <div class="border-t border-outline-variant/25">
-        <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-[0.75rem] tracking-[0.12em] text-on-surface/42 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-            <p>© {{ date('Y') }} Aura &amp; Heirloom. All rights reserved.</p>
-            <div class="flex flex-wrap items-center gap-5">
-                <a href="#" class="transition-colors hover:text-on-surface no-underline">Privacy Policy</a>
-                <a href="#" class="transition-colors hover:text-on-surface no-underline">Terms of Service</a>
-            </div>
+        <div class="fe-footer-foot">
+            <span>&copy; {{ date('Y') }} Aura &amp; Heirloom. All rights reserved.</span>
+            <span>Made in Taiwan · 慢慢來，比較快。</span>
         </div>
     </div>
 </footer>
-

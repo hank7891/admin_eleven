@@ -1,97 +1,110 @@
-@extends('Frontend-share.layout')
+@extends('layouts.frontend')
+
+@section('fe-active', 'product')
 
 @section('content')
     @php($selectedTagIds = array_map('intval', $filters['tag_ids'] ?? []))
-    <section class="px-4 pb-16 pt-32 sm:px-6 lg:px-8 lg:pb-24 lg:pt-40">
-        <div class="mx-auto max-w-7xl">
-            <header class="mb-14 lg:mb-20">
-                <p class="text-[0.76rem] font-semibold uppercase tracking-[0.24em] text-primary">All Products</p>
-                <h1 class="mt-4 font-headline text-[2.8rem] tracking-[-0.05em] text-on-surface sm:text-[4.8rem]">Products</h1>
-                <p class="mt-6 max-w-2xl text-[1rem] leading-8 text-on-surface/70 sm:text-[1.08rem]">
-                    探索目前已上架且生效中的所有商品，支援關鍵字、上架日期、類別與標籤篩選。
-                </p>
-            </header>
 
-            <section class="mb-16 rounded-[1.4rem] bg-surface-container-low p-6 shadow-[0_20px_40px_-32px_rgba(26,28,25,0.28)] sm:p-8">
-                <form method="GET" action="{{ url('product') }}" class="grid grid-cols-1 gap-5 md:grid-cols-6 md:items-end">
-                    <div class="md:col-span-2 space-y-2">
-                        <label class="block text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-on-surface/54">Keyword</label>
-                        <input type="text" name="keyword" value="{{ $filters['keyword'] ?? '' }}" placeholder="搜尋商品名稱或標語" class="w-full rounded-xl border-none bg-surface-container px-4 py-3.5 text-[0.95rem] text-on-surface placeholder:text-outline/70 focus:ring-2 focus:ring-primary/30" />
+    <section class="fe-page-head">
+        <div class="fe-container">
+            <span class="fe-eyebrow">All Products</span>
+            <h1 class="fe-h1 fe-page-title">Products</h1>
+            <p class="fe-body-lg fe-page-lead">
+                探索目前已上架且生效中的所有商品，支援關鍵字、上架日期、類別與標籤篩選。
+            </p>
+        </div>
+    </section>
+
+    <section class="fe-section">
+        <div class="fe-container">
+
+            <form method="GET" action="{{ url('product') }}" class="fe-filter-form" role="search" aria-label="商品篩選">
+                <div class="fe-filter-grid">
+                    <div class="fe-form-field fe-filter-keyword">
+                        <label for="filter-keyword" class="fe-form-label">Keyword</label>
+                        <input id="filter-keyword" type="text" name="keyword" value="{{ $filters['keyword'] ?? '' }}" placeholder="搜尋商品名稱或標語" class="fe-input">
                     </div>
-                    <div class="space-y-2">
-                        <label class="block text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-on-surface/54">From</label>
-                        <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}" class="w-full rounded-xl border-none bg-surface-container px-4 py-3.5 text-[0.95rem] text-on-surface focus:ring-2 focus:ring-primary/30" />
+                    <div class="fe-form-field">
+                        <label for="filter-date-from" class="fe-form-label">From</label>
+                        <input id="filter-date-from" type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}" class="fe-input">
                     </div>
-                    <div class="space-y-2">
-                        <label class="block text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-on-surface/54">To</label>
-                        <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}" class="w-full rounded-xl border-none bg-surface-container px-4 py-3.5 text-[0.95rem] text-on-surface focus:ring-2 focus:ring-primary/30" />
+                    <div class="fe-form-field">
+                        <label for="filter-date-to" class="fe-form-label">To</label>
+                        <input id="filter-date-to" type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}" class="fe-input">
                     </div>
-                    <div class="space-y-2">
-                        <label class="block text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-on-surface/54">Category</label>
-                        <select name="category_id" class="w-full rounded-xl border-none bg-surface-container px-4 py-3.5 text-[0.95rem] text-on-surface focus:ring-2 focus:ring-primary/30">
+                    <div class="fe-form-field">
+                        <label for="filter-category" class="fe-form-label">Category</label>
+                        <select id="filter-category" name="category_id" class="fe-input">
                             <option value="">全部類別</option>
                             @foreach (($filterOptions['categories'] ?? []) as $category)
                                 <option value="{{ $category['id'] }}" {{ (string) ($filters['category_id'] ?? '') === (string) $category['id'] ? 'selected' : '' }}>{{ $category['name'] }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="space-y-2 md:col-span-6">
-                        <label class="block text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-on-surface/54">Tags</label>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach (($filterOptions['tags'] ?? []) as $tag)
+                </div>
+
+                @if (!empty($filterOptions['tags']))
+                    <div class="fe-form-field fe-filter-tags">
+                        <span class="fe-form-label" id="filter-tag-label">Tags</span>
+                        <div class="fe-chip-row" role="group" aria-labelledby="filter-tag-label">
+                            @foreach ($filterOptions['tags'] as $tag)
                                 @php($tagId = (int) ($tag['id'] ?? 0))
-                                <label data-tag-chip class="inline-flex min-h-10 cursor-pointer items-center rounded-full border px-3.5 py-2 text-[0.82rem] font-medium transition-colors {{ in_array($tagId, $selectedTagIds, true) ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/60 bg-surface-container-lowest text-on-surface/75 hover:border-primary/50 hover:text-primary' }}">
-                                    <input data-tag-checkbox type="checkbox" name="tag_ids[]" value="{{ $tagId }}" class="sr-only" {{ in_array($tagId, $selectedTagIds, true) ? 'checked' : '' }}>
+                                @php($isActive = in_array($tagId, $selectedTagIds, true))
+                                <label data-tag-chip class="fe-chip {{ $isActive ? 'is-active' : '' }}" aria-pressed="{{ $isActive ? 'true' : 'false' }}">
+                                    <input data-tag-checkbox type="checkbox" name="tag_ids[]" value="{{ $tagId }}" class="fe-sr-only" {{ $isActive ? 'checked' : '' }}>
                                     <span>{{ $tag['name'] }}</span>
                                 </label>
                             @endforeach
                         </div>
                     </div>
-                    <div class="md:col-span-6 flex gap-3 justify-end">
-                        <button type="submit" class="frontend-btn-primary inline-flex min-h-12 items-center justify-center rounded-xl px-6 py-3 text-[0.82rem] font-semibold uppercase tracking-[0.18em]">Filter</button>
-                        <a href="{{ url('product') }}" class="frontend-btn-ghost inline-flex min-h-12 items-center justify-center rounded-xl px-6 py-3 text-[0.82rem] font-semibold uppercase tracking-[0.18em] no-underline">Clear</a>
-                    </div>
-                </form>
-            </section>
+                @endif
+
+                <div class="fe-filter-actions">
+                    <button type="submit" class="fe-btn fe-btn-primary">Filter</button>
+                    <a href="{{ url('product') }}" class="fe-btn fe-btn-ghost">Clear</a>
+                </div>
+            </form>
 
             @if (empty($products))
-                <div class="rounded-[1.5rem] border border-outline-variant/35 bg-surface-container-lowest px-8 py-20 text-center shadow-[0_24px_48px_-36px_rgba(26,28,25,0.24)]">
-                    <span class="material-symbols-outlined text-[3rem] text-outline-variant/60">package_2</span>
-                    <p class="mt-4 text-[1rem] text-on-surface/68">目前沒有符合條件的商品。</p>
-                    <a href="{{ url('product') }}" class="mt-6 inline-flex items-center gap-2 border-b border-outline pb-1 text-[0.85rem] font-semibold uppercase tracking-[0.18em] text-on-surface transition-colors hover:text-primary no-underline">
-                        清除篩選
-                    </a>
+                <div class="fe-empty-state">
+                    <span class="material-symbols-outlined" aria-hidden="true">package_2</span>
+                    <p class="fe-body">目前沒有符合條件的商品。</p>
+                    <a href="{{ url('product') }}" class="fe-link-arrow">清除篩選 <span class="material-symbols-outlined" aria-hidden="true">arrow_outward</span></a>
                 </div>
             @else
-                <section class="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 xl:grid-cols-3">
+                <div class="fe-product-grid">
                     @foreach ($products as $product)
-                        <article class="frontend-product-card group">
-                            <a href="{{ $product['url'] }}" class="block no-underline" aria-label="查看更多商品：{{ $product['name'] }}">
-                                <div class="overflow-hidden rounded-[1.35rem] bg-surface-container-low shadow-[0_24px_56px_-40px_rgba(26,28,25,0.28)]">
-                                    <img src="{{ $product['image_url'] }}" alt="{{ $product['image_alt'] }}" class="aspect-[4/5] w-full bg-surface-container-high object-contain p-2 transition-transform duration-700 group-hover:scale-[1.04]" loading="lazy">
-                                </div>
-                                <div class="mt-5 flex items-start justify-between gap-4 px-2">
+                        <article class="fe-product">
+                            <a href="{{ $product['url'] }}" aria-label="查看更多商品：{{ $product['name'] }}">
+                                @if (!empty($product['image_url']))
+                                    <div class="fe-product-media">
+                                        <img src="{{ $product['image_url'] }}" alt="{{ $product['image_alt'] }}" loading="lazy">
+                                    </div>
+                                @else
+                                    <div class="fe-product-media" role="img" aria-label="{{ $product['name'] }}"></div>
+                                @endif
+                                <div class="fe-product-info">
                                     <div>
-                                        <p class="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-secondary">{{ $product['start_at_display'] ?? '' }}</p>
-                                        <h2 class="mt-2 font-headline text-[1.3rem] tracking-[-0.02em] text-on-surface">{{ $product['name'] }}</h2>
-                                        <p class="mt-2 text-[0.75rem] font-semibold uppercase tracking-[0.22em] text-on-surface/52">{{ $product['category_name'] }}</p>
+                                        @if (!empty($product['start_at_display']))
+                                            <p class="fe-product-date">{{ $product['start_at_display'] }}</p>
+                                        @endif
+                                        <h2 class="fe-product-name">{{ $product['name'] }}</h2>
+                                        <p class="fe-product-cat">{{ $product['category_name'] }}</p>
                                         @if (!empty($product['tag_names']))
-                                            <p class="mt-3 text-[0.82rem] text-on-surface/62">{{ implode(' / ', $product['tag_names']) }}</p>
+                                            <p class="fe-product-tags">{{ implode(' / ', $product['tag_names']) }}</p>
                                         @endif
                                     </div>
-                                    <p class="pt-1 text-[0.96rem] font-medium text-primary">{{ $product['price_display'] }}</p>
+                                    <p class="fe-product-price">{{ $product['price_display'] }}</p>
                                 </div>
                             </a>
                         </article>
                     @endforeach
-                </section>
+                </div>
 
-                <div class="mt-16">
+                <div class="fe-pagination-wrap">
                     {{ $pagination->appends($filters)->links() }}
                 </div>
             @endif
         </div>
     </section>
 @endsection
-
-
