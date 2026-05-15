@@ -1,23 +1,37 @@
-@extends('Admin-share/guest')
-@section('title', '系統通知')
-@section('body-class', 'bg-surface')
+@extends('layouts.admin-guest')
+
+@section('title-suffix', ' · 系統通知')
 
 @section('content')
-    <div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-10 text-center">
-        <span class="material-symbols-outlined text-[3rem] text-primary mb-4 block">
-            @if(($notice['type'] ?? '') === 'error') error
-            @elseif(($notice['type'] ?? '') === 'warning') warning
-            @elseif(($notice['type'] ?? '') === 'success') check_circle
-            @else info
-            @endif
-        </span>
-        <h2 class="text-[1.25rem] font-bold text-on-surface mb-3 font-headline">{{ $notice['title'] }}</h2>
-        <p class="text-[0.875rem] text-outline mb-6">{{ $notice['message'] }}</p>
-        <a href="{{ url('admin/login') }}" class="inline-flex items-center gap-2 px-6 py-2.5 btn-primary rounded-xl font-bold text-[0.875rem] active:scale-95 transition-all no-underline">
-            <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-            返回登入頁
-        </a>
-    </div>
+<div class="admin-login-body">
+    <div class="admin-login-wrap admin-notice-wrap">
+        <main class="admin-login-card admin-notice-card">
+            @php
+                $icon = match ($notice['type'] ?? '') {
+                    'error' => 'error',
+                    'warning' => 'warning',
+                    'success' => 'check_circle',
+                    default => 'info',
+                };
+                $tone = match ($notice['type'] ?? '') {
+                    'error' => 'admin-notice-icon-danger',
+                    'warning' => 'admin-notice-icon-warning',
+                    'success' => 'admin-notice-icon-success',
+                    default => 'admin-notice-icon-info',
+                };
+            @endphp
+            <span class="material-symbols-outlined admin-notice-icon {{ $tone }}" aria-hidden="true">{{ $icon }}</span>
+            <h2 class="admin-notice-title">{{ $notice['title'] }}</h2>
+            <p class="admin-notice-message">{{ $notice['message'] }}</p>
+            <a href="{{ url('admin/login') }}" class="admin-btn admin-btn-primary admin-notice-action">
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+                <span>返回登入頁</span>
+            </a>
+        </main>
 
-    <p class="mt-8 text-[0.75rem] text-outline">&copy; {{ date('Y') }} YoYoAdmin</p>
+        <footer class="admin-login-foot">
+            &copy; {{ date('Y') }} YoYoAdmin
+        </footer>
+    </div>
+</div>
 @endsection

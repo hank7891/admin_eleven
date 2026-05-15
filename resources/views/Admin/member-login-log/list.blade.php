@@ -1,177 +1,122 @@
-@extends('Admin-share/index')
+@extends('layouts.admin')
+
+@section('title-suffix', ' · 會員登入日誌')
+
 @section('content')
-    <div class="content-wrapper">
-        <div class="p-6 lg:p-10 space-y-8">
-            {{-- 頁面標題區 --}}
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <x-breadcrumb :items="[['label' => '首頁', 'url' => 'admin/'], ['label' => '會員登入日誌']]" />
-                    <h2 class="text-[1.5rem] font-bold text-on-surface tracking-tight font-headline">會員登入日誌</h2>
-                    <p class="text-[0.8125rem] text-outline mt-1">追蹤前台會員登入、登出與註冊紀錄</p>
-                </div>
+    <x-admin.page-head
+        title="會員登入日誌"
+        subtitle="追蹤前台會員登入、登出與註冊紀錄"
+        :breadcrumbs="[['label' => '首頁', 'url' => 'admin/'], ['label' => '會員登入日誌']]"
+    />
+
+    <x-admin.filter-card :action="asset('admin/member.login-log/list')" title="搜尋條件">
+        <x-admin.input
+            name="member_keyword"
+            label="會員帳號 / 姓名"
+            :value="$filters['member_keyword'] ?? ''"
+            placeholder="模糊搜尋..."
+            icon="person_search"
+        />
+        <x-admin.input
+            name="ip_address"
+            label="IP 位址"
+            :value="$filters['ip_address'] ?? ''"
+            placeholder="192.168.x.x"
+            icon="lan"
+        />
+        <x-admin.select
+            name="action"
+            label="操作"
+            :options="$actionOptions ?? []"
+            :value="$filters['action'] ?? ''"
+            placeholder="全部"
+        />
+        <x-admin.select
+            name="status"
+            label="狀態"
+            :options="$statusOptions ?? []"
+            :value="$filters['status'] ?? ''"
+            placeholder="全部"
+        />
+        <x-admin.input
+            name="date_from"
+            type="date"
+            label="開始時間"
+            :value="$filters['date_from'] ?? ''"
+        />
+        <x-admin.input
+            name="date_to"
+            type="date"
+            label="結束時間"
+            :value="$filters['date_to'] ?? ''"
+        />
+
+        <x-slot:actions>
+            <a href="{{ asset('admin/member.login-log/list') }}" class="admin-btn admin-btn-outline">清除條件</a>
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                <span>搜尋日誌</span>
+            </button>
+        </x-slot:actions>
+    </x-admin.filter-card>
+
+    @if (!($hasFilter ?? false))
+        <x-admin.card>
+            <x-admin.empty-state icon="search" title="請輸入搜尋條件後查詢" description="請至少輸入一個篩選欄位以開始檢索。" />
+        </x-admin.card>
+    @elseif (empty($data))
+        <x-admin.card>
+            <x-admin.empty-state icon="inbox" title="查無符合條件的資料" description="請調整篩選條件後再次查詢。" />
+        </x-admin.card>
+    @else
+        <div class="admin-card admin-card-flush">
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>操作</th>
+                            <th>ID</th>
+                            <th>帳號</th>
+                            <th>姓名</th>
+                            <th>操作類型</th>
+                            <th>狀態</th>
+                            <th>IP 位址</th>
+                            <th>操作時間</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($data as $key => $row)
+                            <tr>
+                                <td class="admin-text-mute">{{ $pagination->firstItem() + $key }}</td>
+                                <td>
+                                    <a href="{{ asset('admin/member.login-log/detail/' . $row['id']) }}" class="admin-link-action">
+                                        <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+                                        <span>詳情</span>
+                                    </a>
+                                </td>
+                                <td class="admin-text-mono">{{ $row['id'] }}</td>
+                                <td class="admin-strong">{{ $row['account'] }}</td>
+                                <td>{{ $row['member_name'] }}</td>
+                                <td class="admin-text-mute">{{ $row['action_display'] }}</td>
+                                <td>
+                                    @if ($row['status'] == 1)
+                                        <x-admin.badge tone="success">{{ $row['status_display'] }}</x-admin.badge>
+                                    @else
+                                        <x-admin.badge tone="danger">{{ $row['status_display'] }}</x-admin.badge>
+                                    @endif
+                                </td>
+                                <td class="admin-text-mono admin-text-mute">{{ $row['ip_address'] }}</td>
+                                <td class="admin-text-mute">{{ $row['operated_at'] }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
 
-            {{-- 搜尋篩選卡片 --}}
-            <form method="GET" action="{{ asset('admin/member.login-log/list') }}">
-                <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="space-y-2">
-                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[16px]">person_search</span>
-                                會員帳號 / 姓名
-                            </label>
-                            <input type="text" name="member_keyword" placeholder="模糊搜尋..." value="{{ $filters['member_keyword'] ?? '' }}"
-                                   class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-outline-variant" />
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[16px]">lan</span>
-                                IP 位址
-                            </label>
-                            <input type="text" name="ip_address" placeholder="192.168.x.x" value="{{ $filters['ip_address'] ?? '' }}"
-                                   class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-outline-variant" />
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[16px]">touch_app</span>
-                                操作
-                            </label>
-                            <select name="action" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all appearance-none cursor-pointer">
-                                <option value="">全部</option>
-                                @foreach ($actionOptions ?? [] as $key => $label)
-                                    <option value="{{ $key }}" {{ ($filters['action'] ?? '') === $key ? 'selected' : '' }}>{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[16px]">check_circle</span>
-                                狀態
-                            </label>
-                            <select name="status" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all appearance-none cursor-pointer">
-                                <option value="">全部</option>
-                                @foreach ($statusOptions ?? [] as $key => $label)
-                                    <option value="{{ $key }}" {{ (!is_null($filters['status'] ?? null) && $filters['status'] !== '' && (int)$filters['status'] === $key) ? 'selected' : '' }}>{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[16px]">calendar_today</span>
-                                開始時間
-                            </label>
-                            <input type="date" name="date_from" value="{{ $filters['date_from'] ?? '' }}"
-                                   class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all" />
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[0.8125rem] font-semibold uppercase tracking-widest text-outline flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[16px]">event</span>
-                                結束時間
-                            </label>
-                            <input type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}"
-                                   class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 text-[0.875rem] focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 transition-all" />
-                        </div>
-                    </div>
-                    <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-outline-variant/20">
-                        <a href="{{ asset('admin/member.login-log/list') }}" class="px-6 py-2.5 text-outline hover:text-on-surface font-medium text-[0.875rem] transition-colors no-underline">
-                            清除條件
-                        </a>
-                        <button type="submit" class="px-8 py-2.5 btn-primary rounded-xl font-bold text-[0.875rem] active:scale-95 transition-all flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[18px]">search</span>
-                            搜尋日誌
-                        </button>
-                    </div>
-                </div>
-            </form>
-
-            {{-- 資料表格 --}}
-            @if (!($hasFilter ?? false))
-                <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-12 text-center">
-                    <span class="material-symbols-outlined text-[48px] text-outline-variant/40 mb-3 block">search</span>
-                    <p class="text-outline text-[0.875rem]">請輸入搜尋條件後查詢</p>
-                </div>
-            @elseif (empty($data))
-                <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-12 text-center">
-                    <span class="material-symbols-outlined text-[48px] text-outline-variant/40 mb-3 block">inbox</span>
-                    <p class="text-outline text-[0.875rem]">查無符合條件的資料</p>
-                </div>
-            @else
-                <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse" id="logTable">
-                            <thead>
-                            <tr class="table-header-row">
-                                <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">#</th>
-                                <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">操作</th>
-                                <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">ID</th>
-                                <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">帳號</th>
-                                <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">姓名</th>
-                                <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">操作類型</th>
-                                <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">狀態</th>
-                                <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">IP 位址</th>
-                                <th class="px-6 py-4 text-left text-[0.8125rem] font-bold uppercase tracking-wider text-outline">操作時間</th>
-                            </tr>
-                            </thead>
-                            <tbody class="divide-y divide-outline-variant/10">
-                            @foreach ($data as $key => $row)
-                                <tr class="hover:bg-surface-container-low transition-colors duration-200">
-                                    <td class="px-6 py-5 text-[0.875rem] font-medium text-outline">{{ $pagination->firstItem() + $key }}</td>
-                                    <td class="px-6 py-5">
-                                        <a href="{{ asset('admin/member.login-log/detail/' . $row['id']) }}" class="flex items-center gap-1.5 text-primary hover:bg-primary/5 px-3 py-1.5 rounded-lg transition-colors font-semibold text-[0.875rem] no-underline">
-                                            <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                            詳情
-                                        </a>
-                                    </td>
-                                    <td class="px-6 py-5 text-[0.875rem] font-mono font-medium text-on-surface-variant">{{ $row['id'] }}</td>
-                                    <td class="px-6 py-5 text-[0.875rem] font-medium text-on-surface">{{ $row['account'] }}</td>
-                                    <td class="px-6 py-5 text-[0.875rem] text-on-surface">{{ $row['member_name'] }}</td>
-                                    <td class="px-6 py-5 text-[0.875rem] text-on-surface-variant">{{ $row['action_display'] }}</td>
-                                    <td class="px-6 py-5">
-                                        @if ($row['status'] == 1)
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[0.75rem] font-bold bg-emerald-50 text-emerald-600">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
-                                                {{ $row['status_display'] }}
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[0.75rem] font-bold bg-red-50 text-red-600">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></span>
-                                                {{ $row['status_display'] }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-5 text-[0.875rem] font-mono text-outline">{{ $row['ip_address'] }}</td>
-                                    <td class="px-6 py-5 text-[0.875rem] text-outline">{{ $row['operated_at'] }}</td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {{-- 分頁 --}}
-                    @if (isset($pagination))
-                        <x-stitch-pagination :paginator="$pagination" :filters="$filters" />
-                    @endif
-                </div>
+            @if (isset($pagination))
+                <x-stitch-pagination :paginator="$pagination" :filters="$filters" />
             @endif
         </div>
-    </div>
-
-    @push('scripts')
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(function () {
-            if ($('#logTable').length) {
-                $('#logTable').DataTable({
-                    "paging": false,
-                    "lengthChange": false,
-                    "searching": false,
-                    "ordering": true,
-                    "info": false,
-                    "autoWidth": false,
-                    "responsive": true,
-                });
-            }
-        });
-    </script>
-    @endpush
-@stop
+    @endif
+@endsection

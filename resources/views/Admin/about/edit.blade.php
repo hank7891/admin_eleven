@@ -1,131 +1,143 @@
-@extends('Admin-share/index')
+@extends('layouts.admin')
+
+@section('title-suffix', ' · 關於我們')
+
 @section('content')
-    <div class="content-wrapper">
-        <div class="p-6 lg:p-10 space-y-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <x-breadcrumb :items="[['label' => '首頁', 'url' => 'admin/'], ['label' => '關於我們'] ]" />
-                    <h2 class="text-[1.5rem] font-bold text-on-surface tracking-tight font-headline">關於我們設定</h2>
-                    <p class="text-[0.8125rem] text-outline mt-1">維護前台 About 頁的 Hero、故事、使命願景與聯絡資訊</p>
+    <x-admin.page-head
+        title="關於我們設定"
+        subtitle="維護前台 About 頁的 Hero、故事、使命願景與聯絡資訊"
+        :breadcrumbs="[['label' => '首頁', 'url' => 'admin/'], ['label' => '關於我們']]"
+    >
+        <x-slot:actions>
+            <button type="submit" form="about-edit-form" class="admin-btn admin-btn-primary">
+                <span class="material-symbols-outlined" aria-hidden="true">save</span>
+                <span>儲存設定</span>
+            </button>
+        </x-slot:actions>
+    </x-admin.page-head>
+
+    <x-admin.card title="編輯紀錄">
+        <p class="admin-text-sm">最後編輯者：{{ ($data['updater_name'] ?? '') ?: '尚無資料' }}</p>
+        <p class="admin-text-sm admin-text-mute">最後更新時間：{{ ($data['updated_at_display'] ?? '') ?: '尚無資料' }}</p>
+    </x-admin.card>
+
+    <x-admin.form-error :errors="$errors" />
+
+    <form id="about-edit-form" action="{{ asset('admin/about/edit') }}" method="POST" enctype="multipart/form-data" class="admin-stack admin-stack-lg">
+        @csrf
+
+        <x-admin.card title="Hero 區塊">
+            <div class="admin-form-row">
+                <x-admin.input
+                    name="hero_title"
+                    label="主標題"
+                    :value="old('hero_title', $data['hero_title'] ?? '')"
+                    required
+                    :error="$errors->first('hero_title')"
+                    class="admin-field-full"
+                />
+                <x-admin.input
+                    name="hero_subtitle"
+                    label="副標題"
+                    :value="old('hero_subtitle', $data['hero_subtitle'] ?? '')"
+                    class="admin-field-full"
+                />
+                <div class="admin-field admin-field-full">
+                    <label class="admin-label" for="hero_image">Hero 圖片</label>
+                    <input id="hero_image" type="file" name="hero_image" accept="image/*" class="admin-file-input">
+                    <p class="admin-help">支援 jpg / jpeg / png / gif / webp，最大 {{ round((config('upload.image.max_size', 5120)) / 1024, 2) }}MB</p>
+                    <p class="admin-help">建議尺寸：1200 x 1500（4:5），可避免前台顯示裁切或留白。</p>
+                    <input type="hidden" name="remove_hero_image" value="0">
+                    <label class="admin-checkbox-row">
+                        <input type="checkbox" name="remove_hero_image" value="1" class="admin-checkbox">
+                        <span class="admin-checkbox-label">移除目前圖片</span>
+                    </label>
                 </div>
+                @if (!empty($data['hero_image_url']))
+                    <div class="admin-field-full">
+                        <div class="admin-image-preview-wrap">
+                            <img src="{{ $data['hero_image_url'] }}" alt="Hero 目前圖片" class="admin-image-preview">
+                        </div>
+                    </div>
+                @endif
             </div>
+        </x-admin.card>
 
-            <div class="bg-surface-container-low rounded-xl border border-outline-variant/20 p-5 text-[0.82rem] text-on-surface/75">
-                <p>最後編輯者：{{ $data['updater_name'] ?? '' ?: '尚無資料' }}</p>
-                <p class="mt-1">最後更新時間：{{ $data['updated_at_display'] ?? '' ?: '尚無資料' }}</p>
-            </div>
+        <x-admin.card title="品牌故事">
+            <x-admin.input
+                name="story_title"
+                label="標題"
+                :value="old('story_title', $data['story_title'] ?? '')"
+                required
+                :error="$errors->first('story_title')"
+            />
+            <x-admin.textarea
+                name="story_content"
+                label="內容"
+                :value="old('story_content', $data['story_content'] ?? '')"
+                :rows="6"
+                required
+                :error="$errors->first('story_content')"
+            />
+        </x-admin.card>
 
-            <form id="about-edit-form" action="{{ asset('admin/about/edit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                @csrf
+        <div class="admin-form-mv-grid">
+            <x-admin.card title="使命">
+                <x-admin.input
+                    name="mission_title"
+                    label="標題（可留空）"
+                    :value="old('mission_title', $data['mission_title'] ?? '')"
+                />
+                <x-admin.textarea
+                    name="mission_content"
+                    label="內容（可留空）"
+                    :value="old('mission_content', $data['mission_content'] ?? '')"
+                    :rows="5"
+                />
+            </x-admin.card>
 
-                <fieldset class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] overflow-hidden border-t-4 border-t-primary">
-                    <legend class="sr-only">Hero 區塊</legend>
-                    <div class="p-6 border-b border-outline-variant/20">
-                        <h3 class="text-[0.9375rem] font-semibold text-on-surface font-headline">Hero 區塊</h3>
-                    </div>
-                    <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-1.5 md:col-span-2">
-                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">主標題 <span class="text-error">*</span></label>
-                            <input type="text" name="hero_title" value="{{ $data['hero_title'] ?? '' }}" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all">
-                        </div>
-                        <div class="space-y-1.5 md:col-span-2">
-                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">副標題</label>
-                            <input type="text" name="hero_subtitle" value="{{ $data['hero_subtitle'] ?? '' }}" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all">
-                        </div>
-                        <div class="space-y-1.5 md:col-span-2">
-                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">Hero 圖片</label>
-                            <input type="file" name="hero_image" accept="image/*" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface">
-                            <p class="text-[0.75rem] text-outline-variant">支援 jpg / jpeg / png / gif / webp，最大 {{ round((config('upload.image.max_size', 5120)) / 1024, 2) }}MB</p>
-                            <p class="text-[0.75rem] text-outline-variant">建議尺寸：1200 x 1500（4:5），可避免前台顯示裁切或留白。</p>
-                            <input type="hidden" name="remove_hero_image" value="0">
-                            <label class="inline-flex items-center gap-2 text-[0.8rem] text-on-surface/75">
-                                <input type="checkbox" name="remove_hero_image" value="1" class="rounded border-outline-variant/50">
-                                移除目前圖片
-                            </label>
-                        </div>
-                        @if (!empty($data['hero_image_url']))
-                            <div class="md:col-span-2 rounded-xl overflow-hidden bg-surface-container-low border border-outline-variant/25 max-w-xl">
-                                <img src="{{ $data['hero_image_url'] }}" alt="Hero 目前圖片" class="w-full h-auto object-cover">
-                            </div>
-                        @endif
-                    </div>
-                </fieldset>
-
-                <fieldset class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] overflow-hidden">
-                    <legend class="sr-only">品牌故事</legend>
-                    <div class="p-6 border-b border-outline-variant/20">
-                        <h3 class="text-[0.9375rem] font-semibold text-on-surface font-headline">品牌故事</h3>
-                    </div>
-                    <div class="p-8 grid grid-cols-1 gap-6">
-                        <div class="space-y-1.5">
-                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">標題 <span class="text-error">*</span></label>
-                            <input type="text" name="story_title" value="{{ $data['story_title'] ?? '' }}" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface">
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">內容 <span class="text-error">*</span></label>
-                            <textarea name="story_content" rows="6" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-3 text-[0.875rem] text-on-surface leading-7">{{ $data['story_content'] ?? '' }}</textarea>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <fieldset class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] overflow-hidden">
-                        <legend class="sr-only">使命</legend>
-                        <div class="p-6 border-b border-outline-variant/20">
-                            <h3 class="text-[0.9375rem] font-semibold text-on-surface font-headline">使命</h3>
-                        </div>
-                        <div class="p-6 space-y-4">
-                            <input type="text" name="mission_title" value="{{ $data['mission_title'] ?? '' }}" placeholder="標題（可留空）" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface">
-                            <textarea name="mission_content" rows="5" placeholder="內容（可留空）" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-3 text-[0.875rem] text-on-surface leading-7">{{ $data['mission_content'] ?? '' }}</textarea>
-                        </div>
-                    </fieldset>
-
-                    <fieldset class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] overflow-hidden">
-                        <legend class="sr-only">願景</legend>
-                        <div class="p-6 border-b border-outline-variant/20">
-                            <h3 class="text-[0.9375rem] font-semibold text-on-surface font-headline">願景</h3>
-                        </div>
-                        <div class="p-6 space-y-4">
-                            <input type="text" name="vision_title" value="{{ $data['vision_title'] ?? '' }}" placeholder="標題（可留空）" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface">
-                            <textarea name="vision_content" rows="5" placeholder="內容（可留空）" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-3 text-[0.875rem] text-on-surface leading-7">{{ $data['vision_content'] ?? '' }}</textarea>
-                        </div>
-                    </fieldset>
-                </div>
-
-                <fieldset class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] overflow-hidden">
-                    <legend class="sr-only">聯絡資訊與 SEO</legend>
-                    <div class="p-6 border-b border-outline-variant/20">
-                        <h3 class="text-[0.9375rem] font-semibold text-on-surface font-headline">聯絡資訊與 SEO</h3>
-                    </div>
-                    <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-1.5">
-                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">聯絡 Email</label>
-                            <input type="email" name="contact_email" value="{{ $data['contact_email'] ?? '' }}" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface">
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">聯絡電話</label>
-                            <input type="text" name="contact_phone" value="{{ $data['contact_phone'] ?? '' }}" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface">
-                        </div>
-                        <div class="space-y-1.5 md:col-span-2">
-                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">聯絡地址</label>
-                            <input type="text" name="contact_address" value="{{ $data['contact_address'] ?? '' }}" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-2.5 text-[0.875rem] text-on-surface">
-                        </div>
-                        <div class="space-y-1.5 md:col-span-2">
-                            <label class="block text-[0.875rem] font-medium text-on-surface-variant">Meta Description</label>
-                            <textarea name="meta_description" rows="3" class="w-full bg-surface-container-high border border-transparent rounded-lg px-4 py-3 text-[0.875rem] text-on-surface">{{ $data['meta_description'] ?? '' }}</textarea>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <div class="flex items-center justify-end">
-                    <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl btn-primary px-8 py-3 text-[0.875rem] font-bold">
-                        <span class="material-symbols-outlined text-[20px]">save</span>
-                        儲存設定
-                    </button>
-                </div>
-            </form>
+            <x-admin.card title="願景">
+                <x-admin.input
+                    name="vision_title"
+                    label="標題（可留空）"
+                    :value="old('vision_title', $data['vision_title'] ?? '')"
+                />
+                <x-admin.textarea
+                    name="vision_content"
+                    label="內容（可留空）"
+                    :value="old('vision_content', $data['vision_content'] ?? '')"
+                    :rows="5"
+                />
+            </x-admin.card>
         </div>
-    </div>
+
+        <x-admin.card title="聯絡資訊與 SEO">
+            <div class="admin-form-row">
+                <x-admin.input
+                    name="contact_email"
+                    type="email"
+                    label="聯絡 Email"
+                    :value="old('contact_email', $data['contact_email'] ?? '')"
+                />
+                <x-admin.input
+                    name="contact_phone"
+                    label="聯絡電話"
+                    :value="old('contact_phone', $data['contact_phone'] ?? '')"
+                />
+                <x-admin.input
+                    name="contact_address"
+                    label="聯絡地址"
+                    :value="old('contact_address', $data['contact_address'] ?? '')"
+                    class="admin-field-full"
+                />
+                <x-admin.textarea
+                    name="meta_description"
+                    label="Meta Description"
+                    :value="old('meta_description', $data['meta_description'] ?? '')"
+                    :rows="3"
+                    class="admin-field-full"
+                />
+            </div>
+        </x-admin.card>
+    </form>
 @endsection
-
-

@@ -1524,3 +1524,326 @@ body.admin-login-body { min-height: 100vh; }
     background: rgba(47, 125, 84, 0.12);
     color: var(--color-success);
 }
+
+/* ============================================================
+   ===== P4 業務頁支援樣式（announcement / hero / about / select-role / notice / log）
+   ===== Added 2026-05-15 P4
+   ============================================================ */
+
+/* ----- Hero slide list (卡片版) ----- */
+.admin-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+@media (min-width: 1100px) { .admin-hero-grid { grid-template-columns: repeat(2, 1fr); } }
+.admin-hero-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: hidden;
+    padding: 0;
+}
+@media (min-width: 700px) {
+    .admin-hero-card { grid-template-columns: 220px 1fr; }
+}
+.admin-hero-card-media {
+    background: var(--color-surface-container-low);
+    padding: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.admin-hero-card-media img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+}
+.admin-hero-card-empty {
+    width: 100%;
+    height: 200px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-container-high);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-outline-variant);
+}
+.admin-hero-card-empty .material-symbols-outlined { font-size: 2rem; }
+.admin-hero-card-body {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+.admin-hero-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+.admin-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--color-primary);
+    margin: 0;
+}
+.admin-hero-card-title {
+    margin: 0.4rem 0 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-on-surface);
+}
+.admin-hero-card-desc {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+}
+.admin-hero-card-meta {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.35rem 1rem;
+    margin: 0;
+    font-size: 0.8125rem;
+}
+.admin-hero-card-meta dt { color: var(--color-outline-variant); }
+.admin-hero-card-meta dd { margin: 0; color: var(--color-on-surface); font-weight: 600; }
+.admin-hero-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(176,177,187,0.18);
+}
+
+/* ----- Form image preview / dropzone ----- */
+.admin-dropzone {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1.25rem;
+    border: 1px dashed rgba(176,177,187,0.6);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-container-low);
+    cursor: pointer;
+    transition: border-color 200ms, background 200ms;
+}
+.admin-dropzone:hover,
+.admin-dropzone.is-dragover {
+    border-color: var(--color-primary);
+    background: rgba(75,94,144,0.06);
+}
+.admin-dropzone .material-symbols-outlined {
+    font-size: 1.75rem;
+    color: var(--color-primary);
+}
+.admin-image-preview-wrap {
+    margin-top: 0.85rem;
+    padding: 0.5rem;
+    background: var(--color-surface-container-low);
+    border-radius: var(--radius-md);
+    max-width: 36rem;
+}
+.admin-image-preview {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+.admin-image-preview.is-hidden,
+.admin-image-placeholder.is-hidden { display: none; }
+.admin-image-placeholder {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    background: var(--color-surface-container-high);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    color: var(--color-outline-variant);
+}
+.admin-sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ----- About mission/vision 2-col grid ----- */
+.admin-form-mv-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+@media (min-width: 900px) { .admin-form-mv-grid { grid-template-columns: 1fr 1fr; } }
+
+/* ----- ACL menu tree ----- */
+.admin-acl-tree { display: flex; flex-direction: column; }
+.admin-acl-group {
+    border-bottom: 1px solid rgba(176,177,187,0.15);
+}
+.admin-acl-group:last-child { border-bottom: 0; }
+.admin-acl-group-head {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 0;
+    background: var(--color-surface-container-low);
+    padding: 0.85rem 1rem;
+}
+.admin-acl-group-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    cursor: pointer;
+}
+.admin-acl-group-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+}
+@media (min-width: 700px) { .admin-acl-group-body { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .admin-acl-group-body { grid-template-columns: repeat(4, 1fr); } }
+.admin-acl-item {
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(176,177,187,0.25);
+    background: #fff;
+}
+.admin-acl-item:hover { background: var(--color-surface-container-low); }
+
+/* ----- Select role page ----- */
+.admin-select-role-wrap { max-width: 36rem; }
+.admin-select-role-card { padding: 2rem 2.5rem; }
+.admin-select-role-head { text-align: center; margin-bottom: 2rem; }
+.admin-select-role-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+@media (min-width: 600px) { .admin-select-role-grid { grid-template-columns: 1fr 1fr; } }
+.admin-select-role-form { margin: 0; }
+.admin-select-role-btn {
+    position: relative;
+    width: 100%;
+    background: var(--color-surface-container-low);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: transform 200ms, border-color 200ms, background 200ms;
+}
+.admin-select-role-btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(75,94,144,0.35);
+}
+.admin-select-role-btn.is-active {
+    background: rgba(75,94,144,0.08);
+    border-color: var(--color-primary);
+    box-shadow: 0 12px 24px -16px rgba(75,94,144,0.4);
+}
+.admin-select-role-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 9999px;
+    display: grid;
+    place-items: center;
+    background: var(--color-surface-container-high);
+    color: var(--color-outline);
+}
+.admin-select-role-btn.is-active .admin-select-role-icon {
+    background: var(--color-primary);
+    color: #fff;
+}
+.admin-select-role-icon .material-symbols-outlined { font-size: 1.8rem; }
+.admin-select-role-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-on-surface);
+}
+.admin-select-role-flag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--color-primary);
+}
+.admin-select-role-check {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    color: var(--color-primary);
+    font-size: 1.25rem;
+    font-variation-settings: 'FILL' 1;
+}
+
+/* ----- Notice page ----- */
+.admin-notice-wrap { max-width: 28rem; }
+.admin-notice-card { text-align: center; padding: 2.5rem; }
+.admin-notice-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.admin-notice-icon-danger { color: var(--color-error); }
+.admin-notice-icon-warning { color: var(--color-warning); }
+.admin-notice-icon-success { color: var(--color-success); }
+.admin-notice-icon-info { color: var(--color-primary); }
+.admin-notice-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-on-surface);
+    margin: 0 0 0.75rem;
+}
+.admin-notice-message {
+    color: var(--color-outline);
+    margin: 0 0 1.5rem;
+}
+.admin-notice-action { justify-content: center; width: 100%; }
+
+/* ----- Codeblock (log detail user agent) ----- */
+.admin-codeblock {
+    margin: 0;
+    padding: 1rem;
+    background: var(--color-surface-container-low);
+    border-radius: var(--radius-md);
+    font-family: 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    color: var(--color-on-surface-variant);
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.5;
+}
+
+/* ----- Badge variants for menu type ----- */
+.admin-badge-secondary {
+    background: rgba(107,86,128,0.12);
+    color: var(--color-tertiary);
+}
+
+/* ----- Reduced motion support (WCAG 2.3.3 AAA) ----- */
+@media (prefers-reduced-motion: reduce) {
+    .admin-app *,
+    .admin-app *::before,
+    .admin-app *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

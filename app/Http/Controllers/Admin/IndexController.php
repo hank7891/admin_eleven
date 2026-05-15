@@ -25,7 +25,86 @@ class IndexController extends Controller
 
     public function index()
     {
-        return view('admin/index', $this->settingService->fetchSetData());
+        # Dashboard 真實統計（純讀 count，無業務邏輯，破例直接讀 Model）
+        $now = now();
+        $kpi = [
+            'member_new_month'    => \App\Models\Member::whereYear('created_at', $now->year)
+                ->whereMonth('created_at', $now->month)
+                ->count(),
+            'product_active'      => \App\Models\Product::where('status_key', PRODUCT_STATUS_ONLINE)->count(),
+            'announcement_unread' => \App\Models\Announcement::where('is_active', STATUS_ACTIVE)->count(),
+            'admin_login_today'   => \App\Models\AdminLoginLog::whereDate('operated_at', $now->toDateString())
+                ->where('status', 1)
+                ->count(),
+        ];
+
+        # 最近 5 筆操作日誌
+        $recentLogs = \App\Models\AdminLog::orderByDesc('operated_at')
+            ->limit(5)
+            ->get()
+            ->map(function ($log) {
+                $tone = match ($log->action) {
+                    'create' => 'success',
+                    'update' => 'info',
+                    'delete' => 'danger',
+                    default  => 'neutral',
+                };
+                $icon = match ($log->action) {
+                    'create' => 'add_circle',
+                    'update' => 'edit_note',
+                    'delete' => 'delete',
+                    default  => 'history',
+                };
+                return [
+                    'title'  => ($log->operator_name ?? '系統') . ' · ' . ($log->remarks ?? $log->module),
+                    'meta'   => optional($log->operated_at)->format('Y/m/d H:i') . ' · ' . $log->module . ' · ' . ($log->ip_address ?? '--'),
+                    'action' => $log->action,
+                    'icon'   => $icon,
+                    'tone'   => $tone,
+                ];
+            })
+            ->toArray();
+
+        # 系統資料分佈
+        $productTotal   = \App\Models\Product::count();
+        $productOnline  = \App\Models\Product::where('status_key', PRODUCT_STATUS_ONLINE)->count();
+        $announceTotal  = \App\Models\Announcement::count();
+        $announceActive = \App\Models\Announcement::where('is_active', STATUS_ACTIVE)->count();
+        $heroTotal      = \App\Models\HeroSlide::count();
+        $heroActive     = \App\Models\HeroSlide::where('is_active', STATUS_ACTIVE)->count();
+        $memberTotal    = \App\Models\Member::count();
+        $memberActive   = \App\Models\Member::where('status_key', 'active')->count();
+
+        $systemStats = [
+            [
+                'label'   => '商品（上架 / 全部）',
+                'value'   => $productOnline . ' / ' . $productTotal,
+                'percent' => $productTotal > 0 ? round($productOnline / $productTotal * 100) : 0,
+            ],
+            [
+                'label'   => '公告（已公開 / 全部）',
+                'value'   => $announceActive . ' / ' . $announceTotal,
+                'percent' => $announceTotal > 0 ? round($announceActive / $announceTotal * 100) : 0,
+                'color'   => '#8f7859',
+            ],
+            [
+                'label'   => '輪播（啟用 / 全部）',
+                'value'   => $heroActive . ' / ' . $heroTotal,
+                'percent' => $heroTotal > 0 ? round($heroActive / $heroTotal * 100) : 0,
+                'color'   => '#6b5680',
+            ],
+            [
+                'label'   => '會員（啟用 / 全部）',
+                'value'   => $memberActive . ' / ' . $memberTotal,
+                'percent' => $memberTotal > 0 ? round($memberActive / $memberTotal * 100) : 0,
+                'color'   => '#2f7d54',
+            ],
+        ];
+
+        return view('admin/index', array_merge(
+            $this->settingService->fetchSetData(),
+            compact('kpi', 'recentLogs', 'systemStats'),
+        ));
     }
 
     /**

@@ -1,137 +1,134 @@
-@extends('Admin-share/index')
+@extends('layouts.admin')
+
+@section('title-suffix', ' · 貪食蛇')
+
 @section('content')
-    <div class="content-wrapper stitch-page">
-        <div class="p-6 lg:p-10 space-y-8">
-            {{-- 頁面標題區 --}}
-            <div>
-                <nav class="flex items-center gap-2 text-[0.75rem] text-outline-variant mb-1 uppercase tracking-widest font-semibold">
-                    <a href="{{ asset('admin/') }}" class="hover:text-primary transition-colors">首頁</a>
-                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                    <span class="text-primary">貪食蛇</span>
-                </nav>
-                <h2 class="text-[1.5rem] font-bold text-on-surface tracking-tight font-headline">貪食蛇小遊戲</h2>
-            </div>
+    <x-admin.page-head
+        title="貪食蛇小遊戲"
+        subtitle="管理員放鬆專區"
+        :breadcrumbs="[['label' => '首頁', 'url' => 'admin/'], ['label' => '貪食蛇']]"
+    />
 
-            <div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)] p-8">
-                <div class="max-w-2xl mx-auto text-center space-y-6">
-                    {{-- 遊戲說明 --}}
-                    <div class="flex items-center gap-2 p-4 bg-primary/5 border border-primary/10 rounded-xl text-[0.875rem] text-on-surface-variant">
-                        <span class="material-symbols-outlined text-primary text-[18px]">info</span>
-                        使用方向鍵 ↑ ↓ ← → 或 W A S D 控制蛇的移動，吃到食物可以增加分數和長度。
-                    </div>
+    <x-admin.card title="開始遊戲">
+        <div class="admin-snake-wrap">
+            <p class="admin-help admin-snake-tip">
+                <span class="material-symbols-outlined" aria-hidden="true">info</span>
+                <span>使用方向鍵 ↑ ↓ ← → 或 W A S D 控制蛇的移動，吃到食物可以增加分數和長度。</span>
+            </p>
 
-                    {{-- 遊戲畫布 --}}
-                    <canvas id="gameCanvas" width="600" height="600" class="block mx-auto rounded-lg border-2 border-on-surface/10" style="background-color: #1f2937;"></canvas>
+            <canvas id="gameCanvas" width="600" height="600" class="admin-snake-canvas"></canvas>
 
-                    {{-- 遊戲資訊 --}}
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="bg-emerald-50 rounded-xl p-4">
-                            <p class="text-[0.75rem] font-bold text-emerald-600 uppercase">分數</p>
-                            <p class="text-[1.5rem] font-bold text-emerald-700" id="score">0</p>
-                        </div>
-                        <div class="bg-blue-50 rounded-xl p-4">
-                            <p class="text-[0.75rem] font-bold text-blue-600 uppercase">長度</p>
-                            <p class="text-[1.5rem] font-bold text-blue-700" id="length">3</p>
-                        </div>
-                        <div class="bg-amber-50 rounded-xl p-4">
-                            <p class="text-[0.75rem] font-bold text-amber-600 uppercase">最高分</p>
-                            <p class="text-[1.5rem] font-bold text-amber-700" id="highScore">0</p>
-                        </div>
-                    </div>
-
-                    {{-- 控制按鈕 --}}
-                    <div class="flex items-center justify-center gap-3">
-                        <button type="button" id="startBtn" class="px-6 py-2.5 btn-primary rounded-xl font-bold text-[0.875rem] active:scale-95 transition-all flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[18px]">play_arrow</span> 開始遊戲
-                        </button>
-                        <button type="button" id="pauseBtn" disabled class="px-6 py-2.5 bg-amber-500 text-white rounded-xl font-bold text-[0.875rem] active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50">
-                            <span class="material-symbols-outlined text-[18px]">pause</span> 暫停
-                        </button>
-                        <button type="button" id="resetBtn" class="px-6 py-2.5 bg-error text-white rounded-xl font-bold text-[0.875rem] active:scale-95 transition-all flex items-center gap-2">
-                            <span class="material-symbols-outlined text-[18px]">refresh</span> 重新開始
-                        </button>
-                    </div>
-
-                    {{-- 難度選擇 --}}
-                    <div class="flex items-center justify-center gap-2">
-                        <span class="text-[0.875rem] text-outline font-medium">難度：</span>
-                        <button type="button" class="difficulty-btn px-4 py-1.5 rounded-lg text-[0.8125rem] font-semibold border transition-colors" data-speed="150">簡單</button>
-                        <button type="button" class="difficulty-btn active px-4 py-1.5 rounded-lg text-[0.8125rem] font-semibold border transition-colors" data-speed="100">普通</button>
-                        <button type="button" class="difficulty-btn px-4 py-1.5 rounded-lg text-[0.8125rem] font-semibold border transition-colors" data-speed="60">困難</button>
-                    </div>
+            <div class="admin-snake-stats">
+                <div class="admin-snake-stat admin-snake-stat-score">
+                    <p class="admin-snake-stat-label">分數</p>
+                    <p class="admin-snake-stat-value" id="score">0</p>
+                </div>
+                <div class="admin-snake-stat admin-snake-stat-length">
+                    <p class="admin-snake-stat-label">長度</p>
+                    <p class="admin-snake-stat-value" id="length">3</p>
+                </div>
+                <div class="admin-snake-stat admin-snake-stat-best">
+                    <p class="admin-snake-stat-label">最高分</p>
+                    <p class="admin-snake-stat-value" id="highScore">0</p>
                 </div>
             </div>
+
+            <div class="admin-snake-controls">
+                <button type="button" id="startBtn" class="admin-btn admin-btn-primary">
+                    <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+                    <span id="startBtnLabel">開始遊戲</span>
+                </button>
+                <button type="button" id="pauseBtn" class="admin-btn admin-btn-muted" disabled>
+                    <span class="material-symbols-outlined" aria-hidden="true">pause</span>
+                    <span id="pauseBtnLabel">暫停</span>
+                </button>
+                <button type="button" id="resetBtn" class="admin-btn admin-btn-danger">
+                    <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+                    <span>重新開始</span>
+                </button>
+            </div>
+
+            <div class="admin-snake-difficulty">
+                <span class="admin-text-sm admin-text-mute">難度：</span>
+                <button type="button" class="admin-btn admin-btn-outline admin-btn-sm difficulty-btn" data-speed="150">簡單</button>
+                <button type="button" class="admin-btn admin-btn-primary admin-btn-sm difficulty-btn is-active" data-speed="100">普通</button>
+                <button type="button" class="admin-btn admin-btn-outline admin-btn-sm difficulty-btn" data-speed="60">困難</button>
+            </div>
         </div>
-    </div>
+    </x-admin.card>
+@endsection
 
-    <style>
-        .difficulty-btn { border-color: var(--color-outline-variant); color: var(--color-on-surface-variant); }
-        .difficulty-btn.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
-    </style>
-
+@push('scripts')
     <script>
-        $(document).ready(function() {
+        (function () {
             const canvas = document.getElementById('gameCanvas');
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
             const gridSize = 20;
             const tileCount = canvas.width / gridSize;
 
-            let snake = [{x: 10, y: 10}];
+            const scoreEl = document.getElementById('score');
+            const lengthEl = document.getElementById('length');
+            const highScoreEl = document.getElementById('highScore');
+            const startBtn = document.getElementById('startBtn');
+            const startBtnLabel = document.getElementById('startBtnLabel');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const pauseBtnLabel = document.getElementById('pauseBtnLabel');
+            const resetBtn = document.getElementById('resetBtn');
+            const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+
+            let snake = [{ x: 10, y: 10 }];
             let velocityX = 0, velocityY = 0;
             let foodX = 15, foodY = 15;
             let score = 0, gameSpeed = 100, gameLoop = null;
             let isPaused = false, isGameOver = false;
-            let highScore = localStorage.getItem('snakeHighScore') || 0;
-            $('#highScore').text(highScore);
+            let highScore = parseInt(localStorage.getItem('snakeHighScore') || '0', 10);
+            highScoreEl.textContent = highScore;
 
-            function game() {
+            const tick = () => {
                 if (isPaused || isGameOver) return;
-                updateSnake();
-                if (checkCollision()) { gameOver(); return; }
-                checkFoodCollision();
-                clearCanvas();
-                drawFood();
-                drawSnake();
-            }
-
-            function updateSnake() {
-                const head = {x: snake[0].x + velocityX, y: snake[0].y + velocityY};
+                const head = { x: snake[0].x + velocityX, y: snake[0].y + velocityY };
                 snake.unshift(head);
                 if (head.x !== foodX || head.y !== foodY) snake.pop();
-            }
 
-            function checkCollision() {
-                const head = snake[0];
-                if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) return true;
-                for (let i = 1; i < snake.length; i++) {
-                    if (head.x === snake[i].x && head.y === snake[i].y) return true;
+                if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                    gameOver();
+                    return;
                 }
-                return false;
-            }
+                for (let i = 1; i < snake.length; i++) {
+                    if (head.x === snake[i].x && head.y === snake[i].y) {
+                        gameOver();
+                        return;
+                    }
+                }
 
-            function checkFoodCollision() {
-                if (snake[0].x === foodX && snake[0].y === foodY) {
+                if (head.x === foodX && head.y === foodY) {
                     score += 10;
-                    $('#score').text(score);
-                    $('#length').text(snake.length);
+                    scoreEl.textContent = score;
+                    lengthEl.textContent = snake.length;
                     generateFood();
                     if (score > highScore) {
                         highScore = score;
-                        $('#highScore').text(highScore);
-                        localStorage.setItem('snakeHighScore', highScore);
+                        highScoreEl.textContent = highScore;
+                        localStorage.setItem('snakeHighScore', String(highScore));
                     }
                 }
-            }
 
-            function generateFood() {
+                draw();
+            };
+
+            const generateFood = () => {
                 foodX = Math.floor(Math.random() * tileCount);
                 foodY = Math.floor(Math.random() * tileCount);
-                for (let segment of snake) {
-                    if (segment.x === foodX && segment.y === foodY) { generateFood(); return; }
+                for (const segment of snake) {
+                    if (segment.x === foodX && segment.y === foodY) {
+                        generateFood();
+                        return;
+                    }
                 }
-            }
+            };
 
-            function clearCanvas() {
+            const draw = () => {
                 ctx.fillStyle = '#1f2937';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.strokeStyle = '#374151';
@@ -140,83 +137,99 @@
                     ctx.beginPath(); ctx.moveTo(i * gridSize, 0); ctx.lineTo(i * gridSize, canvas.height); ctx.stroke();
                     ctx.beginPath(); ctx.moveTo(0, i * gridSize); ctx.lineTo(canvas.width, i * gridSize); ctx.stroke();
                 }
-            }
 
-            function drawSnake() {
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(foodX * gridSize + gridSize / 2, foodY * gridSize + gridSize / 2, gridSize / 2 - 2, 0, Math.PI * 2);
+                ctx.fill();
+
                 snake.forEach((segment, index) => {
                     ctx.fillStyle = index === 0 ? '#10b981' : `rgba(16, 185, 129, ${1 - (index / snake.length) * 0.5})`;
                     ctx.fillRect(segment.x * gridSize + 1, segment.y * gridSize + 1, gridSize - 2, gridSize - 2);
-                    if (index === 0) {
-                        ctx.fillStyle = '#ffffff';
-                        const s = 3;
-                        if (velocityX === 1) { ctx.fillRect(segment.x*gridSize+14, segment.y*gridSize+5, s, s); ctx.fillRect(segment.x*gridSize+14, segment.y*gridSize+12, s, s); }
-                        else if (velocityX === -1) { ctx.fillRect(segment.x*gridSize+3, segment.y*gridSize+5, s, s); ctx.fillRect(segment.x*gridSize+3, segment.y*gridSize+12, s, s); }
-                        else if (velocityY === 1) { ctx.fillRect(segment.x*gridSize+5, segment.y*gridSize+14, s, s); ctx.fillRect(segment.x*gridSize+12, segment.y*gridSize+14, s, s); }
-                        else if (velocityY === -1) { ctx.fillRect(segment.x*gridSize+5, segment.y*gridSize+3, s, s); ctx.fillRect(segment.x*gridSize+12, segment.y*gridSize+3, s, s); }
-                    }
                 });
-            }
+            };
 
-            function drawFood() {
-                ctx.fillStyle = '#ef4444';
-                ctx.beginPath();
-                ctx.arc(foodX * gridSize + gridSize/2, foodY * gridSize + gridSize/2, gridSize/2 - 2, 0, 2 * Math.PI);
-                ctx.fill();
-            }
-
-            function gameOver() {
+            const gameOver = () => {
                 isGameOver = true;
                 clearInterval(gameLoop);
-                $('#startBtn').prop('disabled', false).html('<span class="material-symbols-outlined text-[18px]">play_arrow</span> 開始遊戲');
-                $('#pauseBtn').prop('disabled', true);
+                startBtn.disabled = false;
+                startBtnLabel.textContent = '開始遊戲';
+                pauseBtn.disabled = true;
                 ctx.fillStyle = 'rgba(0,0,0,0.7)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 48px Arial';
+                ctx.font = 'bold 48px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText('遊戲結束!', canvas.width/2, canvas.height/2 - 30);
-                ctx.font = '24px Arial';
-                ctx.fillText('分數: ' + score, canvas.width/2, canvas.height/2 + 20);
-            }
+                ctx.fillText('遊戲結束!', canvas.width / 2, canvas.height / 2 - 30);
+                ctx.font = '24px sans-serif';
+                ctx.fillText('分數: ' + score, canvas.width / 2, canvas.height / 2 + 20);
+            };
 
-            function startGame() {
+            const startGame = () => {
                 if (gameLoop) clearInterval(gameLoop);
-                snake = [{x: 10, y: 10}];
-                velocityX = 1; velocityY = 0;
-                score = 0; isPaused = false; isGameOver = false;
-                $('#score').text(score); $('#length').text(snake.length);
+                snake = [{ x: 10, y: 10 }];
+                velocityX = 1;
+                velocityY = 0;
+                score = 0;
+                isPaused = false;
+                isGameOver = false;
+                scoreEl.textContent = '0';
+                lengthEl.textContent = '1';
                 generateFood();
-                $('#startBtn').prop('disabled', true).html('<span class="material-symbols-outlined text-[18px]">play_arrow</span> 遊戲中...');
-                $('#pauseBtn').prop('disabled', false);
-                gameLoop = setInterval(game, gameSpeed);
-            }
+                startBtn.disabled = true;
+                startBtnLabel.textContent = '遊戲中…';
+                pauseBtn.disabled = false;
+                pauseBtnLabel.textContent = '暫停';
+                gameLoop = setInterval(tick, gameSpeed);
+            };
 
-            $(document).keydown(function(e) {
-                if (isGameOver) return;
-                switch(e.key) {
-                    case 'ArrowUp': case 'w': case 'W': if (velocityY !== 1) { velocityX = 0; velocityY = -1; } e.preventDefault(); break;
-                    case 'ArrowDown': case 's': case 'S': if (velocityY !== -1) { velocityX = 0; velocityY = 1; } e.preventDefault(); break;
-                    case 'ArrowLeft': case 'a': case 'A': if (velocityX !== 1) { velocityX = -1; velocityY = 0; } e.preventDefault(); break;
-                    case 'ArrowRight': case 'd': case 'D': if (velocityX !== -1) { velocityX = 1; velocityY = 0; } e.preventDefault(); break;
-                    case ' ': $('#pauseBtn').click(); e.preventDefault(); break;
+            startBtn.addEventListener('click', startGame);
+            resetBtn.addEventListener('click', startGame);
+            pauseBtn.addEventListener('click', () => {
+                isPaused = !isPaused;
+                if (isPaused) {
+                    pauseBtnLabel.textContent = '繼續';
+                    clearInterval(gameLoop);
+                } else {
+                    pauseBtnLabel.textContent = '暫停';
+                    gameLoop = setInterval(tick, gameSpeed);
                 }
             });
 
-            $('#startBtn').click(startGame);
-            $('#pauseBtn').click(function() {
-                isPaused = !isPaused;
-                if (isPaused) { $(this).html('<span class="material-symbols-outlined text-[18px]">play_arrow</span> 繼續'); clearInterval(gameLoop); }
-                else { $(this).html('<span class="material-symbols-outlined text-[18px]">pause</span> 暫停'); gameLoop = setInterval(game, gameSpeed); }
-            });
-            $('#resetBtn').click(startGame);
-            $('.difficulty-btn').click(function() {
-                $('.difficulty-btn').removeClass('active');
-                $(this).addClass('active');
-                gameSpeed = parseInt($(this).data('speed'));
-                if (gameLoop && !isPaused) { clearInterval(gameLoop); gameLoop = setInterval(game, gameSpeed); }
+            difficultyBtns.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    difficultyBtns.forEach((b) => {
+                        b.classList.remove('is-active', 'admin-btn-primary');
+                        b.classList.add('admin-btn-outline');
+                    });
+                    btn.classList.add('is-active', 'admin-btn-primary');
+                    btn.classList.remove('admin-btn-outline');
+                    gameSpeed = parseInt(btn.dataset.speed || '100', 10);
+                    if (gameLoop && !isPaused && !isGameOver) {
+                        clearInterval(gameLoop);
+                        gameLoop = setInterval(tick, gameSpeed);
+                    }
+                });
             });
 
-            clearCanvas(); drawFood(); drawSnake();
-        });
+            document.addEventListener('keydown', (event) => {
+                if (isGameOver) return;
+                const key = event.key;
+                if ((key === 'ArrowUp' || key === 'w' || key === 'W') && velocityY !== 1) {
+                    velocityX = 0; velocityY = -1; event.preventDefault();
+                } else if ((key === 'ArrowDown' || key === 's' || key === 'S') && velocityY !== -1) {
+                    velocityX = 0; velocityY = 1; event.preventDefault();
+                } else if ((key === 'ArrowLeft' || key === 'a' || key === 'A') && velocityX !== 1) {
+                    velocityX = -1; velocityY = 0; event.preventDefault();
+                } else if ((key === 'ArrowRight' || key === 'd' || key === 'D') && velocityX !== -1) {
+                    velocityX = 1; velocityY = 0; event.preventDefault();
+                } else if (key === ' ') {
+                    pauseBtn.click();
+                    event.preventDefault();
+                }
+            });
+
+            draw();
+        })();
     </script>
-@endsection
+@endpush

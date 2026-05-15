@@ -15,6 +15,7 @@
     @stack('styles')
 </head>
 <body class="admin-app">
+    <x-admin.skip-link target="admin-content">跳至主要內容</x-admin.skip-link>
     @yield('content')
     @stack('scripts')
 </body>
