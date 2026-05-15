@@ -1,178 +1,184 @@
-@extends('Admin-share/index')
+@extends('layouts.admin')
+
+@section('title-suffix', ' · 商品管理')
+
 @section('content')
-    <div class="content-wrapper">
-        <div class="p-6 lg:p-10 space-y-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <x-breadcrumb :items="[['label' => '首頁', 'url' => 'admin/'], ['label' => '商品管理']]" />
-                    <h2 class="text-[1.5rem] font-bold text-on-surface tracking-tight font-headline">商品管理</h2>
-                    <p class="text-[0.8125rem] text-outline mt-1">管理商品基本資訊、圖片、上下架與檔期設定</p>
-                </div>
-                <a href="{{ asset('admin/product/edit/0') }}" class="btn-primary px-6 py-2.5 rounded-xl flex items-center gap-2 no-underline">
-                    <span class="material-symbols-outlined text-[20px]">add</span>
-                    <span class="text-[0.875rem] font-semibold">新增商品</span>
-                </a>
+    <x-admin.page-head
+        title="商品管理"
+        subtitle="管理商品基本資訊、圖片、上下架與檔期設定"
+        :breadcrumbs="[['label' => '首頁', 'url' => 'admin/'], ['label' => '商品管理']]"
+    >
+        <x-slot:actions>
+            <x-admin.button as="a" :href="url('admin/product/edit/0')" iconLeft="add">新增商品</x-admin.button>
+        </x-slot:actions>
+    </x-admin.page-head>
+
+    <x-admin.filter-card :action="url('admin/product/list')" title="篩選">
+        <x-admin.input
+            name="keyword"
+            label="關鍵字"
+            :value="$filters['keyword'] ?? ''"
+            placeholder="搜尋商品名稱 / 標語"
+            icon="search"
+        />
+        <x-admin.select
+            name="category_id"
+            label="類別"
+            :options="collect($filterOptions['categories'] ?? [])->pluck('name', 'id')->all()"
+            :value="$filters['category_id'] ?? ''"
+            placeholder="全部類別"
+        />
+        <x-admin.select
+            name="tag_id"
+            label="標籤"
+            :options="collect($filterOptions['tags'] ?? [])->pluck('name', 'id')->all()"
+            :value="$filters['tag_id'] ?? ''"
+            placeholder="全部標籤"
+        />
+        <x-admin.select
+            name="status_key"
+            label="狀態"
+            :options="$filterOptions['statuses'] ?? []"
+            :value="$filters['status_key'] ?? ''"
+            placeholder="全部狀態"
+        />
+        <x-admin.select
+            name="is_featured"
+            label="主打"
+            :options="$filterOptions['featured_options'] ?? []"
+            :value="$filters['is_featured'] ?? ''"
+            placeholder="全部"
+        />
+        <x-admin.select
+            name="period_state"
+            label="時間狀態"
+            :options="$filterOptions['period_states'] ?? []"
+            :value="$filters['period_state'] ?? ''"
+            placeholder="全部"
+        />
+
+        <x-slot:actions>
+            <a href="{{ url('admin/product/list') }}" class="admin-btn admin-btn-outline">清除</a>
+            <button type="submit" class="admin-btn admin-btn-primary">
+                <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                <span>搜尋</span>
+            </button>
+        </x-slot:actions>
+    </x-admin.filter-card>
+
+    <form id="bulkStatusForm" method="POST" action="{{ url('admin/product/bulk-status') }}" class="admin-card admin-card-flush" data-bulk-table>
+        @csrf
+        @foreach (($filters ?? []) as $key => $value)
+            @if ($value !== '' && $value !== null && $key !== 'page')
+                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+            @endif
+        @endforeach
+
+        <div class="admin-bulk-bar">
+            <div class="admin-flex admin-gap-sm admin-bulk-bar-left">
+                <select name="status_key" id="bulkStatusSelect" class="admin-select admin-select-inline">
+                    <option value="{{ PRODUCT_STATUS_ONLINE }}">批次上架</option>
+                    <option value="{{ PRODUCT_STATUS_OFFLINE }}">批次下架</option>
+                </select>
+                <button type="button" id="bulkStatusTrigger" class="admin-btn admin-btn-primary admin-btn-sm">執行</button>
+                <span class="admin-text-sm admin-text-mute admin-bulk-counter">
+                    已選 <span data-bulk-counter>0</span> 件
+                </span>
             </div>
+            <div class="admin-text-sm admin-text-mute">共 {{ $pagination->total() ?? 0 }} 件商品</div>
+        </div>
 
-            <form method="GET" action="{{ url('admin/product/list') }}">
-                <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)]">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
-                        <div class="md:col-span-2">
-                            <label class="text-[0.8rem] font-semibold text-outline">關鍵字</label>
-                            <input name="keyword" value="{{ $filters['keyword'] ?? '' }}" class="mt-2 w-full bg-surface-container-low rounded-xl border-none px-4 py-3" placeholder="搜尋商品名稱/標語" type="text" />
-                        </div>
-                        <div>
-                            <label class="text-[0.8rem] font-semibold text-outline">類別</label>
-                            <select name="category_id" class="mt-2 w-full bg-surface-container-low rounded-xl border-none px-4 py-3">
-                                <option value="">全部類別</option>
-                                @foreach (($filterOptions['categories'] ?? []) as $category)
-                                    <option value="{{ $category['id'] }}" {{ (string) ($filters['category_id'] ?? '') === (string) $category['id'] ? 'selected' : '' }}>{{ $category['name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[0.8rem] font-semibold text-outline">標籤</label>
-                            <select name="tag_id" class="mt-2 w-full bg-surface-container-low rounded-xl border-none px-4 py-3">
-                                <option value="">全部標籤</option>
-                                @foreach (($filterOptions['tags'] ?? []) as $tag)
-                                    <option value="{{ $tag['id'] }}" {{ (string) ($filters['tag_id'] ?? '') === (string) $tag['id'] ? 'selected' : '' }}>{{ $tag['name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[0.8rem] font-semibold text-outline">狀態</label>
-                            <select name="status_key" class="mt-2 w-full bg-surface-container-low rounded-xl border-none px-4 py-3">
-                                <option value="">全部狀態</option>
-                                @foreach (($filterOptions['statuses'] ?? []) as $key => $label)
-                                    <option value="{{ $key }}" {{ (string) ($filters['status_key'] ?? '') === (string) $key ? 'selected' : '' }}>{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[0.8rem] font-semibold text-outline">主打</label>
-                            <select name="is_featured" class="mt-2 w-full bg-surface-container-low rounded-xl border-none px-4 py-3">
-                                <option value="">全部</option>
-                                @foreach (($filterOptions['featured_options'] ?? []) as $key => $label)
-                                    <option value="{{ $key }}" {{ (string) ($filters['is_featured'] ?? '') === (string) $key ? 'selected' : '' }}>{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[0.8rem] font-semibold text-outline">時間狀態</label>
-                            <select name="period_state" class="mt-2 w-full bg-surface-container-low rounded-xl border-none px-4 py-3">
-                                <option value="">全部</option>
-                                @foreach (($filterOptions['period_states'] ?? []) as $key => $label)
-                                    <option value="{{ $key }}" {{ (string) ($filters['period_state'] ?? '') === (string) $key ? 'selected' : '' }}>{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="md:col-span-4 flex justify-end gap-3">
-                            <button type="submit" class="btn-primary px-7 py-3 rounded-xl">搜尋</button>
-                            <a href="{{ url('admin/product/list') }}" class="bg-surface-container-high px-5 py-3 rounded-xl text-on-surface no-underline">清除</a>
-                        </div>
-                    </div>
-                </div>
-            </form>
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th class="admin-table-checkbox">
+                            <input type="checkbox" class="admin-checkbox" data-bulk-toggle-all id="checkAll" aria-label="全選">
+                        </th>
+                        <th>操作</th>
+                        <th>商品</th>
+                        <th>價格</th>
+                        <th>類別 / 標籤</th>
+                        <th>主打</th>
+                        <th>狀態</th>
+                        <th>檔期</th>
+                        <th>更新時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($data as $row)
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="admin-checkbox row-checkbox" name="ids[]" value="{{ $row['id'] }}" data-bulk-item aria-label="選擇 {{ $row['name'] }}">
+                            </td>
+                            <td>
+                                <a href="{{ asset('admin/product/edit/' . $row['id']) }}" class="admin-link-strong">編輯</a>
+                            </td>
+                            <td>
+                                <div class="admin-flex admin-gap-md admin-product-cell">
+                                    @if (!empty($row['primary_image_url']))
+                                        <img src="{{ $row['primary_image_url'] }}" alt="{{ $row['name'] }}" class="admin-thumb">
+                                    @else
+                                        <div class="admin-thumb admin-thumb-empty" aria-hidden="true"></div>
+                                    @endif
+                                    <div>
+                                        <div class="admin-strong">{{ $row['name'] }}</div>
+                                        @if (!empty($row['tagline']))
+                                            <div class="admin-mute">{{ $row['tagline'] }}</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="admin-strong">{{ $row['price_display'] }}</span></td>
+                            <td>
+                                <div>{{ $row['category_name'] }}</div>
+                                @if (!empty($row['tag_names']))
+                                    <div class="admin-mute">{{ implode(' / ', $row['tag_names']) }}</div>
+                                @endif
+                            </td>
+                            <td>
+                                @if (!empty($row['is_featured']))
+                                    <x-admin.badge tone="info">主打</x-admin.badge>
+                                @else
+                                    <span class="admin-text-mute admin-text-sm">—</span>
+                                @endif
+                            </td>
+                            <td>
+                                <x-admin.badge tone="{{ $row['status_tone'] ?? 'neutral' }}">{{ $row['status_display'] }}</x-admin.badge>
+                            </td>
+                            <td>{{ $row['period_display'] }}</td>
+                            <td>{{ $row['updated_at_display'] }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="admin-table-empty">尚無商品資料</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-            <form id="bulkStatusForm" method="POST" action="{{ url('admin/product/bulk-status') }}">
-                @csrf
-                @foreach (($filters ?? []) as $key => $value)
-                    @if ($value !== '' && $value !== null)
-                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                    @endif
-                @endforeach
+        @if (!empty($data))
+            <x-stitch-pagination :paginator="$pagination" :filters="$filters" />
+        @endif
+    </form>
 
-                <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_24px_40px_-4px_rgba(23,28,31,0.06)]">
-                    <div class="p-4 border-b border-outline-variant/15 flex items-center gap-3">
-                        <select name="status_key" id="bulkStatusSelect" class="bg-surface-container-low rounded-lg border-none px-3 py-2">
-                            <option value="{{ PRODUCT_STATUS_ONLINE }}">批次上架</option>
-                            <option value="{{ PRODUCT_STATUS_OFFLINE }}">批次下架</option>
-                        </select>
-                        <button type="button" id="bulkStatusTrigger" class="btn-primary px-4 py-2 rounded-lg">執行</button>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="table-header-row">
-                                    <th class="px-4 py-3 text-left"><input type="checkbox" id="checkAll"></th>
-                                    <th class="px-4 py-3 text-left">操作</th>
-                                    <th class="px-4 py-3 text-left">商品</th>
-                                    <th class="px-4 py-3 text-left">價格</th>
-                                    <th class="px-4 py-3 text-left">類別/標籤</th>
-                                    <th class="px-4 py-3 text-left">主打</th>
-                                    <th class="px-4 py-3 text-left">狀態</th>
-                                    <th class="px-4 py-3 text-left">檔期</th>
-                                    <th class="px-4 py-3 text-left">更新時間</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-outline-variant/10">
-                                @forelse ($data as $row)
-                                    <tr>
-                                        <td class="px-4 py-4"><input type="checkbox" name="ids[]" value="{{ $row['id'] }}" class="row-checkbox"></td>
-                                        <td class="px-4 py-4">
-                                            <a href="{{ asset('admin/product/edit/' . $row['id']) }}" class="text-primary no-underline">編輯</a>
-                                        </td>
-                                        <td class="px-4 py-4">
-                                            <div class="flex items-center gap-3">
-                                                @if (!empty($row['primary_image_url']))
-                                                    <img src="{{ $row['primary_image_url'] }}" alt="{{ $row['name'] }}" class="w-12 h-12 rounded-lg object-cover">
-                                                @endif
-                                                <div>
-                                                    <div class="font-semibold">{{ $row['name'] }}</div>
-                                                    <div class="text-xs text-outline">{{ $row['tagline'] ?? '' }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-4">{{ $row['price_display'] }}</td>
-                                        <td class="px-4 py-4">
-                                            <div>{{ $row['category_name'] }}</div>
-                                            <div class="text-xs text-outline">{{ implode(' / ', $row['tag_names'] ?? []) }}</div>
-                                        </td>
-                                        <td class="px-4 py-4">{{ $row['is_featured_display'] }}</td>
-                                        <td class="px-4 py-4">
-                                            <span class="inline-flex px-2 py-1 rounded-full text-xs {{ $row['status_badge_class'] ?? '' }}">{{ $row['status_display'] }}</span>
-                                        </td>
-                                        <td class="px-4 py-4">{{ $row['period_display'] }}</td>
-                                        <td class="px-4 py-4">{{ $row['updated_at_display'] }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td class="px-4 py-8 text-center text-outline" colspan="9">尚無商品資料</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    @if (!empty($data))
-                        <x-stitch-pagination :paginator="$pagination" :filters="$filters" />
-                    @endif
-                </div>
-            </form>
+    {{-- 批次確認 modal --}}
+    <div id="bulkConfirmModal" class="admin-modal" hidden>
+        <div class="admin-modal-backdrop" data-modal-close></div>
+        <div class="admin-modal-content" role="dialog" aria-modal="true" aria-labelledby="bulkConfirmTitle">
+            <h3 id="bulkConfirmTitle" class="admin-section-title">確認批次操作</h3>
+            <p id="bulkConfirmMessage" class="admin-text-sm admin-text-mute"></p>
+            <div class="admin-modal-actions">
+                <button type="button" id="bulkConfirmCancel" class="admin-btn admin-btn-outline">取消</button>
+                <button type="button" id="bulkConfirmOk" class="admin-btn admin-btn-primary">確定執行</button>
+            </div>
         </div>
     </div>
 @endsection
 
-    <div id="bulkConfirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-on-surface/40">
-        <div class="bg-surface-container-lowest rounded-2xl p-6 shadow-xl max-w-sm w-full mx-4 space-y-4">
-            <h3 class="text-lg font-semibold text-on-surface">確認批次操作</h3>
-            <p id="bulkConfirmMessage" class="text-sm text-outline"></p>
-            <div class="flex justify-end gap-3">
-                <button type="button" id="bulkConfirmCancel" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface text-sm">取消</button>
-                <button type="button" id="bulkConfirmOk" class="px-4 py-2 rounded-lg btn-primary text-sm">確定執行</button>
-            </div>
-        </div>
-    </div>
-
 @push('scripts')
     <script>
-        document.getElementById('checkAll')?.addEventListener('change', function () {
-            document.querySelectorAll('.row-checkbox').forEach((node) => {
-                node.checked = this.checked;
-            });
-        });
-
         (function () {
             const trigger = document.getElementById('bulkStatusTrigger');
             const modal = document.getElementById('bulkConfirmModal');
@@ -185,23 +191,27 @@
             if (!trigger || !modal || !form || !select) return;
 
             const closeModal = () => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
+                modal.setAttribute('hidden', '');
+            };
+
+            const openModal = () => {
+                modal.removeAttribute('hidden');
             };
 
             trigger.addEventListener('click', () => {
-                const checked = document.querySelectorAll('.row-checkbox:checked');
+                const checked = form.querySelectorAll('[data-bulk-item]:checked');
                 if (checked.length === 0) return;
                 const action = select.options[select.selectedIndex].text;
                 message.textContent = `即將對 ${checked.length} 件商品執行「${action}」，確定要繼續嗎？`;
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
+                openModal();
             });
 
             cancelBtn?.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            modal.querySelector('[data-modal-close]')?.addEventListener('click', closeModal);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.hasAttribute('hidden')) closeModal();
+            });
             okBtn?.addEventListener('click', () => { form.submit(); });
         })();
     </script>
 @endpush
-

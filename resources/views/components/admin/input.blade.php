@@ -26,7 +26,7 @@
 
     @if ($icon)
         <div class="admin-input-wrap">
-            <span class="material-symbols-outlined admin-input-icon" aria-hidden="true">{{ $icon }}</span>
+            <span class="material-symbols-outlined admin-input-leading-icon" aria-hidden="true">{{ $icon }}</span>
             <input
                 type="{{ $type }}"
                 id="{{ $inputId }}"

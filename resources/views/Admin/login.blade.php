@@ -1,75 +1,103 @@
-@extends('Admin-share/guest')
-@section('title', '登入')
-@section('body-class', 'overflow-hidden')
+@extends('layouts.admin-guest')
 
-@push('styles')
-<style>
-    body {
-        background: linear-gradient(135deg, #4b5e90 0%, #6b5680 100%);
-    }
-</style>
-@endpush
-
-@section('background')
-    {{-- 裝飾背景元素 --}}
-    <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/10 rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/20 rounded-full blur-[120px] pointer-events-none"></div>
-@endsection
+@section('title-suffix', ' · 登入')
 
 @section('content')
-    {{-- 品牌標誌 --}}
-    <div class="mb-8 text-center">
-        <h1 class="text-5xl font-black text-white tracking-tight drop-shadow-lg font-headline">YoYoAdmin</h1>
-    </div>
+@php
+    $serverMessages = session(ADMIN_MESSAGE_SESSION, []);
+    session()->forget(ADMIN_MESSAGE_SESSION);
+@endphp
 
-    {{-- 登入卡片 --}}
-    <main class="w-full max-w-md bg-white rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] p-10 relative z-10">
-        <div class="flex flex-col gap-8">
-            {{-- 標題 --}}
-            <div class="space-y-2">
-                <h2 class="text-2xl font-bold text-on-surface">歡迎回來</h2>
-                <p class="text-outline font-medium">請登入您的帳號</p>
-            </div>
+<div class="admin-login-body">
+    <div class="admin-login-wrap">
+        <h1 class="admin-login-brand">YoYoAdmin</h1>
 
-            {{-- 表單 --}}
-            <form action="{{ url('admin/login') }}" method="post" class="space-y-6">
+        <main class="admin-login-card" id="admin-content" tabindex="-1">
+            <h2>歡迎回來</h2>
+            <p class="admin-page-sub">請登入您的帳號</p>
+
+            @if ($errors->any())
+                <div class="admin-form-error" role="alert">
+                    <span class="material-symbols-outlined" aria-hidden="true">error</span>
+                    <p>{{ $errors->first() }}</p>
+                </div>
+            @endif
+
+            @if (is_array($serverMessages) && !empty($serverMessages))
+                @foreach ($serverMessages as $message)
+                    @php
+                        $type = $message['type'] ?? 'danger';
+                        $toneClass = match ($type) {
+                            'success' => 'admin-form-success',
+                            'warning' => 'admin-form-warning',
+                            default => 'admin-form-error',
+                        };
+                        $icon = match ($type) {
+                            'success' => 'check_circle',
+                            'warning' => 'warning',
+                            default => 'error',
+                        };
+                    @endphp
+                    <div class="{{ $toneClass }}" role="alert">
+                        <span class="material-symbols-outlined" aria-hidden="true">{{ $icon }}</span>
+                        <p>{{ $message['message'] ?? '' }}</p>
+                    </div>
+                @endforeach
+            @endif
+
+            <form action="{{ url('admin/login') }}" method="POST" class="admin-stack admin-login-form" novalidate>
                 @csrf
 
-                {{-- 帳號 --}}
-                <div class="space-y-1.5">
-                    <label class="text-[0.875rem] font-semibold text-on-surface-variant ml-1">帳號</label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline-variant group-focus-within:text-primary transition-colors">
-                            <span class="material-symbols-outlined">person</span>
-                        </div>
-                        <input type="text" name="account" placeholder="請輸入使用者名稱" autocomplete="username"
-                               class="block w-full pl-11 pr-4 py-3.5 bg-surface-container-low border-0 rounded-lg ring-1 ring-outline-variant/30 focus:ring-2 focus:ring-primary transition-all outline-none text-on-surface placeholder:text-outline-variant/60">
+                <div class="admin-field">
+                    <label class="admin-label" for="login-account">帳號</label>
+                    <div class="admin-input-icon">
+                        <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                        <input
+                            id="login-account"
+                            class="admin-input"
+                            type="text"
+                            name="account"
+                            value="{{ old('account') }}"
+                            placeholder="請輸入使用者名稱"
+                            autocomplete="username"
+                            required
+                            aria-required="true"
+                        >
                     </div>
                 </div>
 
-                {{-- 密碼 --}}
-                <div class="space-y-1.5">
-                    <label class="text-[0.875rem] font-semibold text-on-surface-variant ml-1">密碼</label>
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline-variant group-focus-within:text-primary transition-colors">
-                            <span class="material-symbols-outlined">lock</span>
-                        </div>
-                        <input type="password" name="password" placeholder="請輸入您的密碼" autocomplete="current-password"
-                               class="block w-full pl-11 pr-4 py-3.5 bg-surface-container-low border-0 rounded-lg ring-1 ring-outline-variant/30 focus:ring-2 focus:ring-primary transition-all outline-none text-on-surface placeholder:text-outline-variant/60">
+                <div class="admin-field">
+                    <label class="admin-label" for="login-password">密碼</label>
+                    <div class="admin-input-icon">
+                        <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+                        <input
+                            id="login-password"
+                            class="admin-input"
+                            type="password"
+                            name="password"
+                            placeholder="請輸入您的密碼"
+                            autocomplete="current-password"
+                            required
+                            aria-required="true"
+                        >
                     </div>
                 </div>
 
-                {{-- 登入按鈕 --}}
-                <button type="submit" class="w-full btn-primary font-bold py-4 rounded-lg active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
-                    登入
-                    <span class="material-symbols-outlined text-[20px]">login</span>
+                <label class="admin-login-remember">
+                    <input type="checkbox" name="remember" value="1" class="admin-checkbox">
+                    <span>記住我</span>
+                </label>
+
+                <button type="submit" class="admin-btn admin-btn-primary admin-login-submit">
+                    <span>登入</span>
+                    <span class="material-symbols-outlined" aria-hidden="true">login</span>
                 </button>
             </form>
-        </div>
-    </main>
+        </main>
 
-    {{-- 頁尾 --}}
-    <footer class="mt-12 text-center">
-        <p class="text-white/60 text-[0.875rem] font-medium tracking-wide">&copy; {{ date('Y') }} YoYoAdmin. All rights reserved.</p>
-    </footer>
+        <footer class="admin-login-foot">
+            &copy; {{ date('Y') }} YoYoAdmin. All rights reserved.
+        </footer>
+    </div>
+</div>
 @endsection
