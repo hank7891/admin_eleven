@@ -54,7 +54,7 @@
     <div id="frontend-mobile-menu" class="fe-mobile-menu is-hidden" data-mobile-menu>
         <nav class="fe-mobile-nav" aria-label="前台手機導覽">
             @foreach ($navItems ?? [] as $item)
-                <a href="{{ $item['url'] }}" class="{{ !empty($item['is_active']) ? 'is-active' : '' }}">
+                <a href="{{ $item['url'] }}" class="{{ !empty($item['is_active']) ? 'is-active' : '' }}" @if(!empty($item['is_active'])) aria-current="page" @endif>
                     {{ $item['label'] }}
                 </a>
             @endforeach

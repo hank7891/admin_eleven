@@ -16,7 +16,12 @@
  */
 
 const DEFAULT_FOCUSABLE_SELECTOR =
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    'button:not([disabled]):not([hidden]):not([inert]),'
+    + ' [href]:not([disabled]):not([hidden]):not([inert]),'
+    + ' input:not([disabled]):not([hidden]):not([inert]),'
+    + ' select:not([disabled]):not([hidden]):not([inert]),'
+    + ' textarea:not([disabled]):not([hidden]):not([inert]),'
+    + ' [tabindex]:not([tabindex="-1"]):not([disabled]):not([hidden]):not([inert])';
 
 export const createFocusTrap = (modalEl, opts = {}) => {
     if (!modalEl) {

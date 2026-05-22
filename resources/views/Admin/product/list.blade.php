@@ -97,7 +97,7 @@
                         </th>
                         <th>操作</th>
                         <th data-sortable="name">商品</th>
-                        <th data-sortable="price">價格</th>
+                        <th data-sortable="price" data-sort-type="number">價格</th>
                         <th data-sortable="category">類別 / 標籤</th>
                         <th data-sortable="featured">主打</th>
                         <th data-sortable="status">狀態</th>
@@ -129,7 +129,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td><span class="admin-strong">{{ $row['price_display'] }}</span></td>
+                            <td data-sort-value="{{ $row['price'] ?? 0 }}"><span class="admin-strong">{{ $row['price_display'] }}</span></td>
                             <td>
                                 <div>{{ $row['category_name'] }}</div>
                                 @if (!empty($row['tag_names']))
