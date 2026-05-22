@@ -98,5 +98,34 @@ class MemberRepository
 
         return $member->fresh();
     }
+
+    /**
+     * 計算指定年月的新註冊會員數（Dashboard KPI 用）
+     */
+    public function countNewInMonth(int $year, int $month): int
+    {
+        return $this->model::query()
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->count();
+    }
+
+    /**
+     * 全表會員總數（Dashboard 系統概況用）
+     */
+    public function countTotal(): int
+    {
+        return $this->model::query()->count();
+    }
+
+    /**
+     * 啟用中會員數（Dashboard 系統概況用）
+     */
+    public function countActive(): int
+    {
+        return $this->model::query()
+            ->where('status_key', MEMBER_STATUS_ACTIVE)
+            ->count();
+    }
 }
 

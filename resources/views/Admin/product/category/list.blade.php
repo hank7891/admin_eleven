@@ -40,10 +40,10 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>名稱</th>
-                            <th>排序</th>
-                            <th>商品數</th>
-                            <th>狀態</th>
+                            <th data-sortable="name">名稱</th>
+                            <th data-sortable="sort_order" data-sort-type="number">排序</th>
+                            <th data-sortable="product_count" data-sort-type="number">商品數</th>
+                            <th data-sortable="status">狀態</th>
                             <th>操作</th>
                         </tr>
                     </thead>

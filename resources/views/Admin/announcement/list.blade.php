@@ -59,14 +59,14 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th data-sortable="id" data-sort-type="number">#</th>
                             <th>操作</th>
-                            <th>類型</th>
-                            <th>標題</th>
-                            <th>狀態</th>
-                            <th>開始時間</th>
-                            <th>結束時間</th>
-                            <th>建立者</th>
+                            <th data-sortable="type">類型</th>
+                            <th data-sortable="title">標題</th>
+                            <th data-sortable="status">狀態</th>
+                            <th data-sortable="start_at">開始時間</th>
+                            <th data-sortable="end_at">結束時間</th>
+                            <th data-sortable="created_by">建立者</th>
                         </tr>
                     </thead>
                     <tbody>

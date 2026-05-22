@@ -96,13 +96,13 @@
                             <input type="checkbox" class="admin-checkbox" data-bulk-toggle-all id="checkAll" aria-label="全選">
                         </th>
                         <th>操作</th>
-                        <th>商品</th>
-                        <th>價格</th>
-                        <th>類別 / 標籤</th>
-                        <th>主打</th>
-                        <th>狀態</th>
-                        <th>檔期</th>
-                        <th>更新時間</th>
+                        <th data-sortable="name">商品</th>
+                        <th data-sortable="price">價格</th>
+                        <th data-sortable="category">類別 / 標籤</th>
+                        <th data-sortable="featured">主打</th>
+                        <th data-sortable="status">狀態</th>
+                        <th data-sortable="period">檔期</th>
+                        <th data-sortable="updated_at">更新時間</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -176,42 +176,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    <script>
-        (function () {
-            const trigger = document.getElementById('bulkStatusTrigger');
-            const modal = document.getElementById('bulkConfirmModal');
-            const message = document.getElementById('bulkConfirmMessage');
-            const cancelBtn = document.getElementById('bulkConfirmCancel');
-            const okBtn = document.getElementById('bulkConfirmOk');
-            const form = document.getElementById('bulkStatusForm');
-            const select = document.getElementById('bulkStatusSelect');
-
-            if (!trigger || !modal || !form || !select) return;
-
-            const closeModal = () => {
-                modal.setAttribute('hidden', '');
-            };
-
-            const openModal = () => {
-                modal.removeAttribute('hidden');
-            };
-
-            trigger.addEventListener('click', () => {
-                const checked = form.querySelectorAll('[data-bulk-item]:checked');
-                if (checked.length === 0) return;
-                const action = select.options[select.selectedIndex].text;
-                message.textContent = `即將對 ${checked.length} 件商品執行「${action}」，確定要繼續嗎？`;
-                openModal();
-            });
-
-            cancelBtn?.addEventListener('click', closeModal);
-            modal.querySelector('[data-modal-close]')?.addEventListener('click', closeModal);
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !modal.hasAttribute('hidden')) closeModal();
-            });
-            okBtn?.addEventListener('click', () => { form.submit(); });
-        })();
-    </script>
-@endpush

@@ -499,6 +499,32 @@
     border-bottom: 1px solid var(--color-surface-container-highest);
     white-space: nowrap;
 }
+.admin-table thead th[data-sortable] {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 1.85rem;
+}
+.admin-table thead th[data-sortable]:hover {
+    background: var(--color-surface-container-highest);
+}
+.admin-table thead th[data-sortable]::after {
+    content: '↕';
+    position: absolute;
+    right: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.4;
+    font-size: 0.7rem;
+}
+.admin-table thead th[data-sortable].is-sort-asc::after {
+    content: '↑';
+    opacity: 1;
+}
+.admin-table thead th[data-sortable].is-sort-desc::after {
+    content: '↓';
+    opacity: 1;
+}
 .admin-table tbody td {
     padding: 1rem;
     font-size: 0.875rem;

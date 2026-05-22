@@ -22,7 +22,7 @@
             @foreach ($navItems ?? [] as $item)
                 <a
                     href="{{ $item['url'] }}"
-                    class="{{ !empty($item['is_active']) ? 'is-active text-primary' : '' }}"
+                    class="{{ !empty($item['is_active']) ? 'is-active' : '' }}"
                     @if(!empty($item['is_active'])) aria-current="page" @endif
                 >
                     {{ $item['label'] }}

@@ -62,7 +62,7 @@ class MemberService
                 'phone' => '',
                 'birthday' => '',
                 'gender_key' => (string) GENDER_UNSPECIFIED,
-                'status_key' => 'active',
+                'status_key' => MEMBER_STATUS_ACTIVE,
                 'avatar_path' => null,
                 'avatar_url' => '',
                 'registered_ip' => '',
@@ -86,7 +86,7 @@ class MemberService
             'phone' => (string) ($member->phone ?? ''),
             'birthday' => !empty($member->birthday) ? Carbon::parse($member->birthday)->format('Y-m-d') : '',
             'gender_key' => (string) ($member->gender_key ?? GENDER_UNSPECIFIED),
-            'status_key' => (string) ($member->status_key ?? 'active'),
+            'status_key' => (string) ($member->status_key ?? MEMBER_STATUS_ACTIVE),
             'avatar_path' => $member->avatar_path,
             'avatar_url' => (string) ($member->avatar_url ?? ''),
             'registered_ip' => (string) ($member->registered_ip ?? ''),
@@ -224,7 +224,7 @@ class MemberService
             'phone' => $this->nullableString($data['phone'] ?? null, 30),
             'birthday' => $this->nullableString($data['birthday'] ?? null, 10),
             'gender_key' => (string) ($data['gender_key'] ?? GENDER_UNSPECIFIED),
-            'status_key' => (string) ($data['status_key'] ?? 'active'),
+            'status_key' => (string) ($data['status_key'] ?? MEMBER_STATUS_ACTIVE),
         ];
 
         if (!$isUpdate) {

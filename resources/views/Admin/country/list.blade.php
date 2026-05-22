@@ -47,14 +47,14 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th data-sortable="row_id" data-sort-type="number">#</th>
                             <th>操作</th>
-                            <th>ID</th>
-                            <th>國名</th>
-                            <th>縮寫</th>
-                            <th>國家代碼</th>
-                            <th>狀態</th>
-                            <th>建立時間</th>
+                            <th data-sortable="id" data-sort-type="number">ID</th>
+                            <th data-sortable="name">國名</th>
+                            <th data-sortable="abbreviation">縮寫</th>
+                            <th data-sortable="code">國家代碼</th>
+                            <th data-sortable="status">狀態</th>
+                            <th data-sortable="created_at">建立時間</th>
                         </tr>
                     </thead>
                     <tbody>

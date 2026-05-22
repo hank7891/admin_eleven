@@ -40,16 +40,16 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th data-sortable="row_id" data-sort-type="number">#</th>
                             <th>操作</th>
-                            <th>ID</th>
-                            <th>類型</th>
-                            <th>所屬群組</th>
-                            <th>名稱</th>
-                            <th>URL</th>
-                            <th>排序</th>
-                            <th>狀態</th>
-                            <th>建立時間</th>
+                            <th data-sortable="id" data-sort-type="number">ID</th>
+                            <th data-sortable="type">類型</th>
+                            <th data-sortable="group">所屬群組</th>
+                            <th data-sortable="name">名稱</th>
+                            <th data-sortable="url">URL</th>
+                            <th data-sortable="sort_order" data-sort-type="number">排序</th>
+                            <th data-sortable="status">狀態</th>
+                            <th data-sortable="created_at">建立時間</th>
                         </tr>
                     </thead>
                     <tbody>

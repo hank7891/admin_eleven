@@ -74,15 +74,15 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th data-sortable="row_id" data-sort-type="number">#</th>
                             <th>操作</th>
-                            <th>ID</th>
-                            <th>帳號</th>
-                            <th>姓名</th>
-                            <th>操作類型</th>
-                            <th>狀態</th>
-                            <th>IP 位址</th>
-                            <th>操作時間</th>
+                            <th data-sortable="id" data-sort-type="number">ID</th>
+                            <th data-sortable="account">帳號</th>
+                            <th data-sortable="name">姓名</th>
+                            <th data-sortable="action">操作類型</th>
+                            <th data-sortable="status">狀態</th>
+                            <th data-sortable="ip">IP 位址</th>
+                            <th data-sortable="operated_at">操作時間</th>
                         </tr>
                     </thead>
                     <tbody>

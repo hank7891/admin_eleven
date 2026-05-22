@@ -29,7 +29,7 @@ class FrontendNavActiveTest extends TestCase
         $response = $this->get('/');
         $response->assertOk();
 
-        $this->assertMatchesRegularExpression('/href="\/#top"\s+class="[^"]*text-primary[^"]*"/', $response->getContent());
+        $this->assertMatchesRegularExpression('/href="\/#top"\s+class="[^"]*is-active[^"]*"/', $response->getContent());
     }
 
     public function test_product_page_marks_product_nav_item_active(): void
@@ -58,7 +58,7 @@ class FrontendNavActiveTest extends TestCase
         $response = $this->get('/product');
         $response->assertOk();
 
-        $this->assertMatchesRegularExpression('/href="' . preg_quote(url('product'), '/') . '"\s+class="[^"]*text-primary[^"]*"/', $response->getContent());
+        $this->assertMatchesRegularExpression('/href="' . preg_quote(url('product'), '/') . '"\s+class="[^"]*is-active[^"]*"/', $response->getContent());
     }
 
     public function test_product_detail_page_marks_product_nav_item_active(): void
@@ -92,7 +92,7 @@ class FrontendNavActiveTest extends TestCase
         $response = $this->get('/product/1');
         $response->assertOk();
 
-        $this->assertMatchesRegularExpression('/href="' . preg_quote(url('product'), '/') . '"\s+class="[^"]*text-primary[^"]*"/', $response->getContent());
+        $this->assertMatchesRegularExpression('/href="' . preg_quote(url('product'), '/') . '"\s+class="[^"]*is-active[^"]*"/', $response->getContent());
     }
 
     public function test_announcement_page_marks_announcement_nav_item_active(): void
@@ -112,7 +112,7 @@ class FrontendNavActiveTest extends TestCase
         $response = $this->get('/announcement');
         $response->assertOk();
 
-        $this->assertMatchesRegularExpression('/href="' . preg_quote(url('announcement'), '/') . '"\s+class="[^"]*text-primary[^"]*"/', $response->getContent());
+        $this->assertMatchesRegularExpression('/href="' . preg_quote(url('announcement'), '/') . '"\s+class="[^"]*is-active[^"]*"/', $response->getContent());
     }
 }
 

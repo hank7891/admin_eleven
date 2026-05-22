@@ -74,7 +74,7 @@ class AboutPageTest extends TestCase
         $response->assertOk();
 
         $this->assertMatchesRegularExpression(
-            '/href="' . preg_quote(url('about'), '/') . '"\s+class="[^"]*text-primary[^"]*"/',
+            '/href="' . preg_quote(url('about'), '/') . '"\s+class="[^"]*is-active[^"]*"/',
             $response->getContent()
         );
     }

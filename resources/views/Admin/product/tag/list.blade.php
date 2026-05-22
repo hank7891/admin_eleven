@@ -40,8 +40,8 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>名稱</th>
-                            <th>狀態</th>
+                            <th data-sortable="name">名稱</th>
+                            <th data-sortable="status">狀態</th>
                             <th>操作</th>
                         </tr>
                     </thead>

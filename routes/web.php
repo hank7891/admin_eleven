@@ -37,8 +37,6 @@ Route::prefix('member')->group(function () {
         ->middleware([Middleware\MemberIsLogin::class, 'throttle:20,1']);
 });
 
-Route::get('test', [Controllers\TestController::class, 'index'])->middleware(Middleware\Test::class);
-
 Route::prefix('admin')->group(function () {
     # 白名單路由（只需登入，不檢查選單權限）
     Route::get('/', [Controllers\Admin\IndexController::class, 'index'])->middleware(Middleware\AdminIsLogin::class);

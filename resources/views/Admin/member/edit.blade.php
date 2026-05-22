@@ -91,7 +91,7 @@
                         name="status_key"
                         label="狀態"
                         :options="$statusOptions ?? []"
-                        :value="old('status_key', $data['status_key'] ?? 'active')"
+                        :value="old('status_key', $data['status_key'] ?? MEMBER_STATUS_ACTIVE)"
                         required
                     />
                 </div>

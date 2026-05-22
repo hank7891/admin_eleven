@@ -95,4 +95,16 @@ class AdminLoginLogRepository
 
         return $log;
     }
+
+    /**
+     * 計算指定日期的登入成功次數（Dashboard KPI 用）
+     * status = 1 為登入成功
+     */
+    public function countSuccessOnDate(string $date): int
+    {
+        return $this->adminLoginLog::query()
+            ->whereDate('operated_at', $date)
+            ->where('status', 1)
+            ->count();
+    }
 }

@@ -33,11 +33,11 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th data-sortable="row_id" data-sort-type="number">#</th>
                             <th>操作</th>
-                            <th>ID</th>
-                            <th>角色名稱</th>
-                            <th>建立時間</th>
+                            <th data-sortable="id" data-sort-type="number">ID</th>
+                            <th data-sortable="name">角色名稱</th>
+                            <th data-sortable="created_at">建立時間</th>
                         </tr>
                     </thead>
                     <tbody>

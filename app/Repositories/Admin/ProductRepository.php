@@ -281,5 +281,23 @@ class ProductRepository
                 $builder->whereNull('end_at')->orWhere('end_at', '>=', now());
             });
     }
+
+    /**
+     * 上架商品數（Dashboard KPI 用，不含時段限制）
+     */
+    public function countOnline(): int
+    {
+        return $this->model::query()
+            ->where('status_key', PRODUCT_STATUS_ONLINE)
+            ->count();
+    }
+
+    /**
+     * 全表商品總數（Dashboard 系統概況用）
+     */
+    public function countTotal(): int
+    {
+        return $this->model::query()->count();
+    }
 }
 

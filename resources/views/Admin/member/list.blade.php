@@ -52,16 +52,16 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th data-sortable="row_id" data-sort-type="number">#</th>
                             <th>操作</th>
-                            <th>ID</th>
-                            <th>Email</th>
-                            <th>姓名</th>
-                            <th>電話</th>
-                            <th>性別</th>
-                            <th>狀態</th>
-                            <th>最後登入</th>
-                            <th>註冊時間</th>
+                            <th data-sortable="id" data-sort-type="number">ID</th>
+                            <th data-sortable="email">Email</th>
+                            <th data-sortable="name">姓名</th>
+                            <th data-sortable="phone">電話</th>
+                            <th data-sortable="gender">性別</th>
+                            <th data-sortable="status">狀態</th>
+                            <th data-sortable="last_login">最後登入</th>
+                            <th data-sortable="created_at">註冊時間</th>
                         </tr>
                     </thead>
                     <tbody>

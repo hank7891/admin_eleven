@@ -106,5 +106,23 @@ class HeroSlideRepository
     {
         return (int) ($this->model::query()->max('sort_order') ?? 0);
     }
+
+    /**
+     * 啟用中輪播數（Dashboard 系統概況用）
+     */
+    public function countActive(): int
+    {
+        return $this->model::query()
+            ->where('is_active', STATUS_ACTIVE)
+            ->count();
+    }
+
+    /**
+     * 全表輪播總數（Dashboard 系統概況用）
+     */
+    public function countTotal(): int
+    {
+        return $this->model::query()->count();
+    }
 }
 

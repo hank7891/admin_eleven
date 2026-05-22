@@ -67,15 +67,15 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th data-sortable="row_id" data-sort-type="number">#</th>
                             <th>操作</th>
-                            <th>ID</th>
-                            <th>操作者</th>
-                            <th>模組</th>
-                            <th>操作類型</th>
-                            <th>資源</th>
-                            <th>IP 位址</th>
-                            <th>操作時間</th>
+                            <th data-sortable="id" data-sort-type="number">ID</th>
+                            <th data-sortable="operator">操作者</th>
+                            <th data-sortable="module">模組</th>
+                            <th data-sortable="action">操作類型</th>
+                            <th data-sortable="resource">資源</th>
+                            <th data-sortable="ip">IP 位址</th>
+                            <th data-sortable="operated_at">操作時間</th>
                         </tr>
                     </thead>
                     <tbody>

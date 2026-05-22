@@ -224,5 +224,23 @@ class AnnouncementRepository
             ->limit($limit)
             ->get();
     }
+
+    /**
+     * 已啟用公告數（Dashboard KPI / 系統概況用）
+     */
+    public function countActive(): int
+    {
+        return $this->model::query()
+            ->where('is_active', STATUS_ACTIVE)
+            ->count();
+    }
+
+    /**
+     * 全表公告總數（Dashboard 系統概況用）
+     */
+    public function countTotal(): int
+    {
+        return $this->model::query()->count();
+    }
 }
 
