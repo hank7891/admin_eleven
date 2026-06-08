@@ -60,6 +60,7 @@ class MemberLoginLogController extends Controller
                         'action_display' => $log->action_display,
                         'status'         => $log->status,
                         'status_display' => $log->status_display,
+                        'status_tone'    => $log->status_tone,
                         'ip_address'     => $log->ip_address,
                         'operated_at'    => Carbon::parse($log->operated_at)->format('Y-m-d H:i:s'),
                     ];
@@ -103,6 +104,7 @@ class MemberLoginLogController extends Controller
                 'action_display' => $log->action_display,
                 'status'         => $log->status,
                 'status_display' => $log->status_display,
+                'status_tone'    => $log->status_tone,
                 'fail_reason'    => $log->fail_reason,
                 'ip_address'     => $log->ip_address,
                 'user_agent'     => $log->user_agent,

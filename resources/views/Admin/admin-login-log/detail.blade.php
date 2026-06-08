@@ -47,11 +47,7 @@
 
             <dt>狀態</dt>
             <dd>
-                @if ($data['status'] == 1)
-                    <x-admin.badge tone="success">{{ $data['status_display'] }}</x-admin.badge>
-                @else
-                    <x-admin.badge tone="danger">{{ $data['status_display'] }}</x-admin.badge>
-                @endif
+                <x-admin.badge tone="{{ $data['status_tone'] }}">{{ $data['status_display'] }}</x-admin.badge>
             </dd>
 
             @if (!empty($data['fail_reason']))

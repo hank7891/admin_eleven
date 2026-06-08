@@ -63,4 +63,12 @@ class AdminLoginLog extends Model
     {
         return config('constants.login_log_status')[$this->status] ?? '未知';
     }
+
+    /**
+     * 狀態 badge tone
+     */
+    public function getStatusToneAttribute(): string
+    {
+        return (int) $this->status === LOGIN_LOG_STATUS_SUCCESS ? 'success' : 'danger';
+    }
 }

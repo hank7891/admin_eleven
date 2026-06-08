@@ -100,11 +100,7 @@
                                 <td>{{ $row['member_name'] }}</td>
                                 <td class="admin-text-mute">{{ $row['action_display'] }}</td>
                                 <td>
-                                    @if ($row['status'] == 1)
-                                        <x-admin.badge tone="success">{{ $row['status_display'] }}</x-admin.badge>
-                                    @else
-                                        <x-admin.badge tone="danger">{{ $row['status_display'] }}</x-admin.badge>
-                                    @endif
+                                    <x-admin.badge tone="{{ $row['status_tone'] }}">{{ $row['status_display'] }}</x-admin.badge>
                                 </td>
                                 <td class="admin-text-mono admin-text-mute">{{ $row['ip_address'] }}</td>
                                 <td class="admin-text-mute">{{ $row['operated_at'] }}</td>
